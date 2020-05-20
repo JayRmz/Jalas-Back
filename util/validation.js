@@ -1,7 +1,6 @@
 var validator = require('validator');
 
 exports.isAlphaSpace=function (alpha) {
-    console.log("isAlphaSpace")
     var alphaArray=alpha.split(" ");
     var alphaFormat=[];
 
@@ -12,8 +11,11 @@ exports.isAlphaSpace=function (alpha) {
         string=stringFormat(alphaArray[i])
         if(validator.isAlpha(string))
             alphaFormat.push(string[0].toUpperCase() + (string.slice(1)).toLowerCase());
-        else
+        else{
+            console.log("isAlphaSpace")
             return false
+        }
+
     }
     return alphaFormat.join(" ")
 };
@@ -21,22 +23,31 @@ exports.isAlphaSpace=function (alpha) {
 exports.isAlpha=function (alpha) {
     alpha=stringFormat(alpha)
     if(!validator.isAlpha(alpha))
+    {
+        console.log("isAlpha")
         return false;
+    }
     return alpha[0].toUpperCase() + (alpha.slice(1)).toLowerCase()
 
 };
 
 exports.isEmail=function (email) {
     email=stringFormat(validator.normalizeEmail(email));
+    console.log(email)
     if(!validator.isEmail(email))
+    {
+        console.log("isEmail")
         return false;
+    }
     return email
 };
 
 exports.isDate=function (date) {
     date=stringFormat(date)
-    if(!validator.isISO8601(date))
+    if(!validator.isISO8601(date)) {
+        console.log("isDate")
         return false;
+    }
     return date
 };
 
@@ -46,7 +57,10 @@ exports.isIdArray=function (idArray) {
     for(i=0;i<idArray.length;i++) {
         id = stringFormat(idArray[i])
         if (!validator.isNumeric(id))
+        {
+            console.log("isIdArray")
             return false;
+        }
     }
     return idArray
 };
@@ -58,12 +72,17 @@ exports.pass=function (obj) {
 exports.isId=function (id) {
     id=stringFormat(id)
     if(!validator.isNumeric(id))
-            return false;
+    {
+        console.log("isId")
+        return false;
+    }
     return id
 };
 
 exports.isAlphaNumeric=function (alpha) {
     console.log("isAlphaNumeric")
+
+    alpha=stringFormat(alpha)
     var alphaNumericArray=alpha.split(" ");
     let i;
     let string;
@@ -71,7 +90,10 @@ exports.isAlphaNumeric=function (alpha) {
     {
         string=stringFormat(alphaNumericArray[i])
         if(!validator.isAlphanumeric(string))
+        {
+            console.log("isAlphaNumeric")
             return false;
+        }
     }
     return alpha
 };
@@ -79,14 +101,20 @@ exports.isAlphaNumeric=function (alpha) {
 exports.isFloat=function (number) {
     number=stringFormat(number)
     if (!validator.isFloat(number))
+    {
+        console.log("isFloat")
         return false;
+    }
     return number
 };
 
 exports.isInteger=function (id) {
     id=stringFormat(id)
     if(!validator.isNumeric(id))
+    {
+        console.log("isInteger")
         return false;
+    }
     return id
 };
 
@@ -98,19 +126,28 @@ exports.escape=function (string) {
 exports.isPhone=function (number) {
     number=stringFormat(number)
     if (!validator.isMobilePhone(number))
+    {
+        console.log("isPhone")
         return false;
+    }
     return number
 };
 
 exports.isLatitude=function (lat) {
     if (!validator.isLatLong(stringFormat(lat)+","+"32.690705"))
+    {
+        console.log("isLatitude")
         return false;
+    }
     return lat
 };
 
 exports.isLongitude=function (lon) {
     if (!validator.isLatLong("39.900472"+","+stringFormat(lon)))
+    {
+        console.log("isLongitude")
         return false;
+    }
     return lon
 };
 
@@ -138,7 +175,8 @@ let isValid = function (obj, format) {
 
             }
 
-        } else                                                               //NO ESTA
+        }
+        else                                                               //NO ESTA
         {
             if (item.require)
                 return false

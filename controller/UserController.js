@@ -51,7 +51,7 @@ async  function verifyMail(req,res){
         res.json(resJson)
     }
 
-    }
+}
 
 async function createUser(req,res) {
     let resJson ={
@@ -72,12 +72,20 @@ async function createUser(req,res) {
     //VERIFICAR SI EXISTE EL EMAIL
     try {
         let email = req.body.data.email;
-        let exist = await UserModel.verifyMail(email);
-        if (exist == '1') {
-            resJson.status = 1;
-            resJson.message = "User already exist";
+        let existEmailEstablishment = await EstablishmentModel.verifyMail(email);
+        let exist= await UserModel.verifyMail(email)
+        if(exist == '1'){
+            resJson.status=1;
+            resJson.message="Establishment already exist";
             res.json(resJson);
         }
+        if(existEmailEstablishment == '1'){
+            resJson.status=1;
+            resJson.message="Email already exist";
+            res.json(resJson);
+        }
+
+
         else {
             if (exist == '0') {
 
@@ -167,6 +175,7 @@ async function validateUserCredentials(req,res) {
     }
     res.json(resJson);
 }
+
 
 async function updateUser(req,res) {
     let resJson ={
@@ -326,7 +335,7 @@ async function getUserProfile(req, res){
             response.favorites[i] = information;
     }
 
-   // console.log("FAVORTIOS"+JSON.stringify(response));
+    // console.log("FAVORTIOS"+JSON.stringify(response));
     if(result){
 
         log("user consulted");
@@ -395,16 +404,16 @@ async function setProfileImage(req,res)
                 try {
                     let resultDelete = deleteImage.deleteImage(oldProfileImage,path);
                     console.log(resultDelete);
-                        if (resultDelete) {
-                            log("Update profile Image Correctly");
-                            resJson.message = "Update profile Image Correctly";
-                            res.json(resJson);
-                        } else {
-                            log("fail Update profile Image Correctly1", 'error.log');
-                            resJson.status = 0;
-                            resJson.message = "fail Update profile Image Correctly1";
-                            res.json(resJson);
-                        }
+                    if (resultDelete) {
+                        log("Update profile Image Correctly");
+                        resJson.message = "Update profile Image Correctly";
+                        res.json(resJson);
+                    } else {
+                        log("fail Update profile Image Correctly1", 'error.log');
+                        resJson.status = 0;
+                        resJson.message = "fail Update profile Image Correctly1";
+                        res.json(resJson);
+                    }
                 }
                 catch(error){
                     log("fail Update profile Image Correctly", 'error.log');
@@ -649,8 +658,114 @@ async function deleteProfileImage(req,res)
         }
     }
 
+
 }
 
+async  function getFavorites(req,res){
+    let resJson = {
+        'status': 1,
+        'message': '',
+        'data': {}
+    };
+    if(!validation.isValid(req.body,jsonReq.getFavorites))
+    {
+        resJson.status=0;
+        resJson.message="wrong formatting";
+        res.json(resJson);
+        return;
+    }
+
+    //crear un nuevo UserModel
+    let userInfo=req.body.data;
+    let userModel=new UserModel(userInfo);
+
+    let resultList = await userModel.getFavoritesID();
+
+    let resultFav=[];
+    if(resultList)
+    {
+        let i = 0;
+        let idEstablishment;
+        let list=JSON.parse(resultList.favorites);
+        for(i=0;i<list.length;i++)
+        {
+            idEstablishment=list[i];
+            let resultFD = await UserModel.getFavoritesData(idEstablishment);
+            if(resultFD.hasOwnProperty("profileImage"))
+                resultFD.profileImage=JSON.parse(resultFD.profileImage)+"";
+            if(resultFD)
+                resultFav.push(resultFD)
+        }
+    }
+
+
+    //regresar la respuesta
+    if(resultList){
+        log("Favorites consulted");
+        resJson.data=resultFav;
+        resJson.message="Favorites found";
+        res.json(resJson);
+    }
+    else{
+        log("Fail Favorites consulted");
+        resJson.status=0;
+        resJson.message="Favorites not found";
+        res.json(resJson);
+    }
+}
+
+async  function getEvents(req,res){
+    let resJson = {
+        'status': 1,
+        'message': '',
+        'data': {}
+    };
+    if(!validation.isValid(req.body,jsonReq.getEvents))
+    {
+        resJson.status=0;
+        resJson.message="wrong formatting";
+        res.json(resJson);
+        return;
+    }
+
+    //crear un nuevo UserModel
+    let userInfo=req.body.data;
+    let userModel=new UserModel(userInfo);
+
+    let resultList = await userModel.getEventsID();
+
+    let result=[];
+    if(resultList)
+    {
+        let i = 0;
+        let idEvent;
+        let list=JSON.parse(resultList.events);
+        for(i=0;i<list.length;i++)
+        {
+            idEvent=list[i];
+            let resultFD = await UserModel.getEventsData(idEvent);
+            if(resultFD.hasOwnProperty("conf"))
+                resultFD.conf=JSON.parse(resultFD.conf);
+
+            if(resultFD)
+                result.push(resultFD)
+        }
+    }
+
+    //regresar la respuesta
+    if(resultList){
+        log("Favorites consulted");
+        resJson.data=result;
+        resJson.message="Favorites found";
+        res.json(resJson);
+    }
+    else{
+        log("Fail Favorites consulted");
+        resJson.status=0;
+        resJson.message="Favorites not found";
+        res.json(resJson);
+    }
+}
 
 module.exports.CreateUser = createUser;
 module.exports.ValidateUserCredentials = validateUserCredentials;
@@ -663,5 +778,6 @@ module.exports.SetProfileImage = setProfileImage;
 module.exports.SetBannerImage = setBannerImage;
 module.exports.DeleteProfileImage = deleteProfileImage;
 module.exports.DeleteBannerImage = deleteBannerImage;
-
+module.exports.GetFavorites = getFavorites;
+module.exports.GetEvents = getEvents;
 

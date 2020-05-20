@@ -20,4 +20,7 @@ router.post('/setBannerImage',UserController.SetBannerImage);
 router.post('/deleteProfileImage',UserController.DeleteProfileImage);
 router.post('/deleteBannerImage',UserController.DeleteBannerImage);
 
+router.post('/getFavorites',UserController.GetFavorites);
+router.post('/getEvents',UserController.GetEvents);
+
 module.exports = router;

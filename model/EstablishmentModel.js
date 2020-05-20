@@ -141,6 +141,7 @@ class EstablishmentModel{
             reject("ErrorConsulting");
         }
     }
+
     static async verifyMail(email){
         const sql = `SELECT email FROM establishment WHERE email=?`;
         const params = [email];

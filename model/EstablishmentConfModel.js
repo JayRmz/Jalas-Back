@@ -223,10 +223,11 @@ class EstablishmentConfModel{
             this.location.latitude=0;
             this.location.city="";
             this.location.state="";
+            this.location.address="";
         }
         let jsonData ={
             'category': this.category,  //ARRAY
-            'location': {'latitude':this.location.latitude, 'longitude':this.location.longitude, 'city': this.location.city, 'state': this.location.state}, //JSON
+            'location': {'latitude':this.location.latitude, 'longitude':this.location.longitude, 'city': this.location.city, 'state': this.location.state, 'address': this.location.address}, //JSON
             'genres': this.genres,//ARRAY
             'hours': this.hours,//ARRAY
             'images': {'profileImage':this.images.profileImage, 'bannerImage':this.images.bannerImage },      //JSON

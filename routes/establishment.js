@@ -10,6 +10,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/createEstablishment',EstablishmentController.CreateEstablishment);
 router.post('/validateEstablishment',EstablishmentController.ValidateEstablishmentCredentials);
+router.post('/verifyMail',EstablishmentController.VerifyMail);
 router.post('/updateEstablishment',EstablishmentController.UpdateEstablishment);
 router.post('/getEstablishmentInfo',EstablishmentController.GetEstablishmentInfo);
 router.post('/updateEstablishmentPassword',EstablishmentController.UpdateEstablishmentPassword);
@@ -22,3 +23,4 @@ router.post('/deleteProfileImage',EstablishmentController.DeleteProfileImage);
 
 
 module.exports = router;
+
