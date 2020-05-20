@@ -1,121 +1,6 @@
 const validation = require('../util/validation');
 
 exports.createUser =
-{
-    "fields":
-        [
-            {
-                "name": "data",
-                "require": true,
-                "verification": validation.pass,
-                "children": [
-                    {
-                        "name": "name",
-                        "require": true,
-                        "verification": validation.isAlphaSpace,
-                        "children": []
-                    },
-                    {
-                        "name": "lastName",
-                        "require": true,
-                        "verification": validation.isAlphaSpace,
-                        "children": []
-                    },
-                    {
-                        "name": "email",
-                        "require": true,
-                        "verification": validation.isEmail,
-                        "children": []
-                    },
-                    {
-                        "name": "password",
-                        "require": true,
-                        "verification": validation.pass,
-                        "children": []
-                    },
-                    {
-                        "name": "birthday",
-                        "require": true,
-                        "verification": validation.isDate,
-                        "children": []
-                    },
-                    {
-                        "name": "sex",
-                        "require": true,
-                        "verification": validation.isAlpha,
-                        "children": []
-                    },
-                    {
-                        "name": "phone",
-                        "require": true,
-                        "verification": validation.isPhone,
-                        "children": []
-                    },
-                    {
-                        "name": "conf",
-                        "require": false,
-                        "verification": validation.pass,
-                        "children":
-                            [
-                                {
-                                    "name": "favorites",
-                                    "require": false,
-                                    "verification": validation.isIdArray,
-                                    "children": []
-                                },
-                                {
-                                    "name": "location",
-                                    "require": false,
-                                    "verification": validation.pass,
-                                    "children":
-                                        [
-                                            {
-                                                "name": "city",
-                                                "require": true,
-                                                "verification": validation.isAlphaNumeric,
-                                                "children": []
-                                            },
-                                            {
-                                                "name": "state",
-                                                "require": true,
-                                                "verification": validation.isAlphaNumeric,
-                                                "children": []
-                                            }
-                                        ]
-                                },
-                                {
-                                    "name": "genres",
-                                    "require": false,
-                                    "verification": validation.isIdArray,
-                                    "children": []
-                                },
-                                {
-                                    "name": "events",
-                                    "require": false,
-                                    "verification": validation.isIdArray,
-                                    "children": []
-                                },
-                                {
-                                    "name": "radio",
-                                    "require": false,
-                                    "verification": validation.isFloat,
-                                    "children": []
-                                },
-                                {
-                                    "name": "description",
-                                    "require": false,
-                                    "verification": validation.escape,
-                                    "children": []
-                                }
-                            ]
-                    }
-                ]
-            }
-
-        ]
-};
-
-exports.validateCredentials =
     {
         "fields":
             [
@@ -123,8 +8,19 @@ exports.validateCredentials =
                     "name": "data",
                     "require": true,
                     "verification": validation.pass,
-                    "children":
-                    [
+                    "children": [
+                        {
+                            "name": "name",
+                            "require": true,
+                            "verification": validation.isAlphaSpace,
+                            "children": []
+                        },
+                        {
+                            "name": "lastName",
+                            "require": true,
+                            "verification": validation.isAlphaSpace,
+                            "children": []
+                        },
                         {
                             "name": "email",
                             "require": true,
@@ -136,8 +32,112 @@ exports.validateCredentials =
                             "require": true,
                             "verification": validation.pass,
                             "children": []
+                        },
+                        {
+                            "name": "birthday",
+                            "require": true,
+                            "verification": validation.isDate,
+                            "children": []
+                        },
+                        {
+                            "name": "sex",
+                            "require": true,
+                            "verification": validation.isAlpha,
+                            "children": []
+                        },
+                        {
+                            "name": "phone",
+                            "require": true,
+                            "verification": validation.isPhone,
+                            "children": []
+                        },
+                        {
+                            "name": "conf",
+                            "require": false,
+                            "verification": validation.pass,
+                            "children":
+                                [
+                                    {
+                                        "name": "favorites",
+                                        "require": false,
+                                        "verification": validation.isIdArray,
+                                        "children": []
+                                    },
+                                    {
+                                        "name": "location",
+                                        "require": false,
+                                        "verification": validation.pass,
+                                        "children":
+                                            [
+                                                {
+                                                    "name": "city",
+                                                    "require": true,
+                                                    "verification": validation.isAlphaNumeric,
+                                                    "children": []
+                                                },
+                                                {
+                                                    "name": "state",
+                                                    "require": true,
+                                                    "verification": validation.isAlphaNumeric,
+                                                    "children": []
+                                                }
+                                            ]
+                                    },
+                                    {
+                                        "name": "genres",
+                                        "require": false,
+                                        "verification": validation.isIdArray,
+                                        "children": []
+                                    },
+                                    {
+                                        "name": "events",
+                                        "require": false,
+                                        "verification": validation.isIdArray,
+                                        "children": []
+                                    },
+                                    {
+                                        "name": "radio",
+                                        "require": false,
+                                        "verification": validation.isFloat,
+                                        "children": []
+                                    },
+                                    {
+                                        "name": "description",
+                                        "require": false,
+                                        "verification": validation.escape,
+                                        "children": []
+                                    }
+                                ]
                         }
                     ]
+                }
+
+            ]
+    };
+
+exports.validateCredentials =
+    {
+        "fields":
+            [
+                {
+                    "name": "data",
+                    "require": true,
+                    "verification": validation.pass,
+                    "children":
+                        [
+                            {
+                                "name": "email",
+                                "require": true,
+                                "verification": validation.isEmail,
+                                "children": []
+                            },
+                            {
+                                "name": "password",
+                                "require": true,
+                                "verification": validation.pass,
+                                "children": []
+                            }
+                        ]
                 }
             ]
     }
@@ -416,7 +416,7 @@ exports.createEstablishment =
                         {
                             "name": "group",
                             "require": true,
-                            "verification": validation.isId,
+                            "verification": validation.isAlphaNumeric,
                             "children": []
                         },
                         {
@@ -447,6 +447,12 @@ exports.createEstablishment =
                                                     "name": "longitude",
                                                     "require": true,
                                                     "verification": validation.isLongitude,
+                                                    "children": []
+                                                },
+                                                {
+                                                    "name": "address",
+                                                    "require": true,
+                                                    "verification": validation.escape,
                                                     "children": []
                                                 }
                                             ]
@@ -775,6 +781,12 @@ exports.createEvent =
                                 [
                                     {
                                         "name": "description",
+                                        "require": false,
+                                        "verification": validation.escape,
+                                        "children": []
+                                    },
+                                    {
+                                        "name": "address",
                                         "require": false,
                                         "verification": validation.escape,
                                         "children": []
@@ -1237,6 +1249,12 @@ exports.createEstablishmentConf =
                                         "require": true,
                                         "verification": validation.isLongitude,
                                         "children": []
+                                    },
+                                    {
+                                        "name": "address",
+                                        "require": true,
+                                        "verification": validation.escape,
+                                        "children": []
                                     }
                                 ]
                         },
@@ -1301,6 +1319,12 @@ exports.createEventConf =
                             "children": []
                         },
                         {
+                            "name": "address",
+                            "require": false,
+                            "verification": validation.escape,
+                            "children": []
+                        },
+                        {
                             "name": "images",
                             "require": false,
                             "verification": validation.pass,
@@ -1342,15 +1366,15 @@ exports.getUserConf =
                     "require": true,
                     "verification": validation.pass,
                     "children":
-                    [
-                        {
-                            "name": "idUser",
-                            "require": true,
-                            "verification": validation.isId,
-                            "children": []
-                        }
+                        [
+                            {
+                                "name": "idUser",
+                                "require": true,
+                                "verification": validation.isId,
+                                "children": []
+                            }
 
-                    ]
+                        ]
                 }
 
             ]
@@ -1410,85 +1434,7 @@ exports.updateUserConf =
                     "name": "data",
                     "require": true,
                     "verification": validation.pass,
-                    "children": [
-                        {
-                            "name": "idUser",
-                            "require": true,
-                            "verification": validation.isId,
-                            "children": []
-                        },
-                        {
-                            "name": "favorites",
-                            "require": false,
-                            "verification": validation.isIdArray,
-                            "children": []
-                        },
-                        {
-                            "name": "genres",
-                            "require": false,
-                            "verification": validation.isIdArray,
-                            "children": []
-                        },
-                        {
-                            "name": "events",
-                            "require": false,
-                            "verification": validation.isIdArray,
-                            "children": []
-                        },
-                        {
-                            "name": "radio",
-                            "require": false,
-                            "verification": validation.isFloat,
-                            "children": []
-                        },
-                        {
-                            "name": "description",
-                            "require": false,
-                            "verification": validation.escape,
-                            "children": []
-                        },
-                        {
-                            "name": "location",
-                            "require": false,
-                            "verification": validation.pass,
-                            "children":
-                                [
-                                    {
-                                        "name": "city",
-                                        "require": true,
-                                        "verification": validation.isAlphaNumeric,
-                                        "children": []
-                                    },
-                                    {
-                                        "name": "state",
-                                        "require": true,
-                                        "verification": validation.isAlphaNumeric,
-                                        "children": []
-                                    }
-                                ]
-                        },
-                        {
-                            "name": "images",
-                            "require": false,
-                            "verification": validation.pass,
-                            "children":
-                                [
-                                    {
-                                        "name": "profileImage",
-                                        "require": true,
-                                        "verification": validation.pass,
-                                        "children": []
-                                    },
-                                    {
-                                        "name": "bannerImage",
-                                        "require": true,
-                                        "verification": validation.pass,
-                                        "children": []
-                                    }
-                                ]
-                        }
-
-                    ]
+                    "children":[]
                 }
 
             ]
@@ -1502,85 +1448,7 @@ exports.updateEstablishmentConf =
                     "name": "data",
                     "require": true,
                     "verification": validation.pass,
-                    "children": [
-                        {
-                            "name": "idEstablishment",
-                            "require": true,
-                            "verification": validation.isId,
-                            "children": []
-                        },
-                        {
-                            "name": "category",
-                            "require": false,
-                            "verification": validation.isIdArray,
-                            "children": []
-                        },
-                        {
-                            "name": "genres",
-                            "require": false,
-                            "verification": validation.isIdArray,
-                            "children": []
-                        },
-                        {
-                            "name": "hours",
-                            "require": false,
-                            "verification": validation.pass,
-                            "children": []
-                        },
-                        {
-                            "name": "gallery",
-                            "require": false,
-                            "verification": validation.pass,
-                            "children": []
-                        },
-                        {
-                            "name": "description",
-                            "require": false,
-                            "verification": validation.escape,
-                            "children": []
-                        },
-                        {
-                            "name": "location",
-                            "require": false,
-                            "verification": validation.pass,
-                            "children":
-                                [
-                                    {
-                                        "name": "latitude",
-                                        "require": true,
-                                        "verification": validation.isLatitude,
-                                        "children": []
-                                    },
-                                    {
-                                        "name": "longitude",
-                                        "require": true,
-                                        "verification": validation.isLongitude,
-                                        "children": []
-                                    }
-                                ]
-                        },
-                        {
-                            "name": "images",
-                            "require": false,
-                            "verification": validation.pass,
-                            "children":
-                                [
-                                    {
-                                        "name": "profileImage",
-                                        "require": true,
-                                        "verification": validation.pass,
-                                        "children": []
-                                    },
-                                    {
-                                        "name": "bannerImage",
-                                        "require": true,
-                                        "verification": validation.pass,
-                                        "children": []
-                                    }
-                                ]
-                        }
-
-                    ]
+                    "children": []
                 }
 
             ]
@@ -1594,65 +1462,7 @@ exports.updateEventConf =
                     "name": "data",
                     "require": true,
                     "verification": validation.pass,
-                    "children": [
-                        {
-                            "name": "idEvent",
-                            "require": true,
-                            "verification": validation.isId,
-                            "children": []
-                        },
-                        {
-                            "name": "genres",
-                            "require": false,
-                            "verification": validation.isIdArray,
-                            "children": []
-                        },
-                        {
-                            "name": "date",
-                            "require": false,
-                            "verification": validation.pass,
-                            "children": []
-                        },
-                        {
-                            "name": "gallery",
-                            "require": false,
-                            "verification": validation.pass,
-                            "children": []
-                        },
-                        {
-                            "name": "description",
-                            "require": false,
-                            "verification": validation.escape,
-                            "children": []
-                        },
-                        {
-                            "name": "images",
-                            "require": false,
-                            "verification": validation.pass,
-                            "children":
-                                [
-                                    {
-                                        "name": "profileImage",
-                                        "require": true,
-                                        "verification": validation.pass,
-                                        "children": []
-                                    },
-                                    {
-                                        "name": "bannerImage",
-                                        "require": true,
-                                        "verification": validation.pass,
-                                        "children": []
-                                    },
-                                    {
-                                        "name": "promotionImage",
-                                        "require": true,
-                                        "verification": validation.pass,
-                                        "children": []
-                                    }
-                                ]
-                        }
-
-                    ]
+                    "children": []
                 }
 
             ]
@@ -2242,7 +2052,47 @@ exports.getUserReviews =
             ]
     };
 
+exports.getFavorites =
+    {
+        "fields":
+            [
+                {
+                    "name": "data",
+                    "require": true,
+                    "verification": validation.pass,
+                    "children":
+                        [
+                            {
+                                "name": "idUser",
+                                "require": true,
+                                "verification": validation.isId,
+                                "children": []
+                            }
+                        ]
+                }
+            ]
+    }
 
+exports.getEvents =
+    {
+        "fields":
+            [
+                {
+                    "name": "data",
+                    "require": true,
+                    "verification": validation.pass,
+                    "children":
+                        [
+                            {
+                                "name": "idUser",
+                                "require": true,
+                                "verification": validation.isId,
+                                "children": []
+                            }
+                        ]
+                }
+            ]
+    }
 
 
 

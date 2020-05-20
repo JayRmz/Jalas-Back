@@ -245,27 +245,27 @@ class UserModel{
         console.log(params);
         const idUser = this.idUser;
         return new Promise((resolve,reject) => {
-        try{
-            db.query(sql, params, function(err, res){
-                if(err){
-                    log("Error updating user to database "+idUser+" "+err,'error.log');
-                    reject(false);
-                }else{
-                    console.log(res);
-                    if(res.changedRows== 1){
-                        log("User updated correctly "+idUser);
-                        resolve(true);
+            try{
+                db.query(sql, params, function(err, res){
+                    if(err){
+                        log("Error updating user to database "+idUser+" "+err,'error.log');
+                        reject(false);
+                    }else{
+                        console.log(res);
+                        if(res.changedRows== 1){
+                            log("User updated correctly "+idUser);
+                            resolve(true);
+                        }
+                        else {
+                            log("Error updating user to database "+idUser,'error.log');
+                            resolve(false);
+                        }
                     }
-                    else {
-                        log("Error updating user to database "+idUser,'error.log');
-                        resolve(false);
-                    }
-                }
-            });
-        }catch(err0r){
-            log("Error updating user to database "+idUser+" "+err0r,'error.log');
-            reject(false)
-        }
+                });
+            }catch(err0r){
+                log("Error updating user to database "+idUser+" "+err0r,'error.log');
+                reject(false)
+            }
         });
 
     }
@@ -336,6 +336,122 @@ class UserModel{
             }
         });
 
+    }
+
+    async getFavoritesID(){
+        const sqlVerifyPass = `SELECT JSON_EXTRACT(configuration.conf,"$.favorites") favorites from configuration JOIN user ON configuration.idconfiguration=user.idconfiguration WHERE user.iduser=?`;
+        const params = [this.idUser];
+        let idUser=this.idUser;
+        return new Promise((resolve,reject) => {
+            try{
+                db.query(sqlVerifyPass, params, function(err, res){
+                    if(err){
+                        log("Error consulting favorites from user "+idUser+" "+err,'error.log');
+                        reject("ErrorConsulting")
+                    }else{
+                        log("consulting favorites from user "+idUser);
+                        if(res.length== 1){
+                            log("consulting favorites from user "+idUser);
+                            resolve(res[0]);
+                        }
+                        else {
+                            log("Error consulting favorites from user "+idUser+" "+err,'error.log');
+                            resolve(false);
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error consulting favorites from user "+idUser+" "+err0r,'error.log');
+                reject("ErrorConsulting")
+            }
+        });
+    }
+    async getEventsID(){
+        const sqlVerifyPass = `SELECT JSON_EXTRACT(configuration.conf,"$.events") events from configuration JOIN user ON configuration.idconfiguration=user.idconfiguration WHERE user.iduser=?`;
+        const params = [this.idUser];
+        let idUser=this.idUser;
+        return new Promise((resolve,reject) => {
+            try{
+                db.query(sqlVerifyPass, params, function(err, res){
+                    if(err){
+                        log("Error consulting events from user "+idUser+" "+err,'error.log');
+                        reject("ErrorConsulting")
+                    }else{
+                        log("consulting events from user "+idUser);
+                        if(res.length== 1){
+                            log("consulting events from user "+idUser);
+                            resolve(res[0]);
+                        }
+                        else {
+                            log("Error consulting events from user "+idUser+" "+err,'error.log');
+                            resolve(false);
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error consulting events from user "+idUser+" "+err0r,'error.log');
+                reject("ErrorConsulting")
+            }
+        });
+    }
+    static async getFavoritesData(idEstablishment){
+
+        const sqlVerifyPass ='SELECT idestablishment, name, JSON_EXTRACT(configuration.conf,"$.images.profileImage") profileImage FROM ' +
+            'configuration JOIN establishment ON establishment.idconfiguration=configuration.idconfiguration WHERE establishment.idestablishment=?'
+        const params = [idEstablishment];
+
+        return new Promise((resolve,reject) => {
+            try{
+                db.query(sqlVerifyPass, params, function(err, res){
+                    if(err){
+                        log("Error consulting establishment "+idEstablishment+" "+err,'error.log');
+                        reject("ErrorConsulting")
+                    }else{
+
+                        if(res.length >= 1){
+                            log("consulting establishment "+idEstablishment);
+                            resolve(res[0]);
+                        }
+                        else {
+                            log("Error consulting favorites"+idEstablishment+" "+err,'error.log');
+                            resolve(false);
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error consulting favorites"+idEstablishment+" "+err0r,'error.log');
+                reject("ErrorConsulting")
+            }
+        });
+    }
+    static async getEventsData(idEvent){
+
+        const sqlVerifyPass ='SELECT event.*, configuration.* FROM configuration INNER JOIN event ON event.idconfiguration=configuration.idconfiguration WHERE event.idevent=?'
+        const params = [idEvent];
+
+        return new Promise((resolve,reject) => {
+            try{
+                db.query(sqlVerifyPass, params, function(err, res){
+                    if(err){
+                        log("Error consulting event "+idEvent+" "+err,'error.log');
+                        reject("ErrorConsulting")
+                    }else{
+
+                        if(res.length >= 1){
+                            log("consulting event "+idEvent);
+                            resolve(res[0]);
+                        }
+                        else {
+                            log("Error consulting event "+idEvent+" "+err,'error.log');
+                            resolve(false);
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error consulting favorites"+idEvent+" "+err0r,'error.log');
+                reject("ErrorConsulting")
+            }
+        });
     }
 
 

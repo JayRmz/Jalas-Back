@@ -30,32 +30,32 @@ async function createEvent(req,res) {
 
     try {
 
-            //GENERAR ID UNICO POR Evento
-            let temp = generator.next();
-            let id = intformat(temp, 'dec');
-            //GENERAR UN CODIGO DE CONFIRMACION
-            //INSERTAR A LA BASE DE DATOS
-            let eventInfo = req.body.data;
-            eventInfo.idEvent = id;
-            let eventModel = new EventModel(eventInfo);
-            let eventConfData = req.body.data.conf;
-            //console.log(eventConfData)
+        //GENERAR ID UNICO POR Evento
+        let temp = generator.next();
+        let id = intformat(temp, 'dec');
+        //GENERAR UN CODIGO DE CONFIRMACION
+        //INSERTAR A LA BASE DE DATOS
+        let eventInfo = req.body.data;
+        eventInfo.idEvent = id;
+        let eventModel = new EventModel(eventInfo);
+        let eventConfData = req.body.data.conf;
+        //console.log(eventConfData)
 
-            let result = await eventModel.insertEvent(eventConfData);
+        let result = await eventModel.insertEvent(eventConfData);
 
-            //console.log(result)
-            if (result) {
-                //ENVIAR UN CORREO DE CONFIRMACION
-                //let emailResult = await Email.sendConfirmation(email, uuid);
-                resJson.message = "Event Created Correctly";
-                //log("Sent Email Succesfully " + email);
-                res.json(resJson);
-            } else {
-                resJson.status = 1;
-                resJson.message = "Problem Creating Event";
-                //log("Problem creating user " + email, 'error.log');
-                res.json(resJson);
-            }
+        //console.log(result)
+        if (result) {
+            //ENVIAR UN CORREO DE CONFIRMACION
+            //let emailResult = await Email.sendConfirmation(email, uuid);
+            resJson.message = "Event Created Correctly";
+            //log("Sent Email Succesfully " + email);
+            res.json(resJson);
+        } else {
+            resJson.status = 1;
+            resJson.message = "Problem Creating Event";
+            //log("Problem creating user " + email, 'error.log');
+            res.json(resJson);
+        }
 
     }catch (e) {
         log("Promise error "+e,'error.log');
@@ -458,7 +458,7 @@ async function addImage(req,res){
     }
 }
 
-async function removeImage(req,res){
+async function  removeImage(req,res){
     let resJson ={
         'status': 1,
         'message': ''

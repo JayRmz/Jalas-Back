@@ -28,6 +28,12 @@ class EventConfModel{
         else
             this.description="";
 
+        if(eventConfObject.hasOwnProperty("address"))
+            this.address=eventConfObject.address;
+        else
+            this.address="";
+
+
 
         if(eventConfObject.hasOwnProperty("date"))
             this.date=eventConfObject.date;
@@ -102,7 +108,7 @@ class EventConfModel{
 
             const array_SQL = 'UPDATE configuration SET conf = JSON_SET(conf, "$.' + updateData[i].field + '", JSON_ARRAY(?)) WHERE idconfiguration = ?;';
 
-            if (updateData[i].field == "description") {
+            if (updateData[i].field == "description" || updateData[i].field=="address") {
                 multiSQL = multiSQL + regular_SQL;
                 params.push(updateData[i].data);
             }
@@ -216,15 +222,13 @@ class EventConfModel{
         let jsonData ={
             'images': {'profileImage':this.images.profileImage, 'bannerImage':this.images.bannerImage,'promotionImage':this.images.promotionImage },      //JSON
             'description': this.description,
+            'address':this.address,
             'genres':this.genres,
             'date': this.date,
             'gallery':this.images.gallery
 
 
         };
-
-        console.log(JSON.stringify(jsonData));
-
 
         return JSON.stringify(jsonData);
     }

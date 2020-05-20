@@ -98,7 +98,7 @@ class EventModel{
     }
     setLongitude(longitude)
     {
-       this.longitude=longitude;
+        this.longitude=longitude;
     }
     setIdConfiguration(idConfiguration){
         this.idConfiguration=idConfiguration;
@@ -131,16 +131,7 @@ class EventModel{
             let eventConfInfo = eventConfData;
             eventConfInfo.idEventConf = idEventConf;
 
-
-            console.log("----------------------------");
-            console.log("eventConfInfo");
-            console.log(eventConfInfo);
-            console.log("----------------------------");
-
-            console.log("PZZ0");
             let eventConfModel = new EventConfModel(eventConfInfo);
-
-            console.log("PZZ1");
 
             //INSERTAR A LA BASE DE DATOS
             let result = await eventConfModel.insertEventConf();
@@ -148,7 +139,7 @@ class EventModel{
 
 
             if (result) {
-                log("UserConf Created Correctly");
+                log("EventConf Created Correctly");
 
                 const sql = `INSERT INTO event(idevent,name,latitude,longitude,idestablishment, idconfiguration) values (?,?,?,?,?,?);`;
                 const params = [this.idEvent,this.name,this.latitude,this.longitude,this.idEstablishment, idEventConf];

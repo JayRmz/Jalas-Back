@@ -1,5 +1,6 @@
 ///opt/lampp$ sudo ./manager-linux-x64.run
 const EstablishmentModel = require('../model/EstablishmentModel');
+const UserModel = require('../model/UserModel');
 const EstablishmentConfModel = require('../model/EstablishmentConfModel');
 const FlakeIdGen = require('flake-idgen');
 const intformat = require('biguint-format');
@@ -31,11 +32,18 @@ async function createEstablishment(req,res) {
     //VERIFICAR SI EXISTE EL EMAIL
     let email=req.body.data.email;
     let exist = await EstablishmentModel.verifyMail(email);
+    let existEmailUser= await UserModel.verifyMail(email)
     if(exist == '1'){
         resJson.status=1;
         resJson.message="Establishment already exist";
         res.json(resJson);
     }
+    if(existEmailUser == '1'){
+        resJson.status=1;
+        resJson.message="Email already exist";
+        res.json(resJson);
+    }
+
     else if(exist=='0'){
         //GENERAR ID UNICO POR ESTABLECIMIENTO
         let temp=generator.next();
@@ -672,6 +680,43 @@ async function deleteProfileImage(req,res) {
 
 }
 
+async  function verifyMail(req,res){
+    let resJson ={
+        'status': 1,
+        'message': ''
+    };
+
+    if(!validation.isValid(req.body,jsonReq.verifyMail))
+    {
+        resJson.status=0;
+        resJson.message="wrong formatting Email";
+        res.json(resJson);
+        return;
+    }
+
+    try {
+        let email = req.body.data.email;
+        let exist = await EstablishmentModel.verifyMail(email);
+        if (exist == '1') {
+            resJson.status = 1;
+            resJson.message = "email already exist";
+            res.json(resJson);
+        }
+        else
+        {
+            resJson.status = 0;
+            resJson.message = "email not found";
+            res.json(resJson);
+        }
+    }catch (e) {
+        log("Promise error "+e,'error.log');
+        resJson.status = 1;
+        resJson.message = "Fatal error" + e;
+        res.json(resJson)
+    }
+
+}
+
 
 module.exports.CreateEstablishment = createEstablishment;
 module.exports.ValidateEstablishmentCredentials = validateEstablishmentCredentials;
@@ -684,3 +729,4 @@ module.exports.AddImage=addImage;
 module.exports.RemoveImage=removeImage;
 module.exports.DeleteBannerImage=deleteBannerImage;
 module.exports.DeleteProfileImage=deleteProfileImage;
+module.exports.VerifyMail=verifyMail;
