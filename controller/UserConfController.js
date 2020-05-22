@@ -119,6 +119,7 @@ async function getUserConf(req,res) {
     }
 
 
+
 }
 
 async function updateUserConf(req,res){
@@ -135,12 +136,14 @@ async function updateUserConf(req,res){
         return;
     }
 
+    console.log(req.body)
+
     let userConfData=req.body.data.updateData;
     let idUser = req.body.data.idUser;
     //llamar a updateUserConf
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
-    //console.log(idConfiguration);
-    let result = await UserConfModel.updateUserConf(userConfData, idUser, idConfiguration);
+    console.log(idConfiguration);
+    let result = await UserConfModel.updateUserConf(userConfData, idUser, (idConfiguration));
     //regresar la respuesta
     if(result){
         log("update UserConf");
@@ -153,7 +156,10 @@ async function updateUserConf(req,res){
         resJson.message="Problem Updating UserConf";
         res.json(resJson);
     }
+
+
 }
+
 
 async function addFavorite(req,res){
 
@@ -252,6 +258,8 @@ async function addFavorite(req,res){
         resJson.message="Not found Establishment";
         res.json(resJson);
     }
+
+
 }
 
 async function addEvent(req,res){
