@@ -115,24 +115,33 @@ class UserConfModel{
         let multiSQL="";
         let params=[];
         for(let i=0;i< updateData.length; i++) {
-            const regular_SQL = 'UPDATE configuration SET conf = JSON_SET(conf, "$.' + updateData[i].field + '", ?) WHERE idconfiguration = ?;';
 
-            const json_SQL = 'UPDATE configuration SET conf = JSON_SET(conf, "$.' + updateData[i].field + '", JSON_OBJECT(?)) WHERE idconfiguration = ?;';
 
-            const array_SQL = 'UPDATE configuration SET conf = JSON_SET(conf, "$.' + updateData[i].field + '", JSON_ARRAY(?)) WHERE idconfiguration = ?;';
+
+
+
 
             if (updateData[i].field == "radio" || updateData[i].field == "description") {
+                const regular_SQL = 'UPDATE configuration SET conf = JSON_SET(conf, "$.' + updateData[i].field + '", ?) WHERE idconfiguration = ?;';
                 multiSQL = multiSQL + regular_SQL;
                 params.push(updateData[i].data);
             }
             if(updateData[i].field=="favorites"||updateData[i].field=="genres"||updateData[i].field=="events") {
+                const array_SQL = 'UPDATE configuration SET conf = JSON_SET(conf, "$.' + updateData[i].field + '", JSON_ARRAY(?)) WHERE idconfiguration = ?;';
                 multiSQL = multiSQL + array_SQL;
                 params.push(updateData[i].data);
             }
-            if(updateData[i].field=="location"||updateData[i].field=="images") {
+            if(updateData[i].field=="location") {
+                const json_SQL = 'UPDATE configuration SET conf = JSON_SET(conf, "$.' + updateData[i].field + '", JSON_OBJECT(?)) WHERE idconfiguration = ?;';
                 multiSQL = multiSQL + json_SQL;
                 params.push(updateData[i].data);
             }
+            if(updateData[i].field=="images"){
+                const json_SQL = 'UPDATE configuration SET conf = JSON_SET(conf, "$.' + updateData[i].field + '", JSON_OBJECT(?)) WHERE idconfiguration = ?;';
+                multiSQL = multiSQL + json_SQL;
+                params.push(updateData[i].data);
+            }
+
 
             params.push(idConfiguration.idconfiguration);
 

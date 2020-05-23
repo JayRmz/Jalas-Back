@@ -1434,7 +1434,23 @@ exports.updateUserConf =
                     "name": "data",
                     "require": true,
                     "verification": validation.pass,
-                    "children":[]
+                    "children":
+                        [
+                            {
+                                "name": "idUser",
+                                "require": true,
+                                "verification": validation.isId,
+                                "children": []
+                            },
+                            {
+                                "name": "updateData",
+                                "require": true,
+                                "verification": validation.pass,
+                                "children": []
+                            }
+
+                        ]
+
                 }
 
             ]
@@ -1448,7 +1464,21 @@ exports.updateEstablishmentConf =
                     "name": "data",
                     "require": true,
                     "verification": validation.pass,
-                    "children": []
+                    "children": [
+                        {
+                            "name": "idEstablishment",
+                            "require": true,
+                            "verification": validation.isId,
+                            "children": []
+                        },
+                        {
+                            "name": "updateData",
+                            "require": true,
+                            "verification": validation.pass,
+                            "children": []
+                        }
+
+                    ]
                 }
 
             ]
@@ -1462,7 +1492,21 @@ exports.updateEventConf =
                     "name": "data",
                     "require": true,
                     "verification": validation.pass,
-                    "children": []
+                    "children": [
+                        {
+                            "name": "idEvent",
+                            "require": true,
+                            "verification": validation.isId,
+                            "children": []
+                        },
+                        {
+                            "name": "updateData",
+                            "require": true,
+                            "verification": validation.pass,
+                            "children": []
+                        }
+
+                    ]
                 }
 
             ]
