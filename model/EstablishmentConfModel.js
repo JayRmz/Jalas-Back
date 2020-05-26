@@ -117,11 +117,11 @@ class EstablishmentConfModel{
                 multiSQL = multiSQL + regular_SQL;
                 params.push(updateData[i].data);
             }
-            if(updateData[i].field=="hours"||updateData[i].field=="genres" || updateData[i].field=="category" || updateData[i].field=="gallery") {
+            if(updateData[i].field=="genres" || updateData[i].field=="category" || updateData[i].field=="gallery") {
                 multiSQL = multiSQL + array_SQL;
                 params.push(updateData[i].data);
             }
-            if(updateData[i].field=="images" || updateData[i].field=="location") {
+            if(updateData[i].field=="hours"||updateData[i].field=="images" || updateData[i].field=="location") {
                 multiSQL = multiSQL + json_SQL;
                 params.push(updateData[i].data);
             }
@@ -225,11 +225,48 @@ class EstablishmentConfModel{
             this.location.state="";
             this.location.address="";
         }
+        if(this.hours==null)
+        {
+            this.hours={};
+            this.hours.lunesDe="00:00";
+            this.hours.lunesA="00:00";
+            this.hours.martesDe="00:00";
+            this.hours.martesA="00:00";
+            this.hours.miercolesDe="00:00";
+            this.hours.miercolesA="00:00";
+            this.hours.juevesA="00:00";
+            this.hours.juevesDe="00:00";
+            this.hours.viernesDe="00:00";
+            this.hours.viernesA="00:00";
+            this.hours.sabadoDe="00:00";
+            this.hours.sabadoA="00:00";
+            this.hours.domingoDe="00:00";
+            this.hours.domingoA="00:00";
+
+        }
+
+        let hourJSON=
+        {
+            'lunesDe':this.hours.lunesDe,
+            'lunesA':this.hours.lunesA,
+            'martesDe':this.hours.martesDe,
+            'martesA':this.hours.martesA ,
+            'miercolesDe':this.hours.miercolesDe,
+            'miercolesA':this.hours.miercolesA ,
+            'juevesDe':this.hours.juevesDe,
+            'juevesA':this.hours.juevesA ,
+            'viernesDe':this.hours.viernesDe,
+            'viernesA':this.hours.viernesA ,
+            'sabadoDe':this.hours.sabadoDe,
+            'sabadoA':this.hours.sabadoA ,
+            'domingoDe':this.hours.domingoDe,
+            'domingoA':this.hours.domingoA
+         };
         let jsonData ={
             'category': this.category,  //ARRAY
             'location': {'latitude':this.location.latitude, 'longitude':this.location.longitude, 'city': this.location.city, 'state': this.location.state, 'address': this.location.address}, //JSON
             'genres': this.genres,//ARRAY
-            'hours': this.hours,//ARRAY
+            'hours': hourJSON,//ARRAY
             'images': {'profileImage':this.images.profileImage, 'bannerImage':this.images.bannerImage },      //JSON
             'gallery':this.images.gallery,
             'description': this.description//STRING
