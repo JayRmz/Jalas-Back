@@ -1218,7 +1218,94 @@ exports.createEstablishmentConf =
                             "name": "hours",
                             "require": false,
                             "verification": validation.pass,
-                            "children": []
+                            "children": [
+                                {
+                                    "name": "lunesDe",
+                                    "require": true,
+                                    "verification": validation.isHour,
+                                    "children": []
+                                },
+                                {
+                                    "name": "lunesA",
+                                    "require": true,
+                                    "verification": validation.isHour,
+                                    "children": []
+                                },
+                                {
+                                    "name": "martesDe",
+                                    "require": true,
+                                    "verification": validation.isHour,
+                                    "children": []
+                                },
+                                {
+                                    "name": "martesA",
+                                    "require": true,
+                                    "verification": validation.isHour,
+                                    "children": []
+                                },
+                                {
+                                    "name": "miercolesDe",
+                                    "require": true,
+                                    "verification": validation.isHour,
+                                    "children": []
+                                },
+                                {
+                                    "name": "miercolesA",
+                                    "require": true,
+                                    "verification": validation.isHour,
+                                    "children": []
+                                },
+                                {
+                                    "name": "juevesDe",
+                                    "require": true,
+                                    "verification": validation.isHour,
+                                    "children": []
+                                },
+                                {
+                                    "name": "juevesA",
+                                    "require": true,
+                                    "verification": validation.isHour,
+                                    "children": []
+                                },
+                                {
+                                    "name": "viernesDe",
+                                    "require": true,
+                                    "verification": validation.isHour,
+                                    "children": []
+                                },
+                                {
+                                    "name": "viernesA",
+                                    "require": true,
+                                    "verification": validation.isHour,
+                                    "children": []
+                                },
+                                {
+                                    "name": "sabadoDe",
+                                    "require": true,
+                                    "verification": validation.isHour,
+                                    "children": []
+                                },
+                                {
+                                    "name": "sabadoA",
+                                    "require": true,
+                                    "verification": validation.isHour,
+                                    "children": []
+                                },
+                                {
+                                    "name": "domingoDe",
+                                    "require": true,
+                                    "verification": validation.isHour,
+                                    "children": []
+                                },
+                                {
+                                    "name": "domingoA",
+                                    "require": true,
+                                    "verification": validation.isHour,
+                                    "children": []
+                                }
+
+
+                            ]
                         },
                         {
                             "name": "gallery",

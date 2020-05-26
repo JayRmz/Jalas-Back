@@ -150,6 +150,30 @@ exports.isLongitude=function (lon) {
     }
     return lon
 };
+exports.isHour=function (hour) {
+
+    if(hour.includes(":"))
+    {
+        let hora=hour.split(":")
+
+        if(hora.length==2)
+        {
+            hora[0]=parseInt(hora[0])
+            hora[1]=parseInt(hora[1])
+            if(hora[0]>=0 && hora[0]<=23 && hora[1]>=0 && hora[1]<=59)
+                return  true
+            else
+                return false
+        }
+        else
+            return false
+    }
+    else
+        return false
+}
+
+
+
 
 let isValid = function (obj, format) {
     if (!format.hasOwnProperty("fields"))
