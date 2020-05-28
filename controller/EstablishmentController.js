@@ -18,7 +18,9 @@ async function createEstablishment(req,res) {
 
     let resJson ={
         'status': 1,
-        'message': ''
+        'message': '',
+        'images':{},
+        'idEstablishment':''
     };
 
     if(!validation.isValid(req.body,jsonReq.createEstablishment))
@@ -33,50 +35,137 @@ async function createEstablishment(req,res) {
     let email=req.body.data.email;
     let exist = await EstablishmentModel.verifyMail(email);
     let existEmailUser= await UserModel.verifyMail(email)
-    if(exist == '1'){
-        resJson.status=1;
-        resJson.message="Establishment already exist";
-        res.json(resJson);
-    }
-    if(existEmailUser == '1'){
+
+    if(existEmailUser == '1' || exist == '1'){
         resJson.status=1;
         resJson.message="Email already exist";
         res.json(resJson);
     }
 
-    else if(exist=='0'){
-        //GENERAR ID UNICO POR ESTABLECIMIENTO
-        let temp=generator.next();
-        let id=intformat(temp,'dec');
-        //GENERAR UN CODIGO DE CONFIRMACION
-        let uuid=uuidv4();
-        //INSERTAR A LA BASE DE DATOS
-        let establishmentInfo=req.body.data;
-        establishmentInfo.idEstablishment=id;
-        establishmentInfo.confirmationCode=uuid;
-        let establishmentModel=new EstablishmentModel(establishmentInfo);
-        let establishmentConfData=req.body.data.conf;
-        let result = await establishmentModel.insertEstablishment(establishmentConfData);
-        if(result){
-            //ENVIAR UN CORREO DE CONFIRMACION
-            let emailResult = await Email.sendConfirmation(email,uuid);
-            resJson.message="Establishment Created Correctly";
-            log("Sent Email Succesfully "+email);
-            res.json(resJson);
+    else
+        if(exist=='0')
+        {
+            //GENERAR ID UNICO POR ESTABLECIMIENTO
+            let temp=generator.next();
+            let id=intformat(temp,'dec');
+            //GENERAR UN CODIGO DE CONFIRMACION
+            let uuid=uuidv4();
+            //INSERTAR A LA BASE DE DATOS
+            let establishmentInfo=req.body.data;
+            establishmentInfo.idEstablishment=id;
+            establishmentInfo.confirmationCode=uuid;
+            let establishmentModel=new EstablishmentModel(establishmentInfo);
+            let establishmentConfData=req.body.data.conf;
+            if(establishmentConfData==null)
+                establishmentConfData={}
+
+
+
+
+            if(establishmentConfData.hasOwnProperty("images"))
+            {
+                let images=establishmentConfData.images;
+                if(images.hasOwnProperty("profileImage"))
+                {
+                    if(images.profileImage!="")
+                    {
+                        let path=config.imagepath+"establishment/profile/";
+                        let tempIMG = generator.next();
+                        let nameImg = intformat(tempIMG, 'dec');
+                        let resultSave = await Base64ToImg.base64ToImg(images.profileImage,path,"jpg",nameImg.toString());
+                        if(resultSave)
+                            images.profileImage=nameImg.toString()
+                        else
+                        {
+                            resJson.status=1;
+                            resJson.message="Problem uploading profile image";
+                            log("Problem uploading profile image", "error.log")
+                            res.json(resJson);
+                        }
+                    }
+                }
+
+                if(images.hasOwnProperty("bannerImage"))
+                {
+                    if(images.bannerImage!="")
+                    {
+                        let path = config.imagepath+"establishment/banner/";
+                        let tempIMG = generator.next();
+                        let nameImg = intformat(tempIMG, 'dec');
+                        let resultSave = await Base64ToImg.base64ToImg(images.bannerImage,path,"jpg",nameImg.toString());
+                        if(resultSave)
+                            images.bannerImage=nameImg.toString()
+                        else
+                        {
+                            resJson.status=1;
+                            resJson.message="Problem uploading banner image";
+                            log("Problem uploading banner image", "error.log")
+                            res.json(resJson);
+                        }
+                    }
+                }
+
+                /*
+                if(images.hasOwnProperty("gallery"))
+                {
+                    let path=config.imagepath+"establishment/gallery/";
+                    let gallery=images.gallery;
+                    let resultGallery=[]
+                    if(gallery.length>0)
+                    {
+                        let i;
+                        for (i=0;i<gallery.length;i++)
+                        {
+                            let image=gallery[i];
+                            let tempIMG = generator.next();
+                            let nameImg = intformat(tempIMG, 'dec');
+                            let resultSave = await Base64ToImg.base64ToImg(image,path,"jpg",nameImg.toString());
+                            if(resultSave)
+                                resultGallery.push(nameImg.toString())
+                            else
+                            {
+                                resJson.status=1;
+                                resJson.message="Problem uploading image";
+                                log("Problem uploading image", "error.log")
+                                res.json(resJson);
+                            }
+                        }
+                        images.gallery=resultGallery;
+                    }
+                }
+                */
+
+
+                establishmentConfData.images=images;
+                resJson.images=images;
+
+            }
+
+            let result = await establishmentModel.insertEstablishment(establishmentConfData);
+            if(result)
+            {
+                //ENVIAR UN CORREO DE CONFIRMACION
+                let emailResult = await Email.sendConfirmation(email,uuid);
+                resJson.message="Establishment Created Correctly";
+                resJson.idEstablishment=id;
+                log("Sent Email Succesfully "+email);
+                res.json(resJson);
+            }
+            else
+            {
+                resJson.status=1;
+                resJson.message="Problem Creating Establishment";
+                log("Problem creating user "+email,'error.log');
+                res.json(resJson);
+            }
         }
-        else{
+        else
+        {
             resJson.status=1;
-            resJson.message="Problem Creating Establishment";
+            resJson.message="Establishment already exist";
             log("Problem creating user "+email,'error.log');
             res.json(resJson);
         }
-    }
-    else{
-        resJson.status=1;
-        resJson.message="Establishment already exist";
-        log("Problem creating user "+email,'error.log');
-        res.json(resJson);
-    }
 
 }
 

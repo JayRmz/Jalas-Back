@@ -57,7 +57,8 @@ async function createUser(req,res) {
     let resJson ={
         'status': 1,
         'message': '',
-        'data':{}
+        'idUser':'',
+        'images':{}
     };
 
     if(!validation.isValid(req.body,jsonReq.createUser))
@@ -74,19 +75,13 @@ async function createUser(req,res) {
         let email = req.body.data.email;
         let existEmailEstablishment = await EstablishmentModel.verifyMail(email);
         let exist= await UserModel.verifyMail(email)
-        if(exist == '1'){
-            resJson.status=1;
-            resJson.message="Establishment already exist";
-            res.json(resJson);
-        }
-        if(existEmailEstablishment == '1'){
+        if(exist == '1' || existEmailEstablishment == '1'){
             resJson.status=1;
             resJson.message="Email already exist";
             res.json(resJson);
         }
 
 
-        else {
             if (exist == '0') {
 
                 //GENERAR ID UNICO POR USUARIO
@@ -107,6 +102,56 @@ async function createUser(req,res) {
                     userConfData={};
 
 
+
+                //aqui
+
+                if(userConfData.hasOwnProperty("images"))
+                {
+                    let images=userConfData.images;
+                    if(images.hasOwnProperty("profileImage"))
+                    {
+                        if(images.profileImage!="")
+                        {
+                            let path=config.imagepath+"user/profile/";
+                            let tempIMG = generator.next();
+                            let nameImg = intformat(tempIMG, 'dec');
+                            let resultSave = await Base64ToImg.base64ToImg(images.profileImage,path,"jpg",nameImg.toString());
+                            if(resultSave)
+                                images.profileImage=nameImg.toString()
+                            else
+                            {
+                                resJson.status=1;
+                                resJson.message="Problem uploading profile image";
+                                log("Problem uploading profile image", "error.log")
+                                res.json(resJson);
+                            }
+                        }
+
+                    }
+                    if(images.hasOwnProperty("bannerImage"))
+                    {
+                        if(images.bannerImage!="")
+                        {
+                            let path = config.imagepath+"user/banner/";
+                            let tempIMG = generator.next();
+                            let nameImg = intformat(tempIMG, 'dec');
+                            let resultSave = await Base64ToImg.base64ToImg(images.bannerImage,path,"jpg",nameImg.toString());
+                            if(resultSave)
+                                images.bannerImage=nameImg.toString()
+                            else
+                            {
+                                resJson.status=1;
+                                resJson.message="Problem uploading banner image";
+                                log("Problem uploading banner image", "error.log")
+                                res.json(resJson);
+                            }
+                        }
+                    }
+                    userConfData.images=images;
+                    resJson.images=images;
+                }
+
+
                 let result = await userModel.insertUser(userConfData);
 
                 if (result) {
@@ -114,12 +159,13 @@ async function createUser(req,res) {
                     let emailResult = await Email.sendConfirmation(email, uuid);
 
                     resJson.message = "User Created Correctly";
-                    resJson.data=id;
+                    resJson.idUser=id;
                     log("Sent Email Succesfully " + email);
                     res.json(resJson);
                 } else {
                     resJson.status = 0;
                     resJson.message = "Problem Creating User";
+
                     log("Problem creating user " + email, 'error.log');
                     res.json(resJson);
                 }
@@ -127,11 +173,11 @@ async function createUser(req,res) {
 
             } else {
                 resJson.status = 0;
-                resJson.message = "User already exist";
+                resJson.message = "Email already exist";
                 log("Problem creating user " + email, 'error.log');
                 res.json(resJson);
             }
-        }
+
     }catch (e) {
         log("Promise error "+e,'error.log');
         resJson.status = 0;
@@ -376,8 +422,6 @@ async function setProfileImage(req,res)
 
     let temp = generator.next();
     let nameImg = intformat(temp, 'dec');
-
-
     let resultSave = await Base64ToImg.base64ToImg(img64,path,"jpg",nameImg.toString());
 
     if(resultSave)
