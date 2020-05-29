@@ -95,13 +95,9 @@ async function createUser(req,res) {
                 userInfo.confirmationCode = uuid;
                 let userModel = new UserModel(userInfo);
 
-
-                let userConfData = req.body.data.conf;
-
-                if(userConfData==null)
-                    userConfData={};
-
-
+                let userConfData={};
+                if(req.body.data.hasOwnProperty("conf"))
+                    userConfData = req.body.data.conf;
 
                 //aqui
 
@@ -178,7 +174,9 @@ async function createUser(req,res) {
                 res.json(resJson);
             }
 
-    }catch (e) {
+    }
+    catch (e)
+    {
         log("Promise error "+e,'error.log');
         resJson.status = 0;
         resJson.message = "Fatal error" + e;
@@ -419,6 +417,14 @@ async function setProfileImage(req,res)
     let img64 = req.body.data.image;
     let idUser = req.body.data.idUser;
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
+    if(!idConfiguration)
+    {
+        log("fail Update profile Image Correctly",'error.log');
+        resJson.status=0;
+        resJson.message="fail Update profile Image Correctly";
+        res.json(resJson);
+    }
+
 
     let temp = generator.next();
     let nameImg = intformat(temp, 'dec');
@@ -483,6 +489,7 @@ async function setProfileImage(req,res)
     }
 }
 
+
 async function setBannerImage(req,res)
 {
     let resJson ={
@@ -503,6 +510,13 @@ async function setBannerImage(req,res)
     let img64 = req.body.data.image;
     let idUser = req.body.data.idUser;
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
+    if(!idConfiguration)
+    {
+        log("fail Update banner Image Correctly",'error.log');
+        resJson.status=0;
+        resJson.message="fail Update banner Image Correctly";
+        res.json(resJson);
+    }
 
     let temp = generator.next();
     let nameImg = intformat(temp, 'dec');
@@ -798,15 +812,15 @@ async  function getEvents(req,res){
 
     //regresar la respuesta
     if(resultList){
-        log("Favorites consulted");
+        log("Events consulted");
         resJson.data=result;
-        resJson.message="Favorites found";
+        resJson.message="Events found";
         res.json(resJson);
     }
     else{
-        log("Fail Favorites consulted");
+        log("Fail Events consulted");
         resJson.status=0;
-        resJson.message="Favorites not found";
+        resJson.message="Events not found";
         res.json(resJson);
     }
 }

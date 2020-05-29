@@ -216,6 +216,15 @@ class EstablishmentConfModel{
             this.images.bannerImage="";
             this.images.gallery=[]
         }
+        else {
+            if(!this.images.hasOwnProperty("profileImage"))
+                this.images.profileImage="";
+            if(!this.images.hasOwnProperty("bannerImage"))
+                this.images.bannerImage="";
+            if(!this.images.hasOwnProperty("gallery"))
+                this.images.gallery=[];
+        }
+
         if(this.location==null)
         {
             this.location={};
@@ -228,39 +237,25 @@ class EstablishmentConfModel{
         if(this.hours==null)
         {
             this.hours={};
-            this.hours.lunesDe="00:00";
-            this.hours.lunesA="00:00";
-            this.hours.martesDe="00:00";
-            this.hours.martesA="00:00";
-            this.hours.miercolesDe="00:00";
-            this.hours.miercolesA="00:00";
-            this.hours.juevesA="00:00";
-            this.hours.juevesDe="00:00";
-            this.hours.viernesDe="00:00";
-            this.hours.viernesA="00:00";
-            this.hours.sabadoDe="00:00";
-            this.hours.sabadoA="00:00";
-            this.hours.domingoDe="00:00";
-            this.hours.domingoA="00:00";
+            this.hours.lunes="00:00";
+            this.hours.martes="00:00";
+            this.hours.miercoles="00:00";
+            this.hours.jueves="00:00";
+            this.hours.viernes="00:00";
+            this.hours.sabado="00:00";
+            this.hours.domingo="00:00";
 
         }
 
         let hourJSON=
         {
-            'lunesDe':this.hours.lunesDe,
-            'lunesA':this.hours.lunesA,
-            'martesDe':this.hours.martesDe,
-            'martesA':this.hours.martesA ,
-            'miercolesDe':this.hours.miercolesDe,
-            'miercolesA':this.hours.miercolesA ,
-            'juevesDe':this.hours.juevesDe,
-            'juevesA':this.hours.juevesA ,
-            'viernesDe':this.hours.viernesDe,
-            'viernesA':this.hours.viernesA ,
-            'sabadoDe':this.hours.sabadoDe,
-            'sabadoA':this.hours.sabadoA ,
-            'domingoDe':this.hours.domingoDe,
-            'domingoA':this.hours.domingoA
+            'lunes':this.hours.lunes,
+            'martes':this.hours.martes,
+            'miercoles':this.hours.miercoles,
+            'jueves':this.hours.jueves ,
+            'viernes':this.hours.viernes ,
+            'sabado':this.hours.sabado ,
+            'domingo':this.hours.domingo
          };
         let jsonData ={
             'category': this.category,  //ARRAY
