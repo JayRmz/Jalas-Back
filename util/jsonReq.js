@@ -392,7 +392,7 @@ exports.createEstablishment =
                         {
                             "name": "name",
                             "require": true,
-                            "verification": validation.isAlphaSpace,
+                            "verification": validation.isAlphaNumeric,
                             "children": []
                         },
                         {
@@ -528,7 +528,7 @@ exports.updateEstablishment =
                             {
                                 "name": "name",
                                 "require": true,
-                                "verification": validation.isAlphaSpace,
+                                "verification": validation.isAlphaNumeric,
                                 "children": []
                             },
                             {
@@ -752,7 +752,7 @@ exports.createEvent =
                         {
                             "name": "name",
                             "require": true,
-                            "verification": validation.isAlphaSpace,
+                            "verification": validation.isAlphaNumeric,
                             "children": []
                         },
                         {
@@ -862,7 +862,7 @@ exports.updateEvent =
                             {
                                 "name": "name",
                                 "require": true,
-                                "verification": validation.isAlphaSpace,
+                                "verification": validation.isAlphaNumeric,
                                 "children": []
                             },
                             {

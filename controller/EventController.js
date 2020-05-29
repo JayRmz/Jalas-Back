@@ -14,10 +14,11 @@ const jsonReq = require('../util/jsonReq');
 const validation = require('../util/validation');
 
 async function createEvent(req,res) {
-
     let resJson ={
-        'status': 0,
-        'message': ''
+        'status': 1,
+        'message': '',
+        'images':{},
+        'idEvent':''
     };
 
     if(!validation.isValid(req.body,jsonReq.createEvent))
@@ -39,7 +40,66 @@ async function createEvent(req,res) {
         eventInfo.idEvent = id;
         let eventModel = new EventModel(eventInfo);
         let eventConfData = req.body.data.conf;
-        //console.log(eventConfData)
+
+
+
+        if(eventConfData==null)
+            eventConfData={}
+
+
+
+
+        if(eventConfData.hasOwnProperty("images"))
+        {
+            let images=eventConfData.images;
+            if(images.hasOwnProperty("profileImage"))
+            {
+                if(images.profileImage!="")
+                {
+                    let path=config.imagepath+"event/profile/";
+                    let tempIMG = generator.next();
+                    let nameImg = intformat(tempIMG, 'dec');
+                    let resultSave = await Base64ToImg.base64ToImg(images.profileImage,path,"jpg",nameImg.toString());
+                    if(resultSave)
+                        images.profileImage=nameImg.toString()
+                    else
+                    {
+                        resJson.status=1;
+                        resJson.message="Problem uploading profile image";
+                        log("Problem uploading profile image", "error.log")
+                        res.json(resJson);
+                    }
+                }
+            }
+
+            if(images.hasOwnProperty("bannerImage"))
+            {
+                if(images.bannerImage!="")
+                {
+                    let path = config.imagepath+"event/banner/";
+                    let tempIMG = generator.next();
+                    let nameImg = intformat(tempIMG, 'dec');
+                    let resultSave = await Base64ToImg.base64ToImg(images.bannerImage,path,"jpg",nameImg.toString());
+                    if(resultSave)
+                        images.bannerImage=nameImg.toString()
+                    else
+                    {
+                        resJson.status=1;
+                        resJson.message="Problem uploading banner image";
+                        log("Problem uploading banner image", "error.log")
+                        res.json(resJson);
+                    }
+                }
+            }
+
+
+
+
+            eventConfData.images=images;
+            resJson.images=images;
+
+        }
+
 
         let result = await eventModel.insertEvent(eventConfData);
 
@@ -48,12 +108,12 @@ async function createEvent(req,res) {
             //ENVIAR UN CORREO DE CONFIRMACION
             //let emailResult = await Email.sendConfirmation(email, uuid);
             resJson.message = "Event Created Correctly";
+            log("Event Created Correctly");
             //log("Sent Email Succesfully " + email);
             res.json(resJson);
         } else {
-            resJson.status = 1;
+            resJson.status = 0;
             resJson.message = "Problem Creating Event";
-            //log("Problem creating user " + email, 'error.log');
             res.json(resJson);
         }
 
@@ -83,7 +143,7 @@ async function updateEvent(req,res) {
     //crear nuevo EventModel
     let eventInfo=req.body.data;
     let eventModel=new EventModel(eventInfo);
-    //llamar a updateUser
+    //llamar a updateEvent
     let result = await eventModel.updateEvent();
     //regresar la respuesta
     if(result){
@@ -117,7 +177,7 @@ async  function getEventInfo(req,res){
     //crear un nuevo EventModel
     let eventInfo=req.body.data;
     let eventModel=new EventModel(eventInfo);
-    //llamar a gerUserInfo
+    //llamar a gerEventInfo
     let eventData = await eventModel.getEventInfo();
 
 
