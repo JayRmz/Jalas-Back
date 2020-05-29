@@ -194,7 +194,7 @@ class UserModel{
                 });
             }catch(err0r){
                 log("Error consulting email "+email,'error.log');
-                reject("ErrorConsulting")
+                reject("Error Consulting User email")
             }
         });
     }
@@ -252,7 +252,7 @@ class UserModel{
                         reject(false);
                     }else{
                         console.log(res);
-                        if(res.changedRows== 1){
+                        if(res.affectedRows>= 1){
                             log("User updated correctly "+idUser);
                             resolve(true);
                         }

@@ -161,7 +161,7 @@ class EstablishmentModel{
                 });
             }catch(err0r){
                 log("Error consulting email "+email,'error.log');
-                reject("ErrorConsulting")
+                reject("Error Consulting establishment email")
             }
         });
     }
@@ -217,7 +217,7 @@ class EstablishmentModel{
                         reject(false);
                     }else{
                         console.log(res);
-                        if(res.changedRows== 1){
+                        if(res.affectedRows>= 1){
                             log("Establishment updated correctly "+idEstablishment);
                             resolve(true);
                         }

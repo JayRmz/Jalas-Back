@@ -64,26 +64,6 @@ exports.createUser =
                                         "children": []
                                     },
                                     {
-                                        "name": "location",
-                                        "require": false,
-                                        "verification": validation.pass,
-                                        "children":
-                                            [
-                                                {
-                                                    "name": "city",
-                                                    "require": true,
-                                                    "verification": validation.isAlphaNumeric,
-                                                    "children": []
-                                                },
-                                                {
-                                                    "name": "state",
-                                                    "require": true,
-                                                    "verification": validation.isAlphaNumeric,
-                                                    "children": []
-                                                }
-                                            ]
-                                    },
-                                    {
                                         "name": "genres",
                                         "require": false,
                                         "verification": validation.isIdArray,
@@ -106,6 +86,26 @@ exports.createUser =
                                         "require": false,
                                         "verification": validation.escape,
                                         "children": []
+                                    },
+                                    {
+                                        "name": "location",
+                                        "require": false,
+                                        "verification": validation.pass,
+                                        "children":
+                                            [
+                                                {
+                                                    "name": "city",
+                                                    "require": true,
+                                                    "verification": validation.isAlphaNumeric,
+                                                    "children": []
+                                                },
+                                                {
+                                                    "name": "state",
+                                                    "require": true,
+                                                    "verification": validation.isAlphaNumeric,
+                                                    "children": []
+                                                }
+                                            ]
                                     }
                                 ]
                         }
@@ -467,7 +467,50 @@ exports.createEstablishment =
                                         "name": "hours",
                                         "require": false,
                                         "verification": validation.pass,
-                                        "children": []
+                                        "children": [
+                                            {
+                                                "name": "lunes",
+                                                "require": true,
+                                                "verification": validation.escape,
+                                                "children": []
+                                            },
+                                            {
+                                                "name": "martes",
+                                                "require": true,
+                                                "verification": validation.escape,
+                                                "children": []
+                                            },
+                                            {
+                                                "name": "miercoles",
+                                                "require": true,
+                                                "verification": validation.escape,
+                                                "children": []
+                                            },
+                                            {
+                                                "name": "jueves",
+                                                "require": true,
+                                                "verification": validation.escape,
+                                                "children": []
+                                            },
+                                            {
+                                                "name": "viernes",
+                                                "require": true,
+                                                "verification": validation.escape,
+                                                "children": []
+                                            },
+                                            {
+                                                "name": "sabado",
+                                                "require": true,
+                                                "verification": validation.escape,
+                                                "children": []
+                                            },
+                                            {
+                                                "name": "domingo",
+                                                "require": true,
+                                                "verification": validation.escape,
+                                                "children": []
+                                            }
+                                        ]
                                     },
                                     {
                                         "name": "images",
@@ -1220,91 +1263,47 @@ exports.createEstablishmentConf =
                             "verification": validation.pass,
                             "children": [
                                 {
-                                    "name": "lunesDe",
+                                    "name": "lunes",
                                     "require": true,
-                                    "verification": validation.isHour,
+                                    "verification": validation.escape,
                                     "children": []
                                 },
                                 {
-                                    "name": "lunesA",
+                                    "name": "martes",
                                     "require": true,
-                                    "verification": validation.isHour,
+                                    "verification": validation.escape,
                                     "children": []
                                 },
                                 {
-                                    "name": "martesDe",
+                                    "name": "miercoles",
                                     "require": true,
-                                    "verification": validation.isHour,
+                                    "verification": validation.escape,
                                     "children": []
                                 },
                                 {
-                                    "name": "martesA",
+                                    "name": "jueves",
                                     "require": true,
-                                    "verification": validation.isHour,
+                                    "verification": validation.escape,
                                     "children": []
                                 },
                                 {
-                                    "name": "miercolesDe",
+                                    "name": "viernes",
                                     "require": true,
-                                    "verification": validation.isHour,
+                                    "verification": validation.escape,
                                     "children": []
                                 },
                                 {
-                                    "name": "miercolesA",
+                                    "name": "sabado",
                                     "require": true,
-                                    "verification": validation.isHour,
+                                    "verification": validation.escape,
                                     "children": []
                                 },
                                 {
-                                    "name": "juevesDe",
+                                    "name": "domingo",
                                     "require": true,
-                                    "verification": validation.isHour,
-                                    "children": []
-                                },
-                                {
-                                    "name": "juevesA",
-                                    "require": true,
-                                    "verification": validation.isHour,
-                                    "children": []
-                                },
-                                {
-                                    "name": "viernesDe",
-                                    "require": true,
-                                    "verification": validation.isHour,
-                                    "children": []
-                                },
-                                {
-                                    "name": "viernesA",
-                                    "require": true,
-                                    "verification": validation.isHour,
-                                    "children": []
-                                },
-                                {
-                                    "name": "sabadoDe",
-                                    "require": true,
-                                    "verification": validation.isHour,
-                                    "children": []
-                                },
-                                {
-                                    "name": "sabadoA",
-                                    "require": true,
-                                    "verification": validation.isHour,
-                                    "children": []
-                                },
-                                {
-                                    "name": "domingoDe",
-                                    "require": true,
-                                    "verification": validation.isHour,
-                                    "children": []
-                                },
-                                {
-                                    "name": "domingoA",
-                                    "require": true,
-                                    "verification": validation.isHour,
+                                    "verification": validation.escape,
                                     "children": []
                                 }
-
-
                             ]
                         },
                         {

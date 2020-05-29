@@ -147,13 +147,14 @@ async function createEstablishment(req,res) {
                 //ENVIAR UN CORREO DE CONFIRMACION
                 let emailResult = await Email.sendConfirmation(email,uuid);
                 resJson.message="Establishment Created Correctly";
+                resJson.status=1;
                 resJson.idEstablishment=id;
                 log("Sent Email Succesfully "+email);
                 res.json(resJson);
             }
             else
             {
-                resJson.status=1;
+                resJson.status=0;
                 resJson.message="Problem Creating Establishment";
                 log("Problem creating user "+email,'error.log');
                 res.json(resJson);
@@ -161,7 +162,7 @@ async function createEstablishment(req,res) {
         }
         else
         {
-            resJson.status=1;
+            resJson.status=0;
             resJson.message="Establishment already exist";
             log("Problem creating user "+email,'error.log');
             res.json(resJson);
@@ -189,7 +190,7 @@ async function validateEstablishmentCredentials(req,res) {
     if(exist != '0'){
         log("Verified Establishment "+email);
         resJson.status=1;
-        resJson.message="Establishment Exist";
+        resJson.message="Verified Establishment ";
 
     }
     else if(exist=='0') {
@@ -201,7 +202,7 @@ async function validateEstablishmentCredentials(req,res) {
     else{
         log("Problem validating Establishment "+email,'error.log');
         resJson.status=0;
-        resJson.message="User doesn't exist";
+        resJson.message="Problem validating credentials";
 
     }
     res.json(resJson);
@@ -231,11 +232,11 @@ async function updateEstablishment(req,res) {
     if(result){
         log("update Establishment");
         resJson.message="Establishment Updated Correctly";
+        resJson.status=1;
         res.json(resJson);
     }
     else{
         log("Fail update Establishment",'error.log');
-        resJson.status=1;
         resJson.message="Problem Updating Establishment";
         res.json(resJson);
     }
@@ -266,24 +267,28 @@ async  function getEstablishmentInfo(req,res){
 
     let establishmentConfModel=new EstablishmentConfModel(establishmentInfo);
     //llamar a gerEstablishmentConfInfo
-    result.conf = await establishmentConfModel.getEstablishmentConfInfo(establishmentInfo.idEstablishment);
+
+    let RC=await establishmentConfModel.getEstablishmentConfInfo(establishmentInfo.idEstablishment);
 
 
-    console.log("////////////////////");
-    console.log(result);
-    console.log("////////////////////");
+
+
+
+
 
     //regresar la respuesta
-    if(result){
+    if(result && RC){
+        result.conf =JSON.parse(RC.conf)
+        console.log(result)
         log("Establishment consulted");
         resJson.data=result;
         resJson.message="Establishment found";
+        resJson.status=1;
         res.json(resJson);
     }
     else{
         log("Fail consulted Establishment",'error.log');
-        resJson.status=1;
-        resJson.message="Establishment not found";
+        resJson.message="Fail consulted Establishment";
         res.json(resJson);
     }
 
@@ -313,13 +318,13 @@ async function updateEstablishmentPassword(req,res) {
     //regresar la respuesta
     if(result){
         log("update Establishment Password");
-        resJson.message="Establishment Password Updated Correctly";
+        resJson.message="Password Updated Correctly";
         res.json(resJson);
     }
     else{
         log("Fail update Establishment Password",'error.log');
         resJson.status=1;
-        resJson.message="Problem Updating Establishment Password";
+        resJson.message="fail update password correctly";
         res.json(resJson);
     }
 }
@@ -342,60 +347,71 @@ async function setProfileImage(req,res) {
     let idEstablishment = req.body.data.idEstablishment;
     let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
 
-    let temp = generator.next();
-    let nameImg = intformat(temp, 'dec');
-
-    let path =config.imagepath+"establishment/profile/";
-    let resultSave = await Base64ToImg.base64ToImg(img64,path,"jpg",nameImg.toString());
-
-    if(resultSave)
+    if(idConfiguration)
     {
-        let imagesEstablishment =await  EstablishmentConfModel.getImages(idConfiguration.idconfiguration);
-        if(imagesEstablishment)
-        {
-            let oldProfileImage=JSON.parse(imagesEstablishment.images).profileImage;
-            let bannerImage = JSON.parse(imagesEstablishment.images).bannerImage;
+        let temp = generator.next();
+        let nameImg = intformat(temp, 'dec');
 
-            let imagesJSON =
-                [
-                    "profileImage",nameImg,
-                    "bannerImage", bannerImage
-                ];
-            let updateData = [];
-            updateData.push({
-                "field":"images",
-                "data":imagesJSON
-            });
-            let result = await EstablishmentConfModel.updateEstablishmentConf(updateData, idEstablishment, idConfiguration);
-            if(result){
-                try {
-                    let resultDelete = deleteImage.deleteImage(oldProfileImage, path);
-                    if (resultDelete) {
-                        log("Update profile Image Correctly");
-                        resJson.message = "Update profile Image Correctly";
-                        res.json(resJson);
-                    } else {
+        let path =config.imagepath+"establishment/profile/";
+        let resultSave = await Base64ToImg.base64ToImg(img64,path,"jpg",nameImg.toString());
+
+        if(resultSave)
+        {
+            let imagesEstablishment =await  EstablishmentConfModel.getImages(idConfiguration.idconfiguration);
+            if(imagesEstablishment)
+            {
+                let oldProfileImage=JSON.parse(imagesEstablishment.images).profileImage;
+                let bannerImage = JSON.parse(imagesEstablishment.images).bannerImage;
+
+                let imagesJSON =
+                    [
+                        "profileImage",nameImg,
+                        "bannerImage", bannerImage
+                    ];
+                let updateData = [];
+                updateData.push({
+                    "field":"images",
+                    "data":imagesJSON
+                });
+                let result = await EstablishmentConfModel.updateEstablishmentConf(updateData, idEstablishment, idConfiguration);
+                if(result){
+                    try {
+                        let resultDelete = deleteImage.deleteImage(oldProfileImage, path);
+                        if (resultDelete) {
+                            log("Update profile Image Correctly");
+                            resJson.message = "Update profile Image Correctly";
+                            res.json(resJson);
+                        } else {
+                            log("fail Update profile Image Correctly", 'error.log');
+                            resJson.status = 0;
+                            resJson.message = "fail Update profile Image Correctly";
+                            res.json(resJson);
+
+                        }
+                    }
+                    catch(error){
                         log("fail Update profile Image Correctly", 'error.log');
                         resJson.status = 0;
                         resJson.message = "fail Update profile Image Correctly";
                         res.json(resJson);
-
                     }
                 }
-                catch(error){
-                    log("fail Update profile Image Correctly", 'error.log');
-                    resJson.status = 0;
-                    resJson.message = "fail Update profile Image Correctly";
+                else{
+                    log("fail Update profile Image Correctly",'error.log');
+                    resJson.status=0;
+                    resJson.message="fail Update profile Image Correctly";
                     res.json(resJson);
                 }
             }
-            else{
-                log("fail Update profile Image Correctly",'error.log');
-                resJson.status=0;
-                resJson.message="fail Update profile Image Correctly";
-                res.json(resJson);
-            }
         }
+        else
+        {
+            log("fail Update profile Image Correctly", 'error.log');
+            resJson.status = 0;
+            resJson.message = "fail Update profile Image Correctly";
+            res.json(resJson);
+        }
+
     }
     else
     {
@@ -404,6 +420,7 @@ async function setProfileImage(req,res) {
         resJson.message = "fail Update profile Image Correctly";
         res.json(resJson);
     }
+
 }
 
 async function setBannerImage(req,res){
@@ -423,6 +440,14 @@ async function setBannerImage(req,res){
     let img64 = req.body.data.image;
     let idEstablishment = req.body.data.idEstablishment;
     let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
+
+    if(!idConfiguration)
+    {
+        log("fail Update banner Image Correctly",'error.log');
+        resJson.status=0;
+        resJson.message="fail Update banner Image Correctly";
+        res.json(resJson);
+    }
 
     let temp = generator.next();
     let nameImg = intformat(temp, 'dec');
@@ -505,6 +530,15 @@ async function addImage(req,res){
     let idEstablishment = req.body.data.idEstablishment;
     let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
 
+    if(!idConfiguration)
+    {
+        log("fail add Image to gallery",'error.log');
+        resJson.status=0;
+        resJson.message="fail add Image to gallery";
+        res.json(resJson);
+    }
+
+
     let temp = generator.next();
     let nameImg = intformat(temp, 'dec');
 
@@ -565,6 +599,13 @@ async function removeImage(req,res){
     let idEstablishment = req.body.data.idEstablishment;
     let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
 
+    if(!idConfiguration)
+    {
+        log("fail delete Image",'error.log');
+        resJson.status=0;
+        resJson.message="fail delete Image";
+        res.json(resJson);
+    }
 
         let imagesEstablishment =await  EstablishmentConfModel.getGallery(idConfiguration.idconfiguration);
         if(imagesEstablishment)
@@ -648,6 +689,13 @@ async function deleteBannerImage(req,res) {
     let idEstablishment = req.body.data.idEstablishment;
     let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
 
+    if(!idConfiguration)
+    {
+        log("fail delete banner Image",'error.log');
+        resJson.status=0;
+        resJson.message="fail delete banner Image";
+        res.json(resJson);
+    }
 
     let imagesEstablishment =await  EstablishmentConfModel.getImages(idConfiguration.idconfiguration);
     if(imagesEstablishment)
@@ -718,6 +766,13 @@ async function deleteProfileImage(req,res) {
     let idEstablishment = req.body.data.idEstablishment;
     let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
 
+    if(!idConfiguration)
+    {
+        log("fail delete profile Image",'error.log');
+        resJson.status=0;
+        resJson.message="fail delete profile Image";
+        res.json(resJson);
+    }
 
     let imagesEstablishment =await  EstablishmentConfModel.getImages(idConfiguration.idconfiguration);
     if(imagesEstablishment)
