@@ -19,7 +19,7 @@ async function createEstablishmentConf(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -43,13 +43,13 @@ async function createEstablishmentConf(req,res) {
             if(resultLink){
                 log("EstablishmentConf linked Correctly");
                 resJson.message = "EstablishmentConf Created Correctly and linked Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
             else{
                 log("error EstablishmentConf no linked Correctly",'error.log');
                 resJson.status=0;
                 resJson.message = "EstablishmentConf Created Correctly. ERROR EstablishmentConf not linked";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
 
 
@@ -57,7 +57,7 @@ async function createEstablishmentConf(req,res) {
             resJson.status = 0;
             resJson.message = "Problem Creating EstablishmentConf";
             log("Problem creating EstablishmentConf ", 'error.log');
-            res.json(resJson);
+            res.json(resJson);   return;
         }
 
     }catch (e) {
@@ -80,7 +80,7 @@ async function getEstablishmentConf(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
     try
@@ -95,13 +95,13 @@ async function getEstablishmentConf(req,res) {
             log("Establishment Configuration Consulted");
             resJson.data=result;
             resJson.message="Establishment Configuration found";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
         else{
             log("Fail Establishment Configuration consulted");
             resJson.status=0;
             resJson.message="Establishment Configuration not found";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
 
     }
@@ -126,7 +126,7 @@ async function updateEstablishmentConf(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
     let establishmentConfData=req.body.data.updateData;
@@ -140,13 +140,13 @@ async function updateEstablishmentConf(req,res){
     if(result){
         log("update EstablishmentConf");
         resJson.message="EstablishmentConf Updated Correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Fail update EstablishmentConf",'error.log');
         resJson.status=1;
         resJson.message="Problem Updating EstablishmentConf";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 

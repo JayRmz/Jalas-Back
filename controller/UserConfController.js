@@ -21,7 +21,7 @@ async function createUserConf(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -45,13 +45,13 @@ async function createUserConf(req,res) {
                 if(resultLink){
                     log("UserConf linked Correctly");
                     resJson.message = "UserConf Created Correctly and linked Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
                 else{
                     log("error UserConf no linked Correctly",'error.log');
                     resJson.status=0;
                     resJson.message = "UserConf Created Correctly. ERROR userConf not linked";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
 
 
@@ -59,7 +59,7 @@ async function createUserConf(req,res) {
                 resJson.status = 0;
                 resJson.message = "Problem Creating UserConf";
                 log("Problem creating userConf ", 'error.log');
-                res.json(resJson);
+                res.json(resJson);   return;
             }
 
     }catch (e) {
@@ -83,7 +83,7 @@ async function getUserConf(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -100,13 +100,13 @@ async function getUserConf(req,res) {
             log("user Configuration Consulted");
             resJson.data=result;
             resJson.message="user Configuration found";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
         else{
             log("Fail user Configuration consulted");
             resJson.status=0;
             resJson.message="user Configuration not found";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
 
     }
@@ -132,7 +132,7 @@ async function updateUserConf(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -148,13 +148,13 @@ async function updateUserConf(req,res){
     if(result){
         log("update UserConf");
         resJson.message="UserConf Updated Correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Fail update UserConf",'error.log');
         resJson.status=1;
         resJson.message="Problem Updating UserConf";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
 
@@ -173,7 +173,7 @@ async function addFavorite(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -199,7 +199,7 @@ async function addFavorite(req,res){
             {
                 log("add favorite Correctly");
                 resJson.message="add favorite Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
             else
             {
@@ -217,13 +217,13 @@ async function addFavorite(req,res){
                 if(result){
                     log("add favorite Correctly");
                     resJson.message="add favorite Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
                 else{
                     log("Fail add favorite",'error.log');
                     resJson.status=1;
                     resJson.message="Problem add favorite";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
 
             }
@@ -241,13 +241,13 @@ async function addFavorite(req,res){
             if(result){
                 log("add favorite Correctly");
                 resJson.message="add favorite Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
             else{
                 log("Fail add favorite",'error.log');
                 resJson.status=1;
                 resJson.message="Problem add favorite";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
 
@@ -256,7 +256,7 @@ async function addFavorite(req,res){
     {
         resJson.status=0;
         resJson.message="Not found Establishment";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
 
@@ -274,7 +274,7 @@ async function addEvent(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -309,7 +309,7 @@ async function addEvent(req,res){
             {
                 log("add event Correctly");
                 resJson.message="add event Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
             else
             {
@@ -325,13 +325,13 @@ async function addEvent(req,res){
                 if(result){
                     log("add event Correctly");
                     resJson.message="add event Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
                 else{
                     log("Fail add event",'error.log');
                     resJson.status=1;
                     resJson.message="Problem add event";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
 
             }
@@ -348,13 +348,13 @@ async function addEvent(req,res){
             if(result){
                 log("add event Correctly");
                 resJson.message="add event Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
             else{
                 log("Fail add event",'error.log');
                 resJson.status=1;
                 resJson.message="Problem add event";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
 
@@ -363,7 +363,7 @@ async function addEvent(req,res){
     {
         resJson.status=0;
         resJson.message="Not found event";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -379,7 +379,7 @@ async function removeFavorite(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -417,13 +417,13 @@ async function removeFavorite(req,res){
                 if(result){
                     log("removed favorite Correctly");
                     resJson.message="removed favorite Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
                 else{
                     log("Fail removing favorite",'error.log');
                     resJson.status=1;
                     resJson.message="Problem removing favorite";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
 
             }
@@ -432,7 +432,7 @@ async function removeFavorite(req,res){
 
                 log("removed favorite Correctly");
                 resJson.message="removed favorite Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
 
             }
 
@@ -441,7 +441,7 @@ async function removeFavorite(req,res){
             //NO HAY NADA QUE BORRAR
             log("removed favorite Correctly");
             resJson.message="removed favorite Correctly";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
 
     }
@@ -449,7 +449,7 @@ async function removeFavorite(req,res){
     {
         resJson.status=0;
         resJson.message="Not found Establishment";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -465,7 +465,7 @@ async function removeEvent(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -503,13 +503,13 @@ async function removeEvent(req,res){
                 if(result){
                     log("removed event Correctly");
                     resJson.message="removed event Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
                 else{
                     log("Fail removing event",'error.log');
                     resJson.status=1;
                     resJson.message="Problem removing event";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
 
             }
@@ -518,7 +518,7 @@ async function removeEvent(req,res){
 
                 log("removed event Correctly");
                 resJson.message="removed event Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
 
             }
 
@@ -527,7 +527,7 @@ async function removeEvent(req,res){
             //NO HAY NADA QUE BORRAR
             log("removed event Correctly");
             resJson.message="removed event Correctly";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
 
     }
@@ -535,7 +535,7 @@ async function removeEvent(req,res){
     {
         resJson.status=0;
         resJson.message="Not found event";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 

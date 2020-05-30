@@ -26,7 +26,7 @@ async  function verifyMail(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -36,13 +36,13 @@ async  function verifyMail(req,res){
         if (exist == '1') {
             resJson.status = 1;
             resJson.message = "email already exist";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
         else
         {
             resJson.status = 0;
             resJson.message = "email not found";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }catch (e) {
         log("Promise error "+e,'error.log');
@@ -65,7 +65,7 @@ async function createUser(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -78,7 +78,7 @@ async function createUser(req,res) {
         if(exist == '1' || existEmailEstablishment == '1'){
             resJson.status=1;
             resJson.message="Email already exist";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
 
 
@@ -101,6 +101,9 @@ async function createUser(req,res) {
 
                 //aqui
 
+
+                /* POR SI ALGUN DIA SE QUIERE ASIGNAR UNA FOTO DESDE EL PRINCIPIO
+
                 if(userConfData.hasOwnProperty("images"))
                 {
                     let images=userConfData.images;
@@ -119,7 +122,7 @@ async function createUser(req,res) {
                                 resJson.status=1;
                                 resJson.message="Problem uploading profile image";
                                 log("Problem uploading profile image", "error.log")
-                                res.json(resJson);
+                                res.json(resJson);   return;
                             }
                         }
 
@@ -139,13 +142,26 @@ async function createUser(req,res) {
                                 resJson.status=1;
                                 resJson.message="Problem uploading banner image";
                                 log("Problem uploading banner image", "error.log")
-                                res.json(resJson);
+                                res.json(resJson);   return;
                             }
                         }
                     }
                     userConfData.images=images;
                     resJson.images=images;
                 }
+*/
+
+
+
+                let images =
+                    {
+                        "profileImage":"default",
+                        "bannerImage":"default"
+                    }
+
+                userConfData.images=images;
+                resJson.images=images;
+
 
 
                 let result = await userModel.insertUser(userConfData);
@@ -157,13 +173,13 @@ async function createUser(req,res) {
                     resJson.message = "User Created Correctly";
                     resJson.idUser=id;
                     log("Sent Email Succesfully " + email);
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 } else {
                     resJson.status = 0;
                     resJson.message = "Problem Creating User";
 
                     log("Problem creating user " + email, 'error.log');
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
 
 
@@ -171,7 +187,7 @@ async function createUser(req,res) {
                 resJson.status = 0;
                 resJson.message = "Email already exist";
                 log("Problem creating user " + email, 'error.log');
-                res.json(resJson);
+                res.json(resJson);   return;
             }
 
     }
@@ -195,7 +211,7 @@ async function validateUserCredentials(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -217,9 +233,8 @@ async function validateUserCredentials(req,res) {
         resJson.status=0;
         resJson.message="User doesn't exist";
     }
-    res.json(resJson);
+    res.json(resJson);   return;
 }
-
 
 async function updateUser(req,res) {
     let resJson ={
@@ -230,7 +245,7 @@ async function updateUser(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -243,13 +258,13 @@ async function updateUser(req,res) {
     if(result){
         log("update User");
         resJson.message="User Updated Correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Fail update User",'error.log');
         resJson.status=0;
         resJson.message="Problem Updating User";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -263,7 +278,7 @@ async  function getUserInfo(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -277,13 +292,13 @@ async  function getUserInfo(req,res){
         log("user consulted");
         resJson.data=result;
         resJson.message="user found";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Fail user consulted");
         resJson.status=0;
         resJson.message="user not found";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -296,7 +311,7 @@ async function updateUserPassword(req, res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -309,13 +324,13 @@ async function updateUserPassword(req, res){
     if(result){
         log("update password correctly");
         resJson.message="update password correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Fail update password correctly");
         resJson.status=0;
         resJson.message="fail update password correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
 }
@@ -331,7 +346,7 @@ async function getUserProfile(req, res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -385,13 +400,13 @@ async function getUserProfile(req, res){
         log("user consulted");
         resJson.data= response;
         resJson.message="user found";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Fail user consulted");
         resJson.status=0;
         resJson.message="user not found";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
 }
@@ -409,7 +424,7 @@ async function setProfileImage(req,res)
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -422,12 +437,16 @@ async function setProfileImage(req,res)
         log("fail Update profile Image Correctly",'error.log');
         resJson.status=0;
         resJson.message="fail Update profile Image Correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
 
     let temp = generator.next();
     let nameImg = intformat(temp, 'dec');
+
+
+
+
     let resultSave = await Base64ToImg.base64ToImg(img64,path,"jpg",nameImg.toString());
 
     if(resultSave)
@@ -452,31 +471,42 @@ async function setProfileImage(req,res)
             let result = await UserConfModel.updateUserConf(updateData, idUser, idConfiguration);
             if(result){
                 try {
+
+
+                    if(oldProfileImage=="default")
+                    {
+                        log("Update profile Image Correctly");
+                        resJson.message = "Update profile Image Correctly";
+                        res.json(resJson);   return;
+                    }
+
                     let resultDelete = deleteImage.deleteImage(oldProfileImage,path);
                     console.log(resultDelete);
                     if (resultDelete) {
                         log("Update profile Image Correctly");
                         resJson.message = "Update profile Image Correctly";
-                        res.json(resJson);
+                        res.json(resJson);   return;
                     } else {
                         log("fail Update profile Image Correctly1", 'error.log');
                         resJson.status = 0;
                         resJson.message = "fail Update profile Image Correctly1";
-                        res.json(resJson);
+                        res.json(resJson);   return;
                     }
+
+
                 }
                 catch(error){
                     log("fail Update profile Image Correctly", 'error.log');
                     resJson.status = 0;
                     resJson.message = "fail Update profile Image Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
             }
             else{
                 log("fail Update profile Image Correctly",'error.log');
                 resJson.status=0;
                 resJson.message="fail Update profile Image Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
     }
@@ -485,10 +515,9 @@ async function setProfileImage(req,res)
         log("fail Update profile Image Correctly", 'error.log');
         resJson.status = 0;
         resJson.message = "fail Update profile Image Correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
-
 
 async function setBannerImage(req,res)
 {
@@ -502,7 +531,7 @@ async function setBannerImage(req,res)
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -515,7 +544,7 @@ async function setBannerImage(req,res)
         log("fail Update banner Image Correctly",'error.log');
         resJson.status=0;
         resJson.message="fail Update banner Image Correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
     let temp = generator.next();
@@ -545,30 +574,40 @@ async function setBannerImage(req,res)
             let result = await UserConfModel.updateUserConf(updateData, idUser, idConfiguration);
             if(result){
                 try {
-                    let resultDelete = deleteImage.deleteImage(oldBannerImage,path);
-                    if (resultDelete) {
+                    if(oldBannerImage=="default")
+                    {
                         log("Update banner Image Correctly");
                         resJson.message = "Update banner Image Correctly";
-                        res.json(resJson);
-                    } else {
+                        res.json(resJson);   return;
+                    }
+
+                    let resultDelete = deleteImage.deleteImage(oldBannerImage,path);
+                    if (resultDelete)
+                    {
+                        log("Update banner Image Correctly");
+                        resJson.message = "Update banner Image Correctly";
+                        res.json(resJson);   return;
+                    }
+                    else
+                    {
                         log("fail Update banner Image Correctly", 'error.log');
                         resJson.status = 0;
                         resJson.message = "fail Update banner Image Correctly";
-                        res.json(resJson);
+                        res.json(resJson);   return;
                     }
                 }
                 catch(error){
                     log("fail Update banner Image Correctly", 'error.log');
                     resJson.status = 0;
                     resJson.message = "fail Update banner Image Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
             }
             else{
                 log("fail Update profile Image Correctly",'error.log');
                 resJson.status=0;
                 resJson.message="fail Update profile Image Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
     }
@@ -577,7 +616,7 @@ async function setBannerImage(req,res)
         log("fail Update banner Image Correctly", 'error.log');
         resJson.status = 0;
         resJson.message = "fail Update banner Image Correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -593,12 +632,22 @@ async function deleteBannerImage(req,res)
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
     let idUser = req.body.data.idUser;
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
+
+    if(!idConfiguration)
+    {
+        log("fail delete banner Image",'error.log');
+        resJson.status=0;
+        resJson.message="fail delete banner Image Correctly";
+        res.json(resJson);   return;
+    }
+
+
 
 
     let imagesUser =await  UserConfModel.getImages(idConfiguration.idconfiguration);
@@ -606,10 +655,20 @@ async function deleteBannerImage(req,res)
     {
         let bannerImage = JSON.parse(imagesUser.images).bannerImage;
         let profileImage = JSON.parse(imagesUser.images).profileImage;
+
+        if(bannerImage=="default")
+        {
+            log("Delete banner Image Correctly");
+            resJson.message = "Delete banner Image Correctly";
+            res.json(resJson);   return;
+        }
+
+
+
         let imagesJSON =
             [
                 "profileImage",profileImage,
-                "bannerImage", null
+                "bannerImage", "default"
             ];
         let updateData = [];
         updateData.push({
@@ -617,34 +676,41 @@ async function deleteBannerImage(req,res)
             "data":imagesJSON
         });
         let result = await UserConfModel.updateUserConf(updateData, idUser, idConfiguration);
-        if(result){
+        if(result)
+        {
             try {
                 let path =config.imagepath+"/user/banner/";
                 let resultDelete = deleteImage.deleteImage(bannerImage,path);
-                if (resultDelete) {
+                if (resultDelete)
+                {
                     log("Delete banner Image Correctly");
                     resJson.message = "Delete banner Image Correctly";
-                    res.json(resJson);
-                } else {
+                    res.json(resJson);   return;
+                }
+                else
+                {
                     log("fail delete banner Image", 'error.log');
                     resJson.status = 0;
                     resJson.message = "fail Delete banner Image";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
             }
-            catch(error){
+            catch(error)
+            {
                 log("fail delete banner Image", 'error.log');
                 resJson.status = 0;
                 resJson.message = "fail delete banner Image";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
-        else{
+        else
+        {
             log("fail delete banner Image",'error.log');
             resJson.status=0;
             resJson.message="fail delete banner Image Correctly";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
+
     }
 
 }
@@ -661,7 +727,7 @@ async function deleteProfileImage(req,res)
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -675,9 +741,17 @@ async function deleteProfileImage(req,res)
     {
         let bannerImage = JSON.parse(imagesUser.images).bannerImage;
         let profileImage = JSON.parse(imagesUser.images).profileImage;
+
+        if(profileImage=="default")
+        {
+            log("Delete profile Image Correctly");
+            resJson.message = "Delete profile Image Correctly";
+            res.json(resJson);   return;
+        }
+
         let imagesJSON =
             [
-                "profileImage","",
+                "profileImage","default",
                 "bannerImage", bannerImage
             ];
         let updateData = [];
@@ -693,26 +767,26 @@ async function deleteProfileImage(req,res)
                 if (resultDelete) {
                     log("Delete profile Image Correctly");
                     resJson.message = "Delete profile Image Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 } else {
                     log("fail delete profile Image", 'error.log');
                     resJson.status = 0;
                     resJson.message = "fail Delete profile Image";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
             }
             catch(error){
                 log("fail delete profile Image", 'error.log');
                 resJson.status = 0;
                 resJson.message = "fail delete profile Image";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
         else{
             log("fail delete profile Image",'error.log');
             resJson.status=0;
             resJson.message="fail delete profile Image Correctly";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }
 
@@ -729,7 +803,7 @@ async  function getFavorites(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -762,13 +836,13 @@ async  function getFavorites(req,res){
         log("Favorites consulted");
         resJson.data=resultFav;
         resJson.message="Favorites found";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Fail Favorites consulted");
         resJson.status=0;
         resJson.message="Favorites not found";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -782,7 +856,7 @@ async  function getEvents(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -815,13 +889,13 @@ async  function getEvents(req,res){
         log("Events consulted");
         resJson.data=result;
         resJson.message="Events found";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Fail Events consulted");
         resJson.status=0;
         resJson.message="Events not found";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 

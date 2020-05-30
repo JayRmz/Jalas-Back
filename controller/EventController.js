@@ -25,7 +25,7 @@ async function createEvent(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -67,7 +67,7 @@ async function createEvent(req,res) {
                         resJson.status=1;
                         resJson.message="Problem uploading profile image";
                         log("Problem uploading profile image", "error.log")
-                        res.json(resJson);
+                        res.json(resJson);   return;
                     }
                 }
             }
@@ -87,7 +87,7 @@ async function createEvent(req,res) {
                         resJson.status=1;
                         resJson.message="Problem uploading banner image";
                         log("Problem uploading banner image", "error.log")
-                        res.json(resJson);
+                        res.json(resJson);   return;
                     }
                 }
             }
@@ -110,11 +110,11 @@ async function createEvent(req,res) {
             resJson.message = "Event Created Correctly";
             log("Event Created Correctly");
             //log("Sent Email Succesfully " + email);
-            res.json(resJson);
+            res.json(resJson);   return;
         } else {
             resJson.status = 0;
             resJson.message = "Problem Creating Event";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
 
     }catch (e) {
@@ -136,7 +136,7 @@ async function updateEvent(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -149,13 +149,13 @@ async function updateEvent(req,res) {
     if(result){
         log("update Event");
         resJson.message="Event Updated Correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Fail update Event",'error.log');
         resJson.status=1;
         resJson.message="Problem Updating Event";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -170,7 +170,7 @@ async  function getEventInfo(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -194,13 +194,13 @@ async  function getEventInfo(req,res){
         log("event consulted");
         resJson.data=eventData;
         resJson.message="event found";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Fail event consulted");
         resJson.status=1;
         resJson.message="event not found";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -215,7 +215,7 @@ async function setProfileImage(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -254,12 +254,12 @@ async function setProfileImage(req,res) {
                     if (resultDelete) {
                         log("Update profile Image Correctly");
                         resJson.message = "Update profile Image Correctly";
-                        res.json(resJson);
+                        res.json(resJson);   return;
                     } else {
                         log("fail Update profile Image Correctly", 'error.log');
                         resJson.status = 0;
                         resJson.message = "fail Update profile Image Correctly";
-                        res.json(resJson);
+                        res.json(resJson);   return;
 
                     }
                 }
@@ -267,14 +267,14 @@ async function setProfileImage(req,res) {
                     log("fail Update profile Image Correctly", 'error.log');
                     resJson.status = 0;
                     resJson.message = "fail Update profile Image Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
             }
             else{
                 log("fail Update profile Image Correctly",'error.log');
                 resJson.status=0;
                 resJson.message="fail Update profile Image Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
     }
@@ -283,7 +283,7 @@ async function setProfileImage(req,res) {
         log("fail Update profile Image Correctly", 'error.log');
         resJson.status = 0;
         resJson.message = "fail Update profile Image Correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -298,7 +298,7 @@ async function setBannerImage(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -339,26 +339,26 @@ async function setBannerImage(req,res){
                     if (resultDelete) {
                         log("Update banner Image Correctly");
                         resJson.message = "Update banner Image Correctly";
-                        res.json(resJson);
+                        res.json(resJson);   return;
                     } else {
                         log("fail Update banner Image Correctly", 'error.log');
                         resJson.status = 0;
                         resJson.message = "fail Update banner Image Correctly";
-                        res.json(resJson);
+                        res.json(resJson);   return;
                     }
                 }
                 catch(error){
                     log("fail Update banner Image Correctly", 'error.log');
                     resJson.status = 0;
                     resJson.message = "fail Update banner Image Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
             }
             else{
                 log("fail Update banner Image Correctly",'error.log');
                 resJson.status=0;
                 resJson.message="fail Update banner Image Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
     }
@@ -367,7 +367,7 @@ async function setBannerImage(req,res){
         log("fail Update banner Image", 'error.log');
         resJson.status = 0;
         resJson.message = "fail Update banner Image";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -382,7 +382,7 @@ async function setPromotionImage(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -424,26 +424,26 @@ async function setPromotionImage(req,res){
                     if (resultDelete) {
                         log("Update promotion Image Correctly");
                         resJson.message = "Update promotion Image Correctly";
-                        res.json(resJson);
+                        res.json(resJson);   return;
                     } else {
                         log("fail Update promotion Image Correctly", 'error.log');
                         resJson.status = 0;
                         resJson.message = "fail Update promotion Image Correctly";
-                        res.json(resJson);
+                        res.json(resJson);   return;
                     }
                 }
                 catch(error){
                     log("fail Update promotion Image", 'error.log');
                     resJson.status = 0;
                     resJson.message = "fail Update promotion Image";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
             }
             else{
                 log("fail Update promotion Image Correctly",'error.log');
                 resJson.status=0;
                 resJson.message="fail Update promotion Image Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
     }
@@ -452,7 +452,7 @@ async function setPromotionImage(req,res){
         log("fail Update promotion Image", 'error.log');
         resJson.status = 0;
         resJson.message = "fail Update promotion Image";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -467,7 +467,7 @@ async function addImage(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -499,13 +499,13 @@ async function addImage(req,res){
             if(result){
                 log("add Image to gallery Correctly");
                 resJson.message = "add Image to gallery Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
             else{
                 log("fail add Image to gallery",'error.log');
                 resJson.status=0;
                 resJson.message="fail add Image to gallery";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
     }
@@ -514,7 +514,7 @@ async function addImage(req,res){
         log("fail add Image to gallery", 'error.log');
         resJson.status = 0;
         resJson.message = "fail add Image to gallery";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -529,7 +529,7 @@ async function  removeImage(req,res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -563,12 +563,12 @@ async function  removeImage(req,res){
                         if (resultDelete) {
                             log("delete Image Correctly", 'error.log');
                             resJson.message = "delete Image Correctly";
-                            res.json(resJson);
+                            res.json(resJson);   return;
                         } else {
                             log("fail delete Image1");
                             resJson.status = 0;
                             resJson.message = "fail delete Image PZZ";
-                            res.json(resJson);
+                            res.json(resJson);   return;
                         }
 
                     }
@@ -576,28 +576,28 @@ async function  removeImage(req,res){
                         log("fail delete Image1", 'error.log');
                         resJson.status = 0;
                         resJson.message = "fail delete Image PZZ 2"+error;
-                        res.json(resJson);
+                        res.json(resJson);   return;
                     }
                 }
                 else{
                     log("fail delete Image to gallery",'error.log');
                     resJson.status=0;
                     resJson.message="fail delete Image to gallery";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
             }
             else
             {
                 log("delete Image Correctly", 'error.log');
                 resJson.message = "delete Image Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
         else
         {
             log("delete Image Correctly", 'error.log');
             resJson.message = "delete Image Correctly";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }
 
@@ -614,7 +614,7 @@ async function deleteBannerImage(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -650,12 +650,12 @@ async function deleteBannerImage(req,res) {
                 if (resultDelete) {
                     log("Delete banner Image Correctly");
                     resJson.message = "Delete banner Image Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 } else {
                     log("fail delete banner Image", 'error.log');
                     resJson.status = 0;
                     resJson.message = "fail Delete banner Image";
-                    res.json(resJson);
+                    res.json(resJson);   return;
 
                 }
             }
@@ -663,14 +663,14 @@ async function deleteBannerImage(req,res) {
                 log("fail delete banner Image", 'error.log');
                 resJson.status = 0;
                 resJson.message = "fail delete banner Image";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
         else{
             log("fail delete banner Image",'error.log');
             resJson.status=0;
             resJson.message="fail delete banner Image Correctly";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }
 
@@ -687,7 +687,7 @@ async function deleteProfileImage(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -722,12 +722,12 @@ async function deleteProfileImage(req,res) {
                 if (resultDelete) {
                     log("Delete profile Image Correctly");
                     resJson.message = "Delete profile Image Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 } else {
                     log("fail delete profile Image", 'error.log');
                     resJson.status = 0;
                     resJson.message = "fail Delete profile Image";
-                    res.json(resJson);
+                    res.json(resJson);   return;
 
                 }
             }
@@ -735,14 +735,14 @@ async function deleteProfileImage(req,res) {
                 log("fail delete profile Image", 'error.log');
                 resJson.status = 0;
                 resJson.message = "fail delete profile Image";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
         else{
             log("fail delete profile Image",'error.log');
             resJson.status=0;
             resJson.message="fail delete profile Image Correctly";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }
 
@@ -759,7 +759,7 @@ async function deletePromotionImage(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -794,12 +794,12 @@ async function deletePromotionImage(req,res) {
                 if (resultDelete) {
                     log("Delete promotion Image Correctly");
                     resJson.message = "Delete promotion Image Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 } else {
                     log("fail delete promotion Image", 'error.log');
                     resJson.status = 0;
                     resJson.message = "fail Delete promotion Image";
-                    res.json(resJson);
+                    res.json(resJson);   return;
 
                 }
             }
@@ -807,14 +807,14 @@ async function deletePromotionImage(req,res) {
                 log("fail delete promotion Image", 'error.log');
                 resJson.status = 0;
                 resJson.message = "fail delete promotion Image";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
         else{
             log("fail delete promotion Image",'error.log');
             resJson.status=0;
             resJson.message="fail delete promotion Image Correctly";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }
 

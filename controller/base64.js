@@ -16,7 +16,7 @@ async function convertir(req,res) {
 
     base64ToImg.base64ToImg(base64,path,format,name);
 
-        res.json(resJson);
+        res.json(resJson);   return;
 
 
 
