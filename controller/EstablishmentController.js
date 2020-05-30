@@ -378,15 +378,6 @@ async function setProfileImage(req,res) {
                 let oldProfileImage=JSON.parse(imagesEstablishment.images).profileImage;
                 let bannerImage = JSON.parse(imagesEstablishment.images).bannerImage;
 
-                if(oldProfileImage=="default")
-                {
-                    log("Update profile Image Correctly");
-                    resJson.message = "Update profile Image Correctly";
-                    res.json(resJson);   return;
-                }
-
-
-
                 let imagesJSON =
                     [
                         "profileImage",nameImg,
@@ -400,6 +391,15 @@ async function setProfileImage(req,res) {
                 let result = await EstablishmentConfModel.updateEstablishmentConf(updateData, idEstablishment, idConfiguration);
                 if(result){
                     try {
+
+                        if(oldProfileImage=="default" || oldProfileImage=="" || oldProfileImage==null)
+                        {
+                            log("Update profile Image Correctly");
+                            resJson.message = "Update profile Image Correctly";
+                            res.json(resJson);   return;
+                        }
+
+
                         let resultDelete = deleteImage.deleteImage(oldProfileImage, path);
                         if (resultDelete) {
                             log("Update profile Image Correctly");
@@ -487,13 +487,6 @@ async function setBannerImage(req,res){
             let profileImage=JSON.parse(imagesEstablishment.images).profileImage;
             let oldBannerImage = JSON.parse(imagesEstablishment.images).bannerImage;
 
-            if(oldBannerImage=="default")
-            {
-                log("Update banner Image Correctly");
-                resJson.message = "Update banner Image Correctly";
-                res.json(resJson);   return;
-            }
-
             let imagesJSON =
                 [
                     "profileImage", profileImage,
@@ -507,6 +500,14 @@ async function setBannerImage(req,res){
             let result = await EstablishmentConfModel.updateEstablishmentConf(updateData, idEstablishment, idConfiguration);
             if(result){
                 try {
+                    if(oldBannerImage=="default" || oldBannerImage=="" || oldBannerImage==null)
+                    {
+                        log("Update banner Image Correctly");
+                        resJson.message = "Update banner Image Correctly";
+                        res.json(resJson);   return;
+                    }
+
+
                     let resultDelete = deleteImage.deleteImage(oldBannerImage,path);
                     if (resultDelete)
                     {
