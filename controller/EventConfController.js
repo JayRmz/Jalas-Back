@@ -20,7 +20,7 @@ async function createEventConf(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
     console.log(req.body);
@@ -45,13 +45,13 @@ async function createEventConf(req,res) {
             if(resultLink){
                 log("EventConf linked Correctly");
                 resJson.message = "EventConf Created Correctly and linked Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
             else{
                 log("error EventConf no linked Correctly",'error.log');
                 resJson.status=0;
                 resJson.message = "EventConf Created Correctly. ERROR userConf not linked";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
 
 
@@ -59,7 +59,7 @@ async function createEventConf(req,res) {
             resJson.status = 0;
             resJson.message = "Problem Creating EventConf";
             log("Problem creating eventConf ", 'error.log');
-            res.json(resJson);
+            res.json(resJson);   return;
         }
 
     }catch (e) {
@@ -82,7 +82,7 @@ async function getEventConf(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -99,13 +99,13 @@ async function getEventConf(req,res) {
             log("user Configuration Consulted");
             resJson.data=result;
             resJson.message="event Configuration found";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
         else{
             log("Fail event Configuration consulted");
             resJson.status=0;
             resJson.message="event Configuration not found";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
 
     }
@@ -131,7 +131,7 @@ async function updateEventConf(req,res)
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -145,13 +145,13 @@ async function updateEventConf(req,res)
     if(result){
         log("update EventConf");
         resJson.message="EventConf Updated Correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Fail update EventConf",'error.log');
         resJson.status=1;
         resJson.message="Problem Updating EventConf";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 

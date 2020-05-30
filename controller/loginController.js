@@ -14,7 +14,7 @@ async function validateCredentials(req,res) {
     if (!validation.isValid(req.body, jsonReq.validateCredentials)) {
         resJson.status = 0;
         resJson.message = "wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -53,7 +53,7 @@ async function validateCredentials(req,res) {
             }
         }
     }
-    res.json(resJson);
+    res.json(resJson);   return;
 }
 module.exports.ValidateCredentials = validateCredentials;
 

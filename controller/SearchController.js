@@ -20,7 +20,7 @@ async function searchEvents(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -37,13 +37,13 @@ async function searchEvents(req,res) {
         log("get events");
         resJson.message="found events";
         resJson.data=events;
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Not found events",'error.log');
         resJson.status=1;
         resJson.message="Not found Events";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -59,7 +59,7 @@ async function searchEventsPerGenres(req, res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -81,19 +81,19 @@ async function searchEventsPerGenres(req, res) {
             log("get events");
             resJson.message = "found events";
             resJson.data = result;
-            res.json(resJson);
+            res.json(resJson);   return;
         } else {
             log("Fail found events", 'error.log');
             resJson.status = 0;
             resJson.message = "Problem found Events";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
 
     } else {
         log("Fail found events", 'error.log');
         resJson.status = 1;
         resJson.message = "Problem found Events";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
 
@@ -111,7 +111,7 @@ async function searchEventsPerDate(req, res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -130,13 +130,13 @@ async function searchEventsPerDate(req, res) {
         log("get events");
         resJson.message = "found events";
         resJson.data = events;
-        res.json(resJson);
+        res.json(resJson);   return;
     } else {
         log("Fail found events", 'error.log');
 
         resJson.status = 0;
         resJson.message = "Problem found Events";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
 
@@ -154,7 +154,7 @@ async function searchEventsPerDate_Genres(req, res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -177,19 +177,19 @@ async function searchEventsPerDate_Genres(req, res) {
             log("get events");
             resJson.message = "found events";
             resJson.data = result;
-            res.json(resJson);
+            res.json(resJson);   return;
         } else {
             log("Fail found events", 'error.log');
             resJson.status = 0;
             resJson.message = "Problem found Events";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
 
     } else {
         log("Fail found events", 'error.log');
         resJson.status = 0;
         resJson.message = "Problem found Events";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
 
@@ -206,7 +206,7 @@ async function searchEstablishments(req, res){
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -223,13 +223,13 @@ async function searchEstablishments(req, res){
         log("get events");
         resJson.message="found events";
         resJson.data=events;
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Not found events",'error.log');
         resJson.status=1;
         resJson.message="Not found Events";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -245,7 +245,7 @@ async function searchEventsPerName(req, res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -264,13 +264,13 @@ async function searchEventsPerName(req, res) {
         log("get events");
         resJson.message = "found events";
         resJson.data = events;
-        res.json(resJson);
+        res.json(resJson);   return;
     } else {
         log("Fail found events", 'error.log');
 
         resJson.status = 0;
         resJson.message = "Problem found Events";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
 
@@ -288,7 +288,7 @@ async function searchEstablishmentsPerName(req, res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -307,13 +307,13 @@ async function searchEstablishmentsPerName(req, res) {
         log("get events");
         resJson.message = "found events";
         resJson.data = events;
-        res.json(resJson);
+        res.json(resJson);   return;
     } else {
         log("Fail found events", 'error.log');
 
         resJson.status = 0;
         resJson.message = "Problem found Establishments";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
 

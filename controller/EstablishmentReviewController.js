@@ -21,7 +21,7 @@ async function createReview(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -41,12 +41,12 @@ async function createReview(req,res) {
             resJson.message = "Review Created Correctly";
             resJson.data=idReview;
             log("Review Created Correctly");
-            res.json(resJson);
+            res.json(resJson);   return;
         } else {
             resJson.status = 0;
             resJson.message = "Problem Creating review";
             log("Problem creating review ", 'error.log');
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }catch (e) {
         log("Promise error "+e,'error.log');
@@ -69,7 +69,7 @@ async function updateReview(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -84,12 +84,12 @@ async function updateReview(req,res) {
             //ENVIAR UN CORREO DE CONFIRMACION
             resJson.message = "Review updated Correctly";
             log("Review updated Correctly");
-            res.json(resJson);
+            res.json(resJson);   return;
         } else {
             resJson.status = 0;
             resJson.message = "Problem updating review";
             log("Problem updating review", 'error.log');
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }catch (e) {
         log("Promise error "+e,'error.log');
@@ -112,7 +112,7 @@ async function deleteReview(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -127,12 +127,12 @@ async function deleteReview(req,res) {
             //ENVIAR UN CORREO DE CONFIRMACION
             resJson.message = "Delete Review";
             log("Delete Review");
-            res.json(resJson);
+            res.json(resJson);   return;
         } else {
             resJson.status = 0;
             resJson.message = "Problem Delete Review";
             log("Problem Delete Review", 'error.log');
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }catch (e) {
         log("Promise error "+e,'error.log');
@@ -154,7 +154,7 @@ async function getReview(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -168,12 +168,12 @@ async function getReview(req,res) {
             resJson.message = "get Review";
             resJson.data=result;
             log("get Review");
-            res.json(resJson);
+            res.json(resJson);   return;
         } else {
             resJson.status = 0;
             resJson.message = "Problem get Review";
             log("Problem get Review", 'error.log');
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }catch (e) {
         log("Promise error "+e,'error.log');
@@ -195,7 +195,7 @@ async function getAverage(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -211,12 +211,12 @@ async function getAverage(req,res) {
             resJson.message = "get AVG";
             resJson.data=result;
             log("get AVG");
-            res.json(resJson);
+            res.json(resJson);   return;
         } else {
             resJson.status = 0;
             resJson.message = "Problem get AVG";
             log("Problem get AVG", 'error.log');
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }catch (e) {
         log("Promise error "+e,'error.log');
@@ -237,7 +237,7 @@ async function getRatings(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -253,12 +253,12 @@ async function getRatings(req,res) {
             resJson.message = "get ratings";
             resJson.data=result;
             log("get ratings");
-            res.json(resJson);
+            res.json(resJson);   return;
         } else {
             resJson.status = 0;
             resJson.message = "Problem get ratings";
             log("Problem get ratings", 'error.log');
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }catch (e) {
         log("Promise error "+e,'error.log');
@@ -279,7 +279,7 @@ async function getUserRatings(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -295,12 +295,12 @@ async function getUserRatings(req,res) {
             resJson.message = "get ratings";
             resJson.data=result;
             log("get ratings");
-            res.json(resJson);
+            res.json(resJson);   return;
         } else {
             resJson.status = 0;
             resJson.message = "Problem get ratings";
             log("Problem get ratings", 'error.log');
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }catch (e) {
         log("Promise error "+e,'error.log');

@@ -28,6 +28,7 @@ async function createEstablishment(req,res) {
         resJson.status=0;
         resJson.message="wrong formatting";
         res.json(resJson);
+return;
         return;
     }
 
@@ -40,6 +41,7 @@ async function createEstablishment(req,res) {
         resJson.status=1;
         resJson.message="Email already exist";
         res.json(resJson);
+        return;
     }
 
     else
@@ -61,7 +63,7 @@ async function createEstablishment(req,res) {
 
 
 
-
+            /*
             if(establishmentConfData.hasOwnProperty("images"))
             {
                 let images=establishmentConfData.images;
@@ -81,6 +83,7 @@ async function createEstablishment(req,res) {
                             resJson.message="Problem uploading profile image";
                             log("Problem uploading profile image", "error.log")
                             res.json(resJson);
+return;
                         }
                     }
                 }
@@ -101,11 +104,12 @@ async function createEstablishment(req,res) {
                             resJson.message="Problem uploading banner image";
                             log("Problem uploading banner image", "error.log")
                             res.json(resJson);
+return;
                         }
                     }
                 }
 
-                /*
+
                 if(images.hasOwnProperty("gallery"))
                 {
                     let path=config.imagepath+"establishment/gallery/";
@@ -128,18 +132,28 @@ async function createEstablishment(req,res) {
                                 resJson.message="Problem uploading image";
                                 log("Problem uploading image", "error.log")
                                 res.json(resJson);
+return;
                             }
                         }
                         images.gallery=resultGallery;
                     }
                 }
-                */
+                //
 
 
                 establishmentConfData.images=images;
                 resJson.images=images;
 
             }
+
+            */
+            let images =
+                {
+                    "profileImage":"default",
+                    "bannerImage":"default"
+                }
+            establishmentConfData.images=images;
+            resJson.images=images;
 
             let result = await establishmentModel.insertEstablishment(establishmentConfData);
             if(result)
@@ -151,13 +165,14 @@ async function createEstablishment(req,res) {
                 resJson.idEstablishment=id;
                 log("Sent Email Succesfully "+email);
                 res.json(resJson);
+                return;
             }
             else
             {
                 resJson.status=0;
                 resJson.message="Problem Creating Establishment";
                 log("Problem creating user "+email,'error.log');
-                res.json(resJson);
+                res.json(resJson);return;
             }
         }
         else
@@ -165,7 +180,7 @@ async function createEstablishment(req,res) {
             resJson.status=0;
             resJson.message="Establishment already exist";
             log("Problem creating user "+email,'error.log');
-            res.json(resJson);
+            res.json(resJson);   return;
         }
 
 }
@@ -180,7 +195,7 @@ async function validateEstablishmentCredentials(req,res) {
     {
         resJson.status=0;
         resJson.message="wrong formatting";
-        res.json(resJson);
+        res.json(resJson);   return;
         return;
     }
 
@@ -205,7 +220,7 @@ async function validateEstablishmentCredentials(req,res) {
         resJson.message="Problem validating credentials";
 
     }
-    res.json(resJson);
+    res.json(resJson);   return;
 }
 
 async function updateEstablishment(req,res) {
@@ -233,12 +248,12 @@ async function updateEstablishment(req,res) {
         log("update Establishment");
         resJson.message="Establishment Updated Correctly";
         resJson.status=1;
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Fail update Establishment",'error.log');
         resJson.message="Problem Updating Establishment";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -284,12 +299,12 @@ async  function getEstablishmentInfo(req,res){
         resJson.data=result;
         resJson.message="Establishment found";
         resJson.status=1;
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Fail consulted Establishment",'error.log');
         resJson.message="Fail consulted Establishment";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
 
@@ -319,13 +334,13 @@ async function updateEstablishmentPassword(req,res) {
     if(result){
         log("update Establishment Password");
         resJson.message="Password Updated Correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
     else{
         log("Fail update Establishment Password",'error.log');
         resJson.status=1;
         resJson.message="fail update password correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -363,6 +378,15 @@ async function setProfileImage(req,res) {
                 let oldProfileImage=JSON.parse(imagesEstablishment.images).profileImage;
                 let bannerImage = JSON.parse(imagesEstablishment.images).bannerImage;
 
+                if(oldProfileImage=="default")
+                {
+                    log("Update profile Image Correctly");
+                    resJson.message = "Update profile Image Correctly";
+                    res.json(resJson);   return;
+                }
+
+
+
                 let imagesJSON =
                     [
                         "profileImage",nameImg,
@@ -380,12 +404,12 @@ async function setProfileImage(req,res) {
                         if (resultDelete) {
                             log("Update profile Image Correctly");
                             resJson.message = "Update profile Image Correctly";
-                            res.json(resJson);
+                            res.json(resJson);   return;
                         } else {
                             log("fail Update profile Image Correctly", 'error.log');
                             resJson.status = 0;
                             resJson.message = "fail Update profile Image Correctly";
-                            res.json(resJson);
+                            res.json(resJson);   return;
 
                         }
                     }
@@ -393,14 +417,14 @@ async function setProfileImage(req,res) {
                         log("fail Update profile Image Correctly", 'error.log');
                         resJson.status = 0;
                         resJson.message = "fail Update profile Image Correctly";
-                        res.json(resJson);
+                        res.json(resJson);   return;
                     }
                 }
                 else{
                     log("fail Update profile Image Correctly",'error.log');
                     resJson.status=0;
                     resJson.message="fail Update profile Image Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
             }
         }
@@ -409,7 +433,7 @@ async function setProfileImage(req,res) {
             log("fail Update profile Image Correctly", 'error.log');
             resJson.status = 0;
             resJson.message = "fail Update profile Image Correctly";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
 
     }
@@ -418,7 +442,7 @@ async function setProfileImage(req,res) {
         log("fail Update profile Image Correctly", 'error.log');
         resJson.status = 0;
         resJson.message = "fail Update profile Image Correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
 }
@@ -446,7 +470,7 @@ async function setBannerImage(req,res){
         log("fail Update banner Image Correctly",'error.log');
         resJson.status=0;
         resJson.message="fail Update banner Image Correctly";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
     let temp = generator.next();
@@ -462,6 +486,14 @@ async function setBannerImage(req,res){
         {
             let profileImage=JSON.parse(imagesEstablishment.images).profileImage;
             let oldBannerImage = JSON.parse(imagesEstablishment.images).bannerImage;
+
+            if(oldBannerImage=="default")
+            {
+                log("Update banner Image Correctly");
+                resJson.message = "Update banner Image Correctly";
+                res.json(resJson);   return;
+            }
+
             let imagesJSON =
                 [
                     "profileImage", profileImage,
@@ -476,29 +508,31 @@ async function setBannerImage(req,res){
             if(result){
                 try {
                     let resultDelete = deleteImage.deleteImage(oldBannerImage,path);
-                    if (resultDelete) {
+                    if (resultDelete)
+                    {
                         log("Update banner Image Correctly");
                         resJson.message = "Update banner Image Correctly";
-                        res.json(resJson);
-                    } else {
+                        res.json(resJson);   return;
+                    } else
+                    {
                         log("fail Update banner Image Correctly", 'error.log');
                         resJson.status = 0;
                         resJson.message = "fail Update banner Image Correctly";
-                        res.json(resJson);
+                        res.json(resJson);   return;
                     }
                 }
                 catch(error){
                     log("fail Update banner Image Correctly", 'error.log');
                     resJson.status = 0;
                     resJson.message = "fail Update banner Image Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
             }
             else{
                 log("fail Update profile Image Correctly",'error.log');
                 resJson.status=0;
                 resJson.message="fail Update profile Image Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
     }
@@ -507,7 +541,7 @@ async function setBannerImage(req,res){
         log("fail Update banner Image", 'error.log');
         resJson.status = 0;
         resJson.message = "fail Update banner Image";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -535,7 +569,7 @@ async function addImage(req,res){
         log("fail add Image to gallery",'error.log');
         resJson.status=0;
         resJson.message="fail add Image to gallery";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
 
@@ -562,13 +596,13 @@ async function addImage(req,res){
             if(result){
                 log("add Image to gallery Correctly");
                 resJson.message = "add Image to gallery Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
             else{
                 log("fail add Image to gallery",'error.log');
                 resJson.status=0;
                 resJson.message="fail add Image to gallery";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
     }
@@ -577,7 +611,7 @@ async function addImage(req,res){
         log("fail add Image to gallery", 'error.log');
         resJson.status = 0;
         resJson.message = "fail add Image to gallery";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 }
 
@@ -604,7 +638,7 @@ async function removeImage(req,res){
         log("fail delete Image",'error.log');
         resJson.status=0;
         resJson.message="fail delete Image";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
         let imagesEstablishment =await  EstablishmentConfModel.getGallery(idConfiguration.idconfiguration);
@@ -631,12 +665,12 @@ async function removeImage(req,res){
                             if (resultDelete) {
                                 log("delete Image Correctly", 'error.log');
                                 resJson.message = "delete Image Correctly";
-                                res.json(resJson);
+                                res.json(resJson);   return;
                             } else {
                                 log("fail delete Image1");
                                 resJson.status = 0;
                                 resJson.message = "fail delete Image PZZ";
-                                res.json(resJson);
+                                res.json(resJson);   return;
                             }
 
                         }
@@ -644,28 +678,28 @@ async function removeImage(req,res){
                             log("fail delete Image1", 'error.log');
                             resJson.status = 0;
                             resJson.message = "fail delete Image PZZ 2"+error;
-                            res.json(resJson);
+                            res.json(resJson);   return;
                         }
                     }
                     else{
                         log("fail delete Image to gallery",'error.log');
                         resJson.status=0;
                         resJson.message="fail delete Image to gallery";
-                        res.json(resJson);
+                        res.json(resJson);   return;
                     }
                 }
                 else
                 {
                     log("delete Image Correctly", 'error.log');
                     resJson.message = "delete Image Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 }
             }
             else
             {
                 log("delete Image Correctly", 'error.log');
                 resJson.message = "delete Image Correctly";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
 
@@ -703,10 +737,17 @@ async function deleteBannerImage(req,res) {
         let bannerImage = JSON.parse(imagesEstablishment.images).bannerImage;
         let profileImage = JSON.parse(imagesEstablishment.images).profileImage;
 
+        if(bannerImage=="default")
+        {
+            log("Delete banner Image Correctly");
+            resJson.message = "Delete banner Image Correctly";
+            res.json(resJson);   return;
+        }
+
         let imagesJSON =
             [
                 "profileImage",profileImage,
-                "bannerImage", "",
+                "bannerImage", "default",
 
             ];
         let updateData = [];
@@ -722,12 +763,12 @@ async function deleteBannerImage(req,res) {
                 if (resultDelete) {
                     log("Delete banner Image Correctly");
                     resJson.message = "Delete banner Image Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 } else {
                     log("fail delete banner Image", 'error.log');
                     resJson.status = 0;
                     resJson.message = "fail Delete banner Image";
-                    res.json(resJson);
+                    res.json(resJson);   return;
 
                 }
             }
@@ -735,14 +776,14 @@ async function deleteBannerImage(req,res) {
                 log("fail delete banner Image", 'error.log');
                 resJson.status = 0;
                 resJson.message = "fail delete banner Image";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
         else{
             log("fail delete banner Image",'error.log');
             resJson.status=0;
             resJson.message="fail delete banner Image Correctly";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }
 
@@ -771,18 +812,35 @@ async function deleteProfileImage(req,res) {
         log("fail delete profile Image",'error.log');
         resJson.status=0;
         resJson.message="fail delete profile Image";
-        res.json(resJson);
+        res.json(resJson);   return;
     }
 
     let imagesEstablishment =await  EstablishmentConfModel.getImages(idConfiguration.idconfiguration);
+
+
+
     if(imagesEstablishment)
     {
         let bannerImage = JSON.parse(imagesEstablishment.images).bannerImage;
         let profileImage = JSON.parse(imagesEstablishment.images).profileImage;
 
+        if(profileImage=="default")
+        {
+            log("Delete profile Image Correctly");
+            resJson.message = "Delete profile Image Correctly!!!";
+            res.json(resJson);
+            return
+
+        }
+        else
+            console.log("PZZZZZZZZZZ")
+
+        console.log("---------------------------")
+        console.log(profileImage)
+        console.log("---------------------------")
         let imagesJSON =
             [
-                "profileImage","",
+                "profileImage","default",
                 "bannerImage", bannerImage
             ];
         let updateData = [];
@@ -798,12 +856,12 @@ async function deleteProfileImage(req,res) {
                 if (resultDelete) {
                     log("Delete profile Image Correctly");
                     resJson.message = "Delete profile Image Correctly";
-                    res.json(resJson);
+                    res.json(resJson);   return;
                 } else {
                     log("fail delete profile Image", 'error.log');
                     resJson.status = 0;
                     resJson.message = "fail Delete profile Image";
-                    res.json(resJson);
+                    res.json(resJson);   return;
 
                 }
             }
@@ -811,14 +869,14 @@ async function deleteProfileImage(req,res) {
                 log("fail delete profile Image", 'error.log');
                 resJson.status = 0;
                 resJson.message = "fail delete profile Image";
-                res.json(resJson);
+                res.json(resJson);   return;
             }
         }
         else{
             log("fail delete profile Image",'error.log');
             resJson.status=0;
             resJson.message="fail delete profile Image Correctly";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }
 
@@ -844,13 +902,13 @@ async  function verifyMail(req,res){
         if (exist == '1') {
             resJson.status = 1;
             resJson.message = "email already exist";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
         else
         {
             resJson.status = 0;
             resJson.message = "email not found";
-            res.json(resJson);
+            res.json(resJson);   return;
         }
     }catch (e) {
         log("Promise error "+e,'error.log');

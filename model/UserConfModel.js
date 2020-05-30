@@ -342,9 +342,18 @@ class UserConfModel{
         if(!this.images)
         {
             this.images = {};
-            this.images.profileImage="";
-            this.images.bannerImage="";
+            this.images.profileImage="default";
+            this.images.bannerImage="default";
         }
+        else
+        {
+            if(!this.images.hasOwnProperty("profileImage"))
+                this.images.profileImage="default";
+            if(!this.images.hasOwnProperty("bannerImage"))
+                this.images.bannerImage="default";
+        }
+
+
         if(!this.location)
         {
             this.location = {};
