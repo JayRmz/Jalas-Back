@@ -469,11 +469,10 @@ async function setProfileImage(req,res)
                 "data":imagesJSON
             });
             let result = await UserConfModel.updateUserConf(updateData, idUser, idConfiguration);
-            if(result){
+            if(result)
+            {
                 try {
-
-
-                    if(oldProfileImage=="default")
+                    if(oldProfileImage=="default" || oldProfileImage=="" || oldProfileImage==null)
                     {
                         log("Update profile Image Correctly");
                         resJson.message = "Update profile Image Correctly";
@@ -553,13 +552,22 @@ async function setBannerImage(req,res)
     let path =config.imagepath+"user/banner/";
     let resultSave = await Base64ToImg.base64ToImg(img64,path,"jpg",nameImg.toString());
 
+
+    console.log("resultSave")
+    console.log(resultSave)
+    console.log("resultSave")
+
+
+
     if(resultSave)
     {
         let imagesUser =await  UserConfModel.getImages(idConfiguration.idconfiguration);
+
         if(imagesUser)
         {
-            let oldBannerImage=imagesUser.images.bannerImage;
-            let profileImage = imagesUser.images.profileImage;
+
+            let oldBannerImage=JSON.parse(imagesUser.images).bannerImage;
+            let profileImage = JSON.parse(imagesUser.images).profileImage;
             let imagesJSON =
                 [
                     "bannerImage",nameImg,
@@ -570,8 +578,10 @@ async function setBannerImage(req,res)
                 "field":"images",
                 "data":imagesJSON
             });
-            console.log(updateData);
+
+
             let result = await UserConfModel.updateUserConf(updateData, idUser, idConfiguration);
+
             if(result){
                 try {
                     if(oldBannerImage=="default")

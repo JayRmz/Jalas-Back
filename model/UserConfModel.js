@@ -159,7 +159,6 @@ class UserConfModel{
                         log("Error updating userConf to database "+idUser+" "+err,'error.log');
                         reject(false);
                     }else{
-                        console.log(db.sql);
                         if(res.length>1)
                         {
                             if(res[0].affectedRows== 1){
@@ -301,13 +300,9 @@ class UserConfModel{
 
     static async getImages(idConfiguration)
     {
-
-        //console.log(idConfiguration)
-
         const sql = 'SELECT JSON_EXTRACT(configuration.conf,"$.images") images FROM configuration WHERE idconfiguration=?';
 
         const params = [idConfiguration];
-        //console.log(params);
         return new Promise((resolve, reject) => {
             try{
                 db.query(sql, params, function(err, res){
@@ -315,7 +310,6 @@ class UserConfModel{
                         log("Error not found images to database "+idConfiguration+" "+err,'error.log');
                         reject(false);
                     }else{
-                        //console.log(res)
                         if(res.length>= 1){
                             log("images found correctly "+idConfiguration);
 
@@ -379,7 +373,6 @@ class UserConfModel{
     {
         const sql = 'SELECT idconfiguration FROM user WHERE iduser=?';
         const params = [idUser];
-        //console.log(params);
         return new Promise((resolve, reject) => {
             try{
                 db.query(sql, params, function(err, res){
@@ -387,7 +380,6 @@ class UserConfModel{
                         log("Error not found idconfiguration to database "+idUser+" "+err,'error.log');
                         reject(false);
                     }else{
-                        //console.log(res)
                         if(res.length== 1){
                             log("idconfiguration found correctly "+idUser);
                             resolve(res[0]);
