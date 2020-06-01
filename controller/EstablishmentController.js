@@ -152,6 +152,7 @@ return;
                     "profileImage":"default",
                     "bannerImage":"default"
                 }
+
             establishmentConfData.images=images;
             resJson.images=images;
 
@@ -240,11 +241,19 @@ async function updateEstablishment(req,res) {
     //crear nuevo userModel
     let establishmentInfo=req.body.data;
     let establishmentModel=new EstablishmentModel(establishmentInfo);
-    //llamar a updateUser
+    //llamar a updateEvent
+
+    let establishmentConfData=req.body.data.updateData;
+    let idEstablishment = req.body.data.idEstablishment;
+    let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
+
+
+
+    let resultConf = await EstablishmentConfModel.updateEstablishmentConf(establishmentConfData, idEstablishment, idConfiguration);
     let result = await establishmentModel.updateEstablishment();
 
     //regresar la respuesta
-    if(result){
+    if(result && resultConf){
         log("update Establishment");
         resJson.message="Establishment Updated Correctly";
         resJson.status=1;
@@ -833,12 +842,8 @@ async function deleteProfileImage(req,res) {
             return
 
         }
-        else
-            console.log("PZZZZZZZZZZ")
 
-        console.log("---------------------------")
-        console.log(profileImage)
-        console.log("---------------------------")
+
         let imagesJSON =
             [
                 "profileImage","default",
