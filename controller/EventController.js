@@ -116,6 +116,7 @@ async function createEvent(req,res) {
         if (result) {
             //ENVIAR UN CORREO DE CONFIRMACION
             //let emailResult = await Email.sendConfirmation(email, uuid);
+            resJson.status=0;
             resJson.message = "Event Created Correctly";
             resJson.idEvent=id;
             log("Event Created Correctly");
@@ -129,7 +130,7 @@ async function createEvent(req,res) {
 
     }catch (e) {
         log("Promise error "+e,'error.log');
-        resJson.status = 1;
+        resJson.status = 0;
         resJson.message = "Fatal error" + e;
         res.json(resJson)
     }
@@ -168,12 +169,13 @@ async function updateEvent(req,res) {
     //regresar la respuesta
     if(result && resultConf){
         log("update Event");
+        resJson.status=1;
         resJson.message="Event Updated Correctly";
         res.json(resJson);   return;
     }
     else{
         log("Fail update Event",'error.log');
-        resJson.status=1;
+        resJson.status=0;
         resJson.message="Problem Updating Event";
         res.json(resJson);   return;
     }
@@ -213,6 +215,7 @@ async  function getEventInfo(req,res){
     //regresar la respuesta
 
     if(eventData && confData){
+        resJson.status=1;
         log("event consulted");
         eventData.conf=JSON.parse(confData.conf)
         resJson.data=eventData;
@@ -221,7 +224,7 @@ async  function getEventInfo(req,res){
     }
     else{
         log("Fail event consulted");
-        resJson.status=1;
+        resJson.status=0;
         resJson.message="event not found";
         res.json(resJson);   return;
     }
@@ -276,6 +279,7 @@ async function setProfileImage(req,res) {
 
                     if(oldProfileImage=="default" || oldProfileImage=="" || oldProfileImage==null)
                     {
+                        resJson.status=1;
                         log("Update profile Image Correctly");
                         resJson.message = "Update profile Image Correctly";
                         res.json(resJson);   return;
@@ -285,6 +289,7 @@ async function setProfileImage(req,res) {
 
                     let resultDelete = deleteImage.deleteImage(oldProfileImage, path);
                     if (resultDelete) {
+                        resJson.status=1;
                         log("Update profile Image Correctly");
                         resJson.message = "Update profile Image Correctly";
                         res.json(resJson);   return;
@@ -370,6 +375,7 @@ async function setBannerImage(req,res){
                 try {
                     if(oldBannerImage=="default" || oldBannerImage=="" || oldBannerImage==null)
                     {
+                        resJson.status=1;
                         log("Update banner Image Correctly");
                         resJson.message = "Update banner Image Correctly";
                         res.json(resJson);   return;
@@ -378,6 +384,7 @@ async function setBannerImage(req,res){
 
                     let resultDelete = deleteImage.deleteImage(oldBannerImage, path);
                     if (resultDelete) {
+                        resJson.status=1;
                         log("Update banner Image Correctly");
                         resJson.message = "Update banner Image Correctly";
                         res.json(resJson);   return;
@@ -535,9 +542,6 @@ async function addImage(req,res){
         let imagesEvent =await  EventConfModel.getGallery(idConfiguration.idconfiguration);
         if(imagesEvent)
         {
-            console.log("--------------------------------------------------------------")
-            console.log((imagesEvent).gallery);
-            console.log("--------------------------------------------------------------")
 
             let galleryImages=[]
             if(imagesEvent.gallery!=null)
@@ -686,6 +690,7 @@ async function deleteBannerImage(req,res) {
 
         if(bannerImage=="default")
         {
+            resJson.status=1;
             log("Delete banner Image Correctly");
             resJson.message = "Delete banner Image Correctly";
             res.json(resJson);   return;
@@ -765,6 +770,7 @@ async function deleteProfileImage(req,res) {
 
         if(profileImage=="default")
         {
+            resJson.status=1;
             log("Delete profile Image Correctly");
             resJson.message = "Delete profile Image Correctly!!!";
             res.json(resJson);
