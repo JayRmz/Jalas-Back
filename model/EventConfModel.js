@@ -38,7 +38,7 @@ class EventConfModel{
         if(eventConfObject.hasOwnProperty("date"))
             this.date=eventConfObject.date;
         else
-            this.date=[];
+            this.date=null;
 
 
         if(eventConfObject.hasOwnProperty("genres"))
@@ -112,11 +112,11 @@ class EventConfModel{
                 multiSQL = multiSQL + regular_SQL;
                 params.push(updateData[i].data);
             }
-            if(updateData[i].field=="date"||updateData[i].field=="genres" || updateData[i].field=="gallery") {
+            if(updateData[i].field=="genres" || updateData[i].field=="gallery") {
                 multiSQL = multiSQL + array_SQL;
                 params.push(updateData[i].data);
             }
-            if(updateData[i].field=="images") {
+            if(updateData[i].field=="images" || updateData[i].field=="date") {
                 multiSQL = multiSQL + json_SQL;
                 params.push(updateData[i].data);
             }
@@ -218,13 +218,22 @@ class EventConfModel{
             this.images.promotionImage="";
             this.images.gallery=[];
         }
+        if(this.date==null)
+        {
+            this.date={}
+            this.date.fechaInicio="";
+            this.date.fechaFin="";
+            this.date.horaInicio="";
+            this.date.horaFin="";
+
+        }
 
         let jsonData ={
             'images': {'profileImage':this.images.profileImage, 'bannerImage':this.images.bannerImage,'promotionImage':this.images.promotionImage },      //JSON
             'description': this.description,
             'address':this.address,
             'genres':this.genres,
-            'date': this.date,
+            'date': {'fechaInicio':this.date.fechaInicio, 'fechaFin': this.date.fechaFin, 'horaInicio':this.date.horaInicio, 'horaFin':this.date.horaFin },
             'gallery':this.images.gallery
 
 

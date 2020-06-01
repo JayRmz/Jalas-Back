@@ -48,7 +48,7 @@ async function createEvent(req,res) {
 
 
 
-
+/*
         if(eventConfData.hasOwnProperty("images"))
         {
             let images=eventConfData.images;
@@ -100,7 +100,16 @@ async function createEvent(req,res) {
 
         }
 
+ */
+        let images =
+            {
+                "profileImage":"default",
+                "bannerImage":"default",
+                "promotionImage":""
+            }
 
+        eventConfData.images=images;
+        resJson.images=images;
         let result = await eventModel.insertEvent(eventConfData);
 
         //console.log(result)
@@ -108,6 +117,7 @@ async function createEvent(req,res) {
             //ENVIAR UN CORREO DE CONFIRMACION
             //let emailResult = await Email.sendConfirmation(email, uuid);
             resJson.message = "Event Created Correctly";
+            resJson.idEvent=id;
             log("Event Created Correctly");
             //log("Sent Email Succesfully " + email);
             res.json(resJson);   return;
@@ -145,8 +155,18 @@ async function updateEvent(req,res) {
     let eventModel=new EventModel(eventInfo);
     //llamar a updateEvent
     let result = await eventModel.updateEvent();
+
+
+    let eventConfData=req.body.data.updateData;
+    let idEvent = req.body.data.idEvent;
+    //llamar a updateUserConf
+    let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
+    //console.log(idConfiguration);
+    let resultConf = await EventConfModel.updateEventConf(eventConfData, idEvent, idConfiguration);
+
+
     //regresar la respuesta
-    if(result){
+    if(result && resultConf){
         log("update Event");
         resJson.message="Event Updated Correctly";
         res.json(resJson);   return;
@@ -187,11 +207,14 @@ async  function getEventInfo(req,res){
 
 
 
+
+
     eventData.conf=confData;
     //regresar la respuesta
 
-    if(eventData){
+    if(eventData && confData){
         log("event consulted");
+        eventData.conf=JSON.parse(confData.conf)
         resJson.data=eventData;
         resJson.message="event found";
         res.json(resJson);   return;
@@ -250,6 +273,16 @@ async function setProfileImage(req,res) {
             let result = await EventConfModel.updateEventConf(updateData, idEvent, idConfiguration);
             if(result){
                 try {
+
+                    if(oldProfileImage=="default" || oldProfileImage=="" || oldProfileImage==null)
+                    {
+                        log("Update profile Image Correctly");
+                        resJson.message = "Update profile Image Correctly";
+                        res.json(resJson);   return;
+                    }
+
+
+
                     let resultDelete = deleteImage.deleteImage(oldProfileImage, path);
                     if (resultDelete) {
                         log("Update profile Image Correctly");
@@ -335,6 +368,14 @@ async function setBannerImage(req,res){
             let result = await EventConfModel.updateEventConf(updateData, idEvent, idConfiguration);
             if(result){
                 try {
+                    if(oldBannerImage=="default" || oldBannerImage=="" || oldBannerImage==null)
+                    {
+                        log("Update banner Image Correctly");
+                        resJson.message = "Update banner Image Correctly";
+                        res.json(resJson);   return;
+                    }
+
+
                     let resultDelete = deleteImage.deleteImage(oldBannerImage, path);
                     if (resultDelete) {
                         log("Update banner Image Correctly");
@@ -420,6 +461,14 @@ async function setPromotionImage(req,res){
             let result = await EventConfModel.updateEventConf(updateData, idEvent, idConfiguration);
             if(result){
                 try {
+
+                    if(oldPromotionImage=="default" || oldPromotionImage=="" || oldPromotionImage==null)
+                    {
+                        log("Update Promotion Image Correctly");
+                        resJson.message = "Update Promotion Image Correctly";
+                        res.json(resJson);   return;
+                    }
+
                     let resultDelete = deleteImage.deleteImage(oldPromotionImage, path);
                     if (resultDelete) {
                         log("Update promotion Image Correctly");
@@ -486,8 +535,14 @@ async function addImage(req,res){
         let imagesEvent =await  EventConfModel.getGallery(idConfiguration.idconfiguration);
         if(imagesEvent)
         {
-            let galleryImages = JSON.parse(imagesEvent.gallery);
-            console.log(typeof (galleryImages));
+            console.log("--------------------------------------------------------------")
+            console.log((imagesEvent).gallery);
+            console.log("--------------------------------------------------------------")
+
+            let galleryImages=[]
+            if(imagesEvent.gallery!=null)
+                galleryImages = JSON.parse(imagesEvent.gallery);
+
 
             galleryImages.push(nameImg.toString());
             let updateData = [];
@@ -629,11 +684,17 @@ async function deleteBannerImage(req,res) {
         let profileImage = JSON.parse(imagesEvent.images).profileImage;
         let promotionImage = JSON.parse(imagesEvent.images).promotionImage;
 
+        if(bannerImage=="default")
+        {
+            log("Delete banner Image Correctly");
+            resJson.message = "Delete banner Image Correctly";
+            res.json(resJson);   return;
+        }
 
         let imagesJSON =
             [
                 "profileImage",profileImage,
-                "bannerImage", "",
+                "bannerImage", "default",
                 "promotionImage", promotionImage,
 
             ];
@@ -702,9 +763,18 @@ async function deleteProfileImage(req,res) {
         let profileImage = JSON.parse(imagesEvent.images).profileImage;
         let promotionImage = JSON.parse(imagesEvent.images).promotionImage;
 
+        if(profileImage=="default")
+        {
+            log("Delete profile Image Correctly");
+            resJson.message = "Delete profile Image Correctly!!!";
+            res.json(resJson);
+            return
+
+        }
+
         let imagesJSON =
             [
-                "profileImage","",
+                "profileImage","default",
                 "bannerImage", bannerImage,
                 "promotionImage", promotionImage,
 
@@ -773,6 +843,15 @@ async function deletePromotionImage(req,res) {
         let bannerImage = JSON.parse(imagesEvent.images).bannerImage;
         let profileImage = JSON.parse(imagesEvent.images).profileImage;
         let promotionImage = JSON.parse(imagesEvent.images).promotionImage;
+
+        if(promotionImage=="default")
+        {
+            log("Delete promotion Image Correctly");
+            resJson.message = "Delete promotion Image Correctly!!!";
+            res.json(resJson);
+            return
+
+        }
 
         let imagesJSON =
             [
