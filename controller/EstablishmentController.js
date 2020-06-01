@@ -341,6 +341,7 @@ async function updateEstablishmentPassword(req,res) {
 
     //regresar la respuesta
     if(result){
+        resJson.status=1;
         log("update Establishment Password");
         resJson.message="Password Updated Correctly";
         res.json(resJson);   return;
