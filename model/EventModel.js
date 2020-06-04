@@ -272,6 +272,42 @@ class EventModel{
         });
     }
 
+    static async getEstablishmentProfileImage(idEstablishment)
+    {
+
+        //console.log(idConfiguration)
+
+        const sql = 'SELECT JSON_EXTRACT(configuration.conf,"$.images.profileImage") profileImage ' +
+            'FROM configuration JOIN establishment on establishment.idconfiguration=configuration.idconfiguration WHERE idestablishment=?';
+        const params = [idEstablishment];
+        //console.log(params);
+        return new Promise((resolve, reject) => {
+            try{
+                db.query(sql, params, function(err, res){
+                    if(err){
+                        log("Error not found profileImages to database "+idEstablishment+" "+err,'error.log');
+                        reject(false);
+                    }else{
+                        //console.log(res)
+                        if(res.length>= 1){
+                            log("profileImages found correctly "+idEstablishment);
+
+                            resolve(res[0]);
+                        }
+                        else {
+                            log("Error not found profileImages to database "+idEstablishment,'error.log');
+                            resolve(false);
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error not found profileImages to database "+idEstablishment+" "+err0r,'error.log');
+                reject(false)
+            }
+
+
+        });
+    }
 
 }
 

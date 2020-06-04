@@ -357,6 +357,17 @@ async function getUserProfile(req, res){
     let userConfModel = new UserConfModel({});
     //llamar a gerUserCoonfInfo
     let result = await userConfModel.getUserConfInfo(idUser);
+
+    if(!result){
+        log("Fail user consulted");
+        resJson.status=0;
+        resJson.message="user not found";
+        res.json(resJson);   return;
+    }
+
+
+
+
     //console.log("userid para conf"+idUser);
     let userInfo=req.body.data;
     //console.log("info de usuario para model"+JSON.stringify(userInfo));
@@ -369,8 +380,6 @@ async function getUserProfile(req, res){
     let response = {"events": [], "favorites": [],"userinfo":result2,"userconf":conf};
     //let eventos = [{}];
     let events=conf.events;
-    console.log(conf);
-    console.log(events);
 
 
 

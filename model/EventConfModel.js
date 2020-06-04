@@ -218,6 +218,17 @@ class EventConfModel{
             this.images.promotionImage="";
             this.images.gallery=[];
         }
+        else
+        {
+            if(!this.images.hasOwnProperty("profileImage"))
+                this.images.profileImage="";
+            if(!this.images.hasOwnProperty("bannerImage"))
+                this.images.bannerImage="";
+            if(!this.images.hasOwnProperty("promotionImage"))
+                this.images.promotionImage="";
+            if(!this.images.hasOwnProperty("gallery"))
+                this.images.gallery=[];
+        }
         if(this.date==null)
         {
             this.date={}
