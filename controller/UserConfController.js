@@ -14,7 +14,9 @@ const validation = require('../util/validation');
 async function createUserConf(req,res) {
     let resJson ={
         'status': 0,
-        'message': ''
+        'message': '',
+        'idUserConf':""
+
     };
 
     if(!validation.isValid(req.body,jsonReq.createUserConf))
@@ -40,16 +42,18 @@ async function createUserConf(req,res) {
             //INSERTAR A LA BASE DE DATOS
             let result = await userConfModel.insertUserConf();
             if (result) {
+                resJson.idUserConf=idUserConf;
                 log("UserConf Created Correctly");
                 let resultLink = await  userConfModel.linkUserConf(idUser);
                 if(resultLink){
                     log("UserConf linked Correctly");
+                    resJson.status=1;
                     resJson.message = "UserConf Created Correctly and linked Correctly";
                     res.json(resJson);   return;
                 }
                 else{
                     log("error UserConf no linked Correctly",'error.log');
-                    resJson.status=0;
+                    resJson.status=2;
                     resJson.message = "UserConf Created Correctly. ERROR userConf not linked";
                     res.json(resJson);   return;
                 }
@@ -64,7 +68,7 @@ async function createUserConf(req,res) {
 
     }catch (e) {
         log("Promise error "+e,'error.log');
-        resJson.status = 1;
+        resJson.status = 0;
         resJson.message = "Fatal error" + e;
         res.json(resJson)
     }
@@ -97,7 +101,11 @@ async function getUserConf(req,res) {
         let result = await userConfModel.getUserConfInfo(userInfo.idUser);
         //regresar la respuesta
         if(result){
+            if(result.hasOwnProperty("conf"))
+                result.conf=JSON.parse(result.conf)
+
             log("user Configuration Consulted");
+            resJson.status=1;
             resJson.data=result;
             resJson.message="user Configuration found";
             res.json(resJson);   return;

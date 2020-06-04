@@ -13,7 +13,8 @@ async function createEventConf(req,res) {
 
     let resJson ={
         'status': 0,
-        'message': ''
+        'message': '',
+        'idEventConf':''
     };
 
     if(!validation.isValid(req.body,jsonReq.createEventConf))
@@ -40,16 +41,18 @@ async function createEventConf(req,res) {
         //INSERTAR A LA BASE DE DATOS
         let result = await eventConfModel.insertEventConf();
         if (result) {
+            resJson.idEventConf=idEventConf;
             log("UserConf Created Correctly");
             let resultLink = await  eventConfModel.linkEventConf(idEvent);
             if(resultLink){
                 log("EventConf linked Correctly");
+                resJson.status=1;
                 resJson.message = "EventConf Created Correctly and linked Correctly";
                 res.json(resJson);   return;
             }
             else{
                 log("error EventConf no linked Correctly",'error.log');
-                resJson.status=0;
+                resJson.status=2;
                 resJson.message = "EventConf Created Correctly. ERROR userConf not linked";
                 res.json(resJson);   return;
             }
@@ -64,7 +67,7 @@ async function createEventConf(req,res) {
 
     }catch (e) {
         log("Promise error "+e,'error.log');
-        resJson.status = 1;
+        resJson.status = 0;
         resJson.message = "Fatal error" + e;
         res.json(resJson)
     }
@@ -96,6 +99,9 @@ async function getEventConf(req,res) {
         let result = await eventConfModel.getEventConfInfo(eventInfo.idEvent);
         //regresar la respuesta
         if(result){
+            if(result.hasOwnProperty("conf"))
+                result.conf=JSON.parse(result.conf)
+
             log("user Configuration Consulted");
             resJson.data=result;
             resJson.message="event Configuration found";
@@ -143,13 +149,14 @@ async function updateEventConf(req,res)
     let result = await EventConfModel.updateEventConf(eventConfData, idEvent, idConfiguration);
     //regresar la respuesta
     if(result){
+        resJson.status=1;
         log("update EventConf");
         resJson.message="EventConf Updated Correctly";
         res.json(resJson);   return;
     }
     else{
         log("Fail update EventConf",'error.log');
-        resJson.status=1;
+        resJson.status=0;
         resJson.message="Problem Updating EventConf";
         res.json(resJson);   return;
     }

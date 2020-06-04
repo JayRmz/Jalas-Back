@@ -12,7 +12,8 @@ async function createEstablishmentConf(req,res) {
 
     let resJson ={
         'status': 0,
-        'message': ''
+        'message': '',
+        'idEstablishmentConf':''
     };
 
     if(!validation.isValid(req.body,jsonReq.createEstablishmentConf))
@@ -38,16 +39,18 @@ async function createEstablishmentConf(req,res) {
         //INSERTAR A LA BASE DE DATOS
         let result = await establishmentConfModel.insertEstablishmentConf();
         if (result) {
+            resJson.idEstablishmentConf=idEstablishmentConf;
             log("EstablishmentConf Created Correctly");
             let resultLink = await  establishmentConfModel.linkEstablishmentConf(idEstablishment);
             if(resultLink){
                 log("EstablishmentConf linked Correctly");
+                resJson.status=1;
                 resJson.message = "EstablishmentConf Created Correctly and linked Correctly";
                 res.json(resJson);   return;
             }
             else{
                 log("error EstablishmentConf no linked Correctly",'error.log');
-                resJson.status=0;
+                resJson.status=2;
                 resJson.message = "EstablishmentConf Created Correctly. ERROR EstablishmentConf not linked";
                 res.json(resJson);   return;
             }
@@ -62,7 +65,7 @@ async function createEstablishmentConf(req,res) {
 
     }catch (e) {
         log("Promise error "+e,'error.log');
-        resJson.status = 1;
+        resJson.status = 0;
         resJson.message = "Fatal error" + e;
         res.json(resJson)
     }
@@ -92,8 +95,13 @@ async function getEstablishmentConf(req,res) {
         let result = await establishmentConfModel.getEstablishmentConfInfo(establishmentInfo.idEstablishment);
         //regresar la respuesta
         if(result){
+
+            if(result.hasOwnProperty("conf"))
+                result.conf=JSON.parse(result.conf)
+
             log("Establishment Configuration Consulted");
             resJson.data=result;
+            resJson.status=1;
             resJson.message="Establishment Configuration found";
             res.json(resJson);   return;
         }

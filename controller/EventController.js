@@ -48,10 +48,11 @@ async function createEvent(req,res) {
 
 
 
-/*
+
         if(eventConfData.hasOwnProperty("images"))
         {
             let images=eventConfData.images;
+            /*
             if(images.hasOwnProperty("profileImage"))
             {
                 if(images.profileImage!="")
@@ -71,7 +72,21 @@ async function createEvent(req,res) {
                     }
                 }
             }
+*/
 
+            if(!images.hasOwnProperty("profileImage"))
+                images.profileImage="";
+
+            let PI="default";
+
+            if(eventInfo.hasOwnProperty("idEstablishment"))
+            {
+                PI = await EventModel.getEstablishmentProfileImage(eventInfo.idEstablishment)
+                PI=JSON.parse(PI.profileImage)
+                console.log(PI)
+            }
+
+            images.profileImage=PI;
             if(images.hasOwnProperty("bannerImage"))
             {
                 if(images.bannerImage!="")
@@ -90,7 +105,13 @@ async function createEvent(req,res) {
                         res.json(resJson);   return;
                     }
                 }
+                else
+                    images.bannerImage="default";
+
             }
+            else
+                images.bannerImage="default";
+
 
 
 
@@ -100,16 +121,9 @@ async function createEvent(req,res) {
 
         }
 
- */
-        let images =
-            {
-                "profileImage":"default",
-                "bannerImage":"default",
-                "promotionImage":""
-            }
 
-        eventConfData.images=images;
-        resJson.images=images;
+
+
         let result = await eventModel.insertEvent(eventConfData);
 
         //console.log(result)
