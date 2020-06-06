@@ -951,7 +951,19 @@ async  function getEvents(req,res){
 
     let result = await establishmentModel.getEvents();
 
+
+
     if(result){
+        let i;
+        let establishment= await EstablishmentModel.getEstablishment(establishmentInfo.idEstablishment)
+        establishment.conf=JSON.parse(establishment.conf)
+
+        for(i=0;i<result.length;i++)
+        {
+            result[i].conf=(JSON.parse(result[i].conf))
+            result[i].establishment=establishment
+        }
+
         log("Events consulted");
         resJson.data=result;
         resJson.message="Events found";

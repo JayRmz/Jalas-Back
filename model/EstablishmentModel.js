@@ -357,9 +357,7 @@ class EstablishmentModel{
                     }else{
                         console.log(res);
                         if(res.length>= 1){
-                            let i;
-                            for(i=0;i<res.length;i++)
-                                res[i].conf=(JSON.parse(res[i].conf))
+
                             log("Events found correctly idEstablishment: "+idEstablishment);
                             resolve(res);
                         }
@@ -377,5 +375,42 @@ class EstablishmentModel{
 
         });
     }
+
+
+    static  async getEstablishment(idEstablishment)
+    {
+        const sql = `SELECT establishment.idestablishment, establishment.name, establishment.email, establishment.phone, establishment.groupid, configuration.conf 
+        FROM establishment JOIN configuration ON establishment.idconfiguration=configuration.idconfiguration 
+        WHERE idestablishment=?`;
+        const params = [idEstablishment];
+
+        return new Promise((resolve,reject) => {
+            try{
+                db.query(sql, params, function(err, res){
+                    if(err){
+                        log("Error not found establishment "+idEstablishment,'error.log');
+                        reject("ErrorConsulting")
+                    }else{
+                        log("found establishment "+idEstablishment);
+
+                        if(res.length == 0)
+                        {
+                            resolve(false);
+                        }
+                        else
+                        {
+                            resolve(res[0]);
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error not found establishment "+idEstablishment,'error.log');
+                reject("ErrorConsulting")
+            }
+        });
+    }
+
+
+
 }
 module.exports = EstablishmentModel;

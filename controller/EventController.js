@@ -1,5 +1,6 @@
 
 const EventModel = require('../model/EventModel');
+const EstablishmentModel = require('../model/EstablishmentModel');
 const EventConfModel = require('../model/EventConfModel');
 const FlakeIdGen = require('flake-idgen');
 const intformat = require('biguint-format');
@@ -74,9 +75,9 @@ async function createEvent(req,res) {
                 }
             }
 */
-
+/*
             if(!images.hasOwnProperty("profileImage"))
-                images.profileImage="";
+                images.profileImage="default";
 
             let PI="default";
 
@@ -88,6 +89,11 @@ async function createEvent(req,res) {
             }
 
             images.profileImage=PI;
+  */
+
+
+            images.profileImage="default";
+
             if(images.hasOwnProperty("bannerImage"))
             {
                 if(images.bannerImage!="")
@@ -226,13 +232,24 @@ async  function getEventInfo(req,res){
 
 
 
-    eventData.conf=confData;
+
     //regresar la respuesta
 
     if(eventData && confData){
+        eventData.conf=confData;
+        eventData.conf=JSON.parse(confData.conf)
+        let establishment= await EstablishmentModel.getEstablishment(eventData.idestablishment)
+        if(establishment)
+        {
+            establishment.conf=JSON.parse(establishment.conf)
+            eventData.establishment=establishment
+        }
+
+
+
+
         resJson.status=1;
         log("event consulted");
-        eventData.conf=JSON.parse(confData.conf)
         resJson.data=eventData;
         resJson.message="event found";
         res.json(resJson);   return;
