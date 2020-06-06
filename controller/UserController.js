@@ -888,9 +888,15 @@ async  function getEvents(req,res){
     let result=[];
     let ghostEvent=false
     let eventosExistentes=[]
+    let establishmentBandera=true;
+    let establishment={};
 
     if(resultList)
     {
+
+
+
+
         let i = 0;
         let idEvent;
         let list=JSON.parse(resultList.events);
@@ -903,6 +909,17 @@ async  function getEvents(req,res){
 
             if(resultFD)
             {
+
+
+                if(establishmentBandera)
+                {
+                    establishment= await EstablishmentModel.getEstablishment(resultFD.idestablishment)
+                    establishment.conf=JSON.parse(establishment.conf)
+                    establishmentBandera=false
+                }
+
+
+                resultFD.establishment=establishment
                 result.push(resultFD)
                 eventosExistentes.push(idEvent)
             }
