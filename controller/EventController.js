@@ -51,6 +51,7 @@ async function createEvent(req,res) {
 
         if(eventConfData.hasOwnProperty("images"))
         {
+
             let images=eventConfData.images;
             /*
             if(images.hasOwnProperty("profileImage"))
@@ -919,6 +920,42 @@ async function deletePromotionImage(req,res) {
 
 }
 
+async  function deleteEvent(req,res){
+    let resJson = {
+        'status': 0,
+        'message': '',
+        'data': {}
+    };
+
+    if(!validation.isValid(req.body,jsonReq.deleteEvent))
+    {
+        resJson.status=0;
+        resJson.message="wrong formatting";
+        res.json(resJson);   return;
+        return;
+    }
+
+    //crear un nuevo EventModel
+    let eventInfo=req.body.data;
+    let eventModel=new EventModel(eventInfo);
+    //llamar a gerEventInfo
+
+
+    let result = await eventModel.deleteEvent();
+
+    if(result){
+        resJson.status=1;
+        log("delete event");
+        resJson.message="delete event";
+        res.json(resJson);   return;
+    }
+    else{
+        log("Fail delete event");
+        resJson.status=0;
+        resJson.message="Fail delete event";
+        res.json(resJson);   return;
+    }
+}
 
 
 module.exports.CreateEvent = createEvent;
@@ -933,4 +970,4 @@ module.exports.DeleteBannerImage=deleteBannerImage;
 module.exports.DeleteProfileImage=deleteProfileImage;
 module.exports.SetPromotionImage=setPromotionImage;
 
-
+module.exports.DeleteEvent = deleteEvent;

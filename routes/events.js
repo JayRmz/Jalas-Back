@@ -20,6 +20,7 @@ router.post('/deleteProfileImage',EventController.DeleteProfileImage);
 router.post('/setPromotionImage',EventController.SetPromotionImage);
 router.post('/deletePromotionImage',EventController.DeletePromotionImage);
 
+router.post('/deleteEvent',EventController.DeleteEvent);
 
 
 module.exports = router;

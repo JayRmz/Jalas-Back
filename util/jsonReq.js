@@ -606,6 +606,28 @@ exports.getEstablishmentInfo =
             ]
     }
 
+exports.getEvents2 =
+    {
+        "fields":
+            [
+                {
+                    "name": "data",
+                    "require": true,
+                    "verification": validation.pass,
+                    "children":
+                        [
+                            {
+                                "name": "idEstablishment",
+                                "require": true,
+                                "verification": validation.isId,
+                                "children": []
+                            }
+                        ]
+                }
+            ]
+    }
+
+
 exports.updateEstablishmentPassword =
     {
         "fields":
@@ -2223,6 +2245,28 @@ exports.getEvents =
                 }
             ]
     }
+
+exports.deleteEvent =
+    {
+        "fields":
+            [
+                {
+                    "name": "data",
+                    "require": true,
+                    "verification": validation.pass,
+                    "children":
+                        [
+                            {
+                                "name": "idEvent",
+                                "require": true,
+                                "verification": validation.isId,
+                                "children": []
+                            }
+                        ]
+                }
+            ]
+    }
+
 
 
 

@@ -308,7 +308,41 @@ class EventModel{
 
         });
     }
+    async deleteEvent(){
+        const sql = 'DELETE FROM event WHERE idevent=?';
+        const params = [this.idEvent];
 
+        const  idEvent=this.idEvent;
+        return new Promise((resolve, reject) => {
+
+            try{
+                db.query(sql, params, function(err, res){
+                    if(err){
+                        log("Error not delete event to database "+idEvent+" "+err,'error.log');
+                        reject(false);
+                    }else{
+
+                        console.log(res)
+                        console.log(res.affectedRows)
+                        if(res.affectedRows>= 1){
+                            console.log("PZZ")
+                            log("Event delete correctly "+idEvent);
+                            resolve(true);
+                        }
+                        else {
+                            log("Error not delete event to database "+idEvent,'error.log');
+                            resolve(false);
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error not delete event to database "+idEvent+" "+err0r,'error.log');
+                reject(false)
+            }
+
+
+        });
+    }
 }
 
 module.exports = EventModel;

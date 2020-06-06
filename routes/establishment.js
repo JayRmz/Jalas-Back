@@ -20,7 +20,7 @@ router.post('/addImage',EstablishmentController.AddImage);
 router.post('/removeImage',EstablishmentController.RemoveImage);
 router.post('/deleteBannerImage',EstablishmentController.DeleteBannerImage);
 router.post('/deleteProfileImage',EstablishmentController.DeleteProfileImage);
-
+router.post('/getEvents',EstablishmentController.GetEvents);
 
 module.exports = router;
 
