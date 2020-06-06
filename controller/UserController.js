@@ -886,6 +886,9 @@ async  function getEvents(req,res){
     let resultList = await userModel.getEventsID();
 
     let result=[];
+    let ghostEvent=false
+    let eventosExistentes=[]
+
     if(resultList)
     {
         let i = 0;
@@ -899,12 +902,34 @@ async  function getEvents(req,res){
                 resultFD.conf=JSON.parse(resultFD.conf);
 
             if(resultFD)
+            {
                 result.push(resultFD)
+                eventosExistentes.push(idEvent)
+            }
+            else
+                ghostEvent=true;
+
         }
     }
 
     //regresar la respuesta
     if(resultList){
+        if(ghostEvent)
+        {
+            let updateData = [];
+            updateData.push({
+                "field":"events",
+                "data":eventosExistentes
+            });
+            let idUser = req.body.data.idUser;
+            let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
+
+            let resultUpdateEvents = await UserConfModel.updateUserConf(updateData, idUser, idConfiguration);
+            if(resultUpdateEvents)
+                log("Events Updated");
+            else
+                log("Error Update Events");
+        }
         log("Events consulted");
         resJson.data=result;
         resJson.message="Events found";

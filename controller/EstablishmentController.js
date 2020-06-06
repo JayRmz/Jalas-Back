@@ -926,6 +926,48 @@ async  function verifyMail(req,res){
 
 }
 
+async  function getEvents(req,res){
+    let resJson = {
+        'status': 0,
+        'message': '',
+        'data': {}
+    };
+
+    if(!validation.isValid(req.body,jsonReq.getEvents2))
+    {
+        resJson.status=0;
+        resJson.message="wrong formatting";
+        res.json(resJson);
+        return;
+    }
+
+    //crear un nuevo EstablishmentModel
+    let establishmentInfo=req.body.data;
+    let establishmentModel=new EstablishmentModel(establishmentInfo);
+    //llamar a gerEstablishmentInfo
+
+
+
+
+    let result = await establishmentModel.getEvents();
+
+    if(result){
+        log("Events consulted");
+        resJson.data=result;
+        resJson.message="Events found";
+        resJson.status=1;
+        res.json(resJson);   return;
+    }
+    else{
+        log("Fail consulted Events",'error.log');
+        resJson.message="Fail consulted Events";
+        res.json(resJson);   return;
+    }
+
+
+}
+
+
 
 module.exports.CreateEstablishment = createEstablishment;
 module.exports.ValidateEstablishmentCredentials = validateEstablishmentCredentials;
@@ -939,3 +981,4 @@ module.exports.RemoveImage=removeImage;
 module.exports.DeleteBannerImage=deleteBannerImage;
 module.exports.DeleteProfileImage=deleteProfileImage;
 module.exports.VerifyMail=verifyMail;
+module.exports.GetEvents=getEvents;

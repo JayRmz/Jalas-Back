@@ -332,5 +332,50 @@ class EstablishmentModel{
             }
         });
     }
+
+
+
+    async getEvents(){
+
+
+
+        const sql = 'SELECT event.idevent, event.name, event.latitude, event.longitude, configuration.idconfiguration,configuration.conf ' +
+            'FROM event JOIN configuration ON event.idconfiguration=configuration.idconfiguration ' +
+            'WHERE idestablishment=? AND JSON_EXTRACT(configuration.conf,"$.date.fechaFin") >= ?';
+
+        let fechaActual=new Date().toJSON().slice(0,10).split('-').reverse().join('-');
+        const params = [this.idEstablishment, fechaActual];
+        console.log(params);
+        const  idEstablishment=this.idEstablishment;
+        return new Promise((resolve, reject) => {
+
+            try{
+                db.query(sql, params, function(err, res){
+                    if(err){
+                        log("Error not found Events to database from Establishment "+idEstablishment+" "+err,'error.log');
+                        reject(false);
+                    }else{
+                        console.log(res);
+                        if(res.length>= 1){
+                            let i;
+                            for(i=0;i<res.length;i++)
+                                res[i].conf=(JSON.parse(res[i].conf))
+                            log("Events found correctly idEstablishment: "+idEstablishment);
+                            resolve(res);
+                        }
+                        else {
+                            log("Error not found Events to database from Establishment "+idEstablishment+" "+err,'error.log');
+                            resolve(false);
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error not found Events to database from Establishment "+idEstablishment+" "+err0r,'error.log');
+                reject(false)
+            }
+
+
+        });
+    }
 }
 module.exports = EstablishmentModel;

@@ -496,7 +496,7 @@ async function removeEvent(req,res){
 
             if(data.includes( idEvent ))
             {
-                //COMO SI ESTA AGREGADO HAY QUE BORRAR
+                //SI ESTA AGREGADO, ENTONCES HAY QUE BORRAR
 
                 let index = data.indexOf( idEvent );
                 data.splice( index, 1 );
