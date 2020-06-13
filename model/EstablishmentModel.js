@@ -355,8 +355,9 @@ class EstablishmentModel{
                         log("Error not found Events to database from Establishment "+idEstablishment+" "+err,'error.log');
                         reject(false);
                     }else{
-                        console.log(res);
-                        if(res.length>= 1){
+
+                        if(res.length>= 0)
+                        {
 
                             log("Events found correctly idEstablishment: "+idEstablishment);
                             resolve(res);

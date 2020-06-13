@@ -241,19 +241,31 @@ async function updateEstablishment(req,res) {
     //crear nuevo userModel
     let establishmentInfo=req.body.data;
     let establishmentModel=new EstablishmentModel(establishmentInfo);
-    //llamar a updateEvent
-
-    let establishmentConfData=req.body.data.updateData;
+    let RC=true;
     let idEstablishment = req.body.data.idEstablishment;
-    let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
-
-
-
-    let resultConf = await EstablishmentConfModel.updateEstablishmentConf(establishmentConfData, idEstablishment, idConfiguration);
     let result = await establishmentModel.updateEstablishment();
 
+    if(req.body.data.hasOwnProperty("updateData"))
+    {
+        let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
+        if (!idConfiguration)
+        {
+            log("fail Update banner establishment", 'error.log');
+            resJson.status = 0;
+            resJson.message = "fail Update banner establishment";
+            res.json(resJson);
+            return;
+        }
+
+        let establishmentConfData = req.body.data.updateData;
+        let resultConf = await EstablishmentConfModel.updateEstablishmentConf(establishmentConfData, idEstablishment, idConfiguration);
+        if(!resultConf)
+            RC=false;
+    }
+
+
     //regresar la respuesta
-    if(result && resultConf){
+    if(result && RC){
         log("update Establishment");
         resJson.message="Establishment Updated Correctly";
         resJson.status=1;
@@ -951,9 +963,19 @@ async  function getEvents(req,res){
 
     let result = await establishmentModel.getEvents();
 
+    if(result.length==0)
+    {
+        log("There are no events");
+        resJson.data=result;
+        resJson.message="There are no events";
+        resJson.status=1;
+        res.json(resJson);   return;
+    }
+
+    if(result.length>=1)
+    {
 
 
-    if(result){
         let i;
         let establishment= await EstablishmentModel.getEstablishment(establishmentInfo.idEstablishment)
         establishment.conf=JSON.parse(establishment.conf)
@@ -969,6 +991,9 @@ async  function getEvents(req,res){
         resJson.message="Events found";
         resJson.status=1;
         res.json(resJson);   return;
+
+
+
     }
     else{
         log("Fail consulted Events",'error.log');
