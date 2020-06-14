@@ -241,6 +241,7 @@ async function updateEstablishment(req,res) {
     //crear nuevo userModel
     let establishmentInfo=req.body.data;
     let establishmentModel=new EstablishmentModel(establishmentInfo);
+
     let RC=true;
     let idEstablishment = req.body.data.idEstablishment;
     let result = await establishmentModel.updateEstablishment();

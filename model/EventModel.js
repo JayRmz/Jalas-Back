@@ -189,7 +189,7 @@ class EventModel{
                         reject(false);
                     }else{
                         console.log(res);
-                        if(res.changedRows== 1){
+                        if(res.affectedRows>= 1){
                             log("Event updated correctly "+idEvent);
                             resolve(true);
                         }
