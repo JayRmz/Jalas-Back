@@ -175,24 +175,44 @@ async function updateEvent(req,res) {
     //crear nuevo EventModel
     let eventInfo=req.body.data;
     let eventModel=new EventModel(eventInfo);
-    //llamar a updateEvent
+
+
+
+
+
+    let RC=true;
+    let idEvent = req.body.data.idEvent;
     let result = await eventModel.updateEvent();
 
+    if(req.body.data.hasOwnProperty("updateData"))
+    {
+        let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
+        console.log("__________________________")
+        console.log(idConfiguration)
+        console.log("__________________________")
+        if (!idConfiguration)
+        {
+            log("fail Update event", 'error.log');
+            resJson.status = 0;
+            resJson.message = "fail event idConfiguration";
+            res.json(resJson);
+            return;
+        }
 
-    let eventConfData=req.body.data.updateData;
-    let idEvent = req.body.data.idEvent;
-    //llamar a updateUserConf
-    let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
-    //console.log(idConfiguration);
-    let resultConf = await EventConfModel.updateEventConf(eventConfData, idEvent, idConfiguration);
+        let eventConfData = req.body.data.updateData;
+        let resultConf = await EventConfModel.updateEventConf(eventConfData, idEvent, idConfiguration);
+        if(!resultConf)
+            RC=false;
+    }
 
 
     //regresar la respuesta
-    if(result && resultConf){
+    if(result && RC){
         log("update Event");
-        resJson.status=1;
         resJson.message="Event Updated Correctly";
+        resJson.status=1;
         res.json(resJson);   return;
+
     }
     else{
         log("Fail update Event",'error.log');
