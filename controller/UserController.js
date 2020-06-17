@@ -253,9 +253,36 @@ async function updateUser(req,res) {
     let userInfo=req.body.data;
     let userModel=new UserModel(userInfo);
     //llamar a updateUser
+    let RC=true;
+    let idUser = req.body.data.idUser;
     let result = await userModel.updateUser();
+
+
+
+    if(req.body.data.hasOwnProperty("updateData"))
+    {
+        let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
+        if (!idConfiguration)
+        {
+            log("fail Update user conf", 'error.log');
+            resJson.status = 0;
+            resJson.message = "fail Update user conf";
+            res.json(resJson);
+            return;
+        }
+
+        let userConfData = req.body.data.updateData;
+        let resultConf = await UserConfModel.updateUserConf(userConfData, idUser, idConfiguration);
+        if(!resultConf)
+            RC=false;
+    }
+
+
+
+
+
     //regresar la respuesta
-    if(result){
+    if(result && RC){
         log("update User");
         resJson.message="User Updated Correctly";
         res.json(resJson);   return;
@@ -754,6 +781,13 @@ async function deleteProfileImage(req,res)
     let idUser = req.body.data.idUser;
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
 
+    if(!idConfiguration)
+    {
+        log("fail delete profile Image",'error.log');
+        resJson.status=0;
+        resJson.message="fail delete profile Image Correctly";
+        res.json(resJson);   return;
+    }
 
     let imagesUser =await  UserConfModel.getImages(idConfiguration.idconfiguration);
     if(imagesUser)
@@ -832,26 +866,67 @@ async  function getFavorites(req,res){
 
     let resultList = await userModel.getFavoritesID();
 
+    let result=[];
+    let ghostEstablishment=false
+    let establecimientosExistentes=[]
+
     let resultFav=[];
     if(resultList)
     {
         let i = 0;
         let idEstablishment;
-        let list=JSON.parse(resultList.favorites);
-        for(i=0;i<list.length;i++)
+        let list = JSON.parse(resultList.favorites);
+
+        for (i = 0; i < list.length; i++)
         {
-            idEstablishment=list[i];
+            idEstablishment = list[i];
+
+
             let resultFD = await UserModel.getFavoritesData(idEstablishment);
-            if(resultFD.hasOwnProperty("profileImage"))
-                resultFD.profileImage=JSON.parse(resultFD.profileImage)+"";
-            if(resultFD)
+
+            if (resultFD)
+            {
+
+                if (resultFD.hasOwnProperty("profileImage"))
+                    resultFD.profileImage = JSON.parse(resultFD.profileImage) + "";
+
+                establecimientosExistentes.push(idEstablishment)
                 resultFav.push(resultFD)
+            }
+            else
+            {
+                ghostEstablishment = true;
+            }
         }
+
+
+        //regresar la respuesta
     }
+    console.log("PZZ")
+    if(resultList)
+    {
+        console.log(ghostEstablishment)
+        if(ghostEstablishment)
+        {
+            let updateData = [];
+            updateData.push({
+                "field":"favorites",
+                "data":establecimientosExistentes
+            });
 
+            console.log(updateData)
+            let idUser = req.body.data.idUser;
+            let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
 
-    //regresar la respuesta
-    if(resultList){
+            let resultUpdateEstablishments = await UserConfModel.updateUserConf(updateData, idUser, idConfiguration);
+
+            console.log(resultUpdateEstablishments)
+
+            if(resultUpdateEstablishments)
+                log("Establishments Updated");
+            else
+                log("Error Update Establishments");
+        }
         log("Favorites consulted");
         resJson.data=resultFav;
         resJson.message="Favorites found";
@@ -864,6 +939,9 @@ async  function getFavorites(req,res){
         res.json(resJson);   return;
     }
 }
+
+
+
 
 async  function getEvents(req,res){
     let resJson = {
@@ -893,15 +971,14 @@ async  function getEvents(req,res){
 
     if(resultList)
     {
-
-
-
-
         let i = 0;
         let idEvent;
         let list=JSON.parse(resultList.events);
         for(i=0;i<list.length;i++)
         {
+
+
+
             idEvent=list[i];
             let resultFD = await UserModel.getEventsData(idEvent);
             if(resultFD.hasOwnProperty("conf"))
@@ -914,7 +991,10 @@ async  function getEvents(req,res){
                 if(establishmentBandera)
                 {
                     establishment= await EstablishmentModel.getEstablishment(resultFD.idestablishment)
-                    establishment.conf=JSON.parse(establishment.conf)
+                    if(establishment)
+                    {
+                        establishment.conf=JSON.parse(establishment.conf)
+                    }
                     establishmentBandera=false
                 }
 
