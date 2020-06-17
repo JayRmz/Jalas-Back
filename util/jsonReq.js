@@ -467,7 +467,8 @@ exports.createEstablishment =
                                         "name": "hours",
                                         "require": false,
                                         "verification": validation.pass,
-                                        "children": [
+                                        "children":
+                                        [
                                             {
                                                 "name": "lunes",
                                                 "require": true,

@@ -238,7 +238,7 @@ async function updateEstablishment(req,res) {
         return;
     }
 
-    //crear nuevo userModel
+    //crear nuevo EstablishmentModel
     let establishmentInfo=req.body.data;
     let establishmentModel=new EstablishmentModel(establishmentInfo);
 
@@ -251,9 +251,9 @@ async function updateEstablishment(req,res) {
         let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
         if (!idConfiguration)
         {
-            log("fail Update banner establishment", 'error.log');
+            log("fail Update establishment conf", 'error.log');
             resJson.status = 0;
-            resJson.message = "fail Update banner establishment";
+            resJson.message = "fail Update establishment conf";
             res.json(resJson);
             return;
         }
@@ -306,13 +306,6 @@ async  function getEstablishmentInfo(req,res){
     //llamar a gerEstablishmentConfInfo
 
     let RC=await establishmentConfModel.getEstablishmentConfInfo(establishmentInfo.idEstablishment);
-
-
-
-
-
-
-
     //regresar la respuesta
     if(result && RC){
         result.conf =JSON.parse(RC.conf)
@@ -964,6 +957,11 @@ async  function getEvents(req,res){
 
     let result = await establishmentModel.getEvents();
 
+    console.log("PZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
+    console.log(result)
+    console.log("PZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
+
+
     if(result.length==0)
     {
         log("There are no events");
@@ -979,6 +977,19 @@ async  function getEvents(req,res){
 
         let i;
         let establishment= await EstablishmentModel.getEstablishment(establishmentInfo.idEstablishment)
+
+        if(!establishment)
+        {
+            log("ESTE EVENTO NO DEBERIA DE EXISTIR PORQUE NO TIENE ESTABLECIMIENTO QUE LO PATROCINE");
+            resJson.data=result;
+            resJson.message="Events found";
+            resJson.status=1;
+            res.json(resJson);   return;
+        }
+
+        console.log("establishment")
+        console.log(establishment)
+        console.log("establishment")
         establishment.conf=JSON.parse(establishment.conf)
 
         for(i=0;i<result.length;i++)
