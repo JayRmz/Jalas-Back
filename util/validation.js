@@ -134,21 +134,27 @@ exports.isPhone=function (number) {
 };
 
 exports.isLatitude=function (lat) {
-    if (!validator.isLatLong(stringFormat(lat)+","+"32.690705"))
+    lat=stringFormat(lat)
+    if (!validator.isLatLong(lat+","+"32.690705"))
     {
         console.log("isLatitude")
         return false;
     }
-    return lat
+
+    let lat2=parseFloat(lat)
+    return lat2
 };
 
 exports.isLongitude=function (lon) {
-    if (!validator.isLatLong("39.900472"+","+stringFormat(lon)))
+    lon=stringFormat(lon)
+    if (!validator.isLatLong("39.900472"+","+lon))
     {
         console.log("isLongitude")
         return false;
     }
-    return lon
+
+    let lon2=parseFloat(lon)
+    return lon2
 };
 exports.isHour=function (hour) {
 

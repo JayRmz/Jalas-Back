@@ -29,6 +29,8 @@ class  SearchModel {
                         log("Error not found events to database 1   "+err,'error.log');
                         reject(false);
                     }else{
+                        if(res.length==0)
+                            resolve([])
                         if(res.length>= 1) {
                             let events = [];
                             for (let i = 0; i < res.length; i++)
@@ -85,6 +87,8 @@ class  SearchModel {
                         log("Error not found events to database 1   "+err,'error.log');
                         reject(false);
                     }else{
+                        if(res.length==0)
+                            resolve([])
                         if(res.length>= 1){
                             let events=[];
 
@@ -94,8 +98,22 @@ class  SearchModel {
                                 let lat=(res[i].latitude - latitude) * (res[i].latitude - latitude);
                                 let lon= (res[i].longitude - longitude) * (res[i].longitude - longitude);
                                 let dis=(kmPerDegrees * distance) * (kmPerDegrees * distance);
-                                if (  ((lat +lon) <= dis)  && res[i].date==fecha  )
-                                    events.push(res[i])
+
+
+
+                                if(res[i].hasOwnProperty("date"))
+                                {
+                                    res[i].date=JSON.parse(res[i].date)
+                                    if(res[i].date.hasOwnProperty("fechaInicio") && res[i].date.hasOwnProperty("fechaFin"))
+                                    {
+                                        var fecha_busqueda = new Date(fecha.split("-")[2]+"-"+fecha.split("-")[1]+"-"+fecha.split("-")[0]);
+                                        var fecha_inicio=new Date(res[i].date.fechaInicio.split("-")[2]+"-"+res[i].date.fechaInicio.split("-")[1]+"-"+res[i].date.fechaInicio.split("-")[0]);
+                                        var fecha_fin=new Date(res[i].date.fechaFin.split("-")[2]+"-"+res[i].date.fechaFin.split("-")[1]+"-"+res[i].date.fechaFin.split("-")[0]);
+
+                                        if (  ((lat +lon) <= dis)  && fecha_inicio<=fecha_busqueda && fecha_fin>=fecha_busqueda  )
+                                            events.push(res[i])
+                                    }
+                                }
                             }
 
 
@@ -151,22 +169,24 @@ class  SearchModel {
         const circumference = 40075;
         const kmPerDegrees = 360/circumference;
 
-        const latitudeMax = latitude+kmPerDegrees*distance;
-        const latitudeMin= latitude-kmPerDegrees*distance;
-        const longitudeMax = longitude+kmPerDegrees*distance;
-        const longitudeMin= longitude-kmPerDegrees*distance;
+        let latitudeMax = parseInt(latitude+kmPerDegrees*distance)+1;
+        let latitudeMin= parseInt(latitude-kmPerDegrees*distance)-1;
+        let longitudeMax = parseInt(longitude+kmPerDegrees*distance)+1;
+        let longitudeMin= parseInt(longitude-kmPerDegrees*distance)-1;
+
+        const sql = 'SELECT JSON_EXTRACT(configuration.conf,"$.category") category, establishment.idestablishment,establishment.name, JSON_EXTRACT(configuration.conf,"$.location") location FROM configuration JOIN establishment ON establishment.idconfiguration = configuration.idconfiguration WHERE JSON_EXTRACT(configuration.conf,"$.location.latitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.latitude") <= ? AND JSON_EXTRACT(configuration.conf,"$.location.longitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.longitude") <=?;';
 
 
-        const sql = 'SELECT JSON_EXTRACT(configuration.conf,"$.category") category, establishment.idestablishment,establishment.name,' +
-            ' JSON_EXTRACT(configuration.conf,"$.location") location ' +
-            'FROM configuration JOIN establishment ON establishment.idconfiguration = configuration.idconfiguration ' +
-            'WHERE JSON_EXTRACT(configuration.conf,"$.location.latitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.latitude") <=? ' +
-            'AND JSON_EXTRACT(configuration.conf,"$.location.longitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.longitude") <=?' +
-            'ORDER BY category';
+        console.log(sql)
+        let params = [latitudeMin, latitudeMax,longitudeMin, longitudeMax];
+
+        console.log(params)
+        //params = [latitudeMin,latitudeMax];
 
 
-        const params = [latitudeMin,latitudeMax, longitudeMin, longitudeMax];
-        //console.log(params);
+        console.log("PARAMS")
+        console.log(params);
+        console.log("PARAMS")
         return new Promise((resolve, reject) => {
             try{
                 db.query(sql, params, function(err, res){
@@ -174,8 +194,11 @@ class  SearchModel {
                         log("Error not found establishment to database 1   "+err,'error.log');
                         reject(false);
                     }else{
+                        if(res.length==0)
+                            resolve([])
                         if(res.length>= 1) {
                             let establishment = [];
+
                             for (let i = 0; i < res.length; i++) {
                                 res[i].location=JSON.parse(res[i].location);
 
@@ -190,11 +213,16 @@ class  SearchModel {
                             log("found establishment correctly ");
                             resolve(establishment);
 
+
                         }
+
+
                         else {
                             log("Not found establishment to  database",'error.log');
                             resolve(false);
                         }
+
+
                     }
                 });
             }catch(err0r){
@@ -238,6 +266,8 @@ class  SearchModel {
                         log("Error not found events to database 1   "+err,'error.log');
                         reject(false);
                     }else{
+                        if(res.length==0)
+                            resolve([])
                         if(res.length>= 1){
                             let events=[];
 
@@ -276,21 +306,18 @@ class  SearchModel {
         const circumference = 40075;
         const kmPerDegrees = 360/circumference;
 
-        const latitudeMax = latitude+kmPerDegrees*distance;
-        const latitudeMin= latitude-kmPerDegrees*distance;
-        const longitudeMax = longitude+kmPerDegrees*distance;
-        const longitudeMin= longitude-kmPerDegrees*distance;
+        let latitudeMax = parseInt(latitude+kmPerDegrees*distance)+1;
+        let latitudeMin= parseInt(latitude-kmPerDegrees*distance)-1;
+        let longitudeMax = parseInt(longitude+kmPerDegrees*distance)+1;
+        let longitudeMin= parseInt(longitude-kmPerDegrees*distance)-1;
 
-        const sql = 'SELECT JSON_EXTRACT(configuration.conf,"$.category") category, establishment.idestablishment,establishment.name,' +
-            ' JSON_EXTRACT(configuration.conf,"$.location") location ' +
-            'FROM configuration JOIN establishment ON establishment.idconfiguration = configuration.idconfiguration ' +
-            'WHERE JSON_EXTRACT(configuration.conf,"$.location.latitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.latitude") <=? ' +
-            'AND JSON_EXTRACT(configuration.conf,"$.location.longitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.longitude") <=?' +
-            'AND establishment.name LIKE ? ORDER BY category';
+        const sql = 'SELECT JSON_EXTRACT(configuration.conf,"$.category") category, establishment.idestablishment,establishment.name, JSON_EXTRACT(configuration.conf,"$.location") location FROM configuration JOIN establishment ON establishment.idconfiguration = configuration.idconfiguration WHERE JSON_EXTRACT(configuration.conf,"$.location.latitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.latitude") <= ? AND JSON_EXTRACT(configuration.conf,"$.location.longitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.longitude") <=? AND establishment.name LIKE ?  ORDER BY category;';
 
 
         const params = [latitudeMin,latitudeMax, longitudeMin, longitudeMax, "%"+name+"%"];
-        //console.log(params);
+        console.log("params")
+        console.log(params);
+        console.log("params")
         return new Promise((resolve, reject) => {
             try{
                 db.query(sql, params, function(err, res){
@@ -299,6 +326,13 @@ class  SearchModel {
                         log("Error not found establishment to database 1   "+err,'error.log');
                         reject(false);
                     }else{
+                        console.log("RES")
+                        console.log(res)
+                        console.log("RES")
+
+                        if(res.length==0)
+                            resolve([]);
+
                         if(res.length>= 1) {
                             let establishment = [];
                             for (let i = 0; i < res.length; i++) {

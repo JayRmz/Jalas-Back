@@ -154,6 +154,8 @@ return;
                 }
 
             establishmentConfData.images=images;
+            //if(establishmentConfData.ha)
+
             resJson.images=images;
 
             let result = await establishmentModel.insertEstablishment(establishmentConfData);
@@ -957,10 +959,6 @@ async  function getEvents(req,res){
 
     let result = await establishmentModel.getEvents();
 
-    console.log("PZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
-    console.log(result)
-    console.log("PZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
-
 
     if(result.length==0)
     {
@@ -980,7 +978,7 @@ async  function getEvents(req,res){
 
         if(!establishment)
         {
-            log("ESTE EVENTO NO DEBERIA DE EXISTIR PORQUE NO TIENE ESTABLECIMIENTO QUE LO PATROCINE");
+            log("ESTE EVENTO NO DEBERIA DE EXISTIR PORQUE NO TIENE ESTABLECIMIENTO ASOCIADO");
             resJson.data=result;
             resJson.message="Events found";
             resJson.status=1;
