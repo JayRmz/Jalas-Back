@@ -1,6 +1,7 @@
 const log = require('log-to-file');
 const db = require('../util/db');
 const bcrypt = require('bcrypt');
+const moment = require('moment');
 const EstablishmentConfModel = require('../model/EstablishmentConfModel');
 const FlakeIdGen = require('flake-idgen');
 const intformat = require('biguint-format');
@@ -343,7 +344,9 @@ class EstablishmentModel{
             'FROM event JOIN configuration ON event.idconfiguration=configuration.idconfiguration ' +
             'WHERE idestablishment=? AND JSON_EXTRACT(configuration.conf,"$.date.fechaFin") >= ?';
 
-        let fechaActual=new Date().toJSON().slice(0,10).split('-').reverse().join('-');
+        let fechaActual=moment().format().slice(0,10).split('-').reverse().join('-')
+
+
         const params = [this.idEstablishment, fechaActual];
         console.log(params);
         const  idEstablishment=this.idEstablishment;
