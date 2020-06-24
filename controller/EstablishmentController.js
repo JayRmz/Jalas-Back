@@ -20,6 +20,7 @@ async function createEstablishment(req,res) {
         'status': 1,
         'message': '',
         'images':{},
+       'idSession':'',
         'idEstablishment':''
     };
 
@@ -40,7 +41,7 @@ return;
     if(existEmailUser == '1' || exist == '1'){
         resJson.status=1;
         resJson.message="Email already exist";
-        res.json(resJson);
+                res.json(resJson);
         return;
     }
 
@@ -50,12 +51,20 @@ return;
             //GENERAR ID UNICO POR ESTABLECIMIENTO
             let temp=generator.next();
             let id=intformat(temp,'dec');
+
             //GENERAR UN CODIGO DE CONFIRMACION
             let uuid=uuidv4();
+
+            //GENERAR UN ID DE SESION
+            let temp2 = generator.next();
+            let idSession = intformat(temp2, 'dec');
+
             //INSERTAR A LA BASE DE DATOS
             let establishmentInfo=req.body.data;
             establishmentInfo.idEstablishment=id;
             establishmentInfo.confirmationCode=uuid;
+            establishmentInfo.idSession=idSession
+
             let establishmentModel=new EstablishmentModel(establishmentInfo);
             let establishmentConfData=req.body.data.conf;
             if(establishmentConfData==null)
@@ -165,6 +174,7 @@ return;
                 let emailResult = await Email.sendConfirmation(email,uuid);
                 resJson.message="Establishment Created Correctly";
                 resJson.status=1;
+                resJson.idSession=idSession;
                 resJson.idEstablishment=id;
                 log("Sent Email Succesfully "+email);
                 res.json(resJson);
@@ -985,9 +995,7 @@ async  function getEvents(req,res){
             res.json(resJson);   return;
         }
 
-        console.log("establishment")
-        console.log(establishment)
-        console.log("establishment")
+
         establishment.conf=JSON.parse(establishment.conf)
 
         for(i=0;i<result.length;i++)

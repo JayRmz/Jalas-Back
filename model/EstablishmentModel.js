@@ -41,6 +41,8 @@ class EstablishmentModel{
             this.idConfiguration=establishmentObject.idConfiguration;
         if(establishmentObject.hasOwnProperty("confirmationCode"))
             this.confirmationCode=establishmentObject.confirmationCode;
+        if(establishmentObject.hasOwnProperty("idSession"))
+            this.idSession=establishmentObject.idSession;
 
     }
 
@@ -115,10 +117,10 @@ class EstablishmentModel{
 
                 log("EstablishmentConf Created Correctly");
 
-                const sql = `INSERT INTO establishment(idestablishment,name,email,password,phone,groupid,confirmationcode,idconfiguration) values (?,?,?,?,?,?,?,?);`;
+                const sql = `INSERT INTO establishment(idestablishment,name,email,password,phone,groupid,confirmationcode,idconfiguration,idsession) values (?,?,?,?,?,?,?,?,?);`;
                 const saltRounds = 10;
                 let hash = await bcrypt.hash(this.password, saltRounds);
-                const params = [this.idEstablishment, this.name, this.email, hash, this.phone, this.group, this.confirmationCode, idEstablishmentConf];
+                const params = [this.idEstablishment, this.name, this.email, hash, this.phone, this.group, this.confirmationCode, idEstablishmentConf,this.idSession];
 
                 return new Promise((resolve, reject) => {
                     try {
@@ -410,6 +412,66 @@ class EstablishmentModel{
             }catch(err0r){
                 log("Error not found establishment "+idEstablishment,'error.log');
                 reject("ErrorConsulting")
+            }
+        });
+    }
+    static async getIdSession(idEstablishment){
+
+        const sql = `SELECT idsession FROM establishment WHERE idestablishment=?`;
+        const params = [idEstablishment];
+
+        return new Promise((resolve,reject) => {
+            try{
+                db.query(sql, params, function(err, res){
+                    if(err){
+                        log("Error consulting idSession  idEstablishment:"+idEstablishment+" "+err,'error.log');
+                        reject("Error Consulting idSession")
+                    }else{
+                        log("idSession consulting idEstablishment:" +idEstablishment);
+                        if(res.length==1) {
+                            resolve(res[0].idsession);
+
+                        }
+                        else {
+                            log("Error consulting idSession  idEstablishment:"+idEstablishment+" "+err,'error.log');
+                            resolve(false)
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error consulting idSession  idEstablishment:"+idEstablishment+" "+err0r,'error.log');
+                reject("Error Consulting idSession")
+            }
+        });
+    }
+
+    static async setIdSession(idEstablishment, idSession){
+
+        const sql = `UPDATE establishment SET establishment.idsession = ? WHERE establishment.idestablishment = ?;`;
+        const params = [idSession,idEstablishment];
+
+        return new Promise((resolve,reject) => {
+            try{
+                db.query(sql, params, function(err, res){
+                    if(err){
+                        log("Error updating idSession  idEstablishment:"+idEstablishment+" "+err,'error.log');
+                        reject("Error updating idSession")
+                    }else{
+                        log("idSession updating idEstablishment:" +idEstablishment);
+
+                        if(res.affectedRows==1) {
+                            resolve(true);
+
+                        }
+                        else {
+                            log("Error updating idSession  idEstablishment:"+idEstablishment+" "+err,'error.log');
+                            resolve(false)
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error updating idSession  idEstablishment:"+idEstablishment+" "+err0r,'error.log');
+                reject("Error updating idSession")
             }
         });
     }

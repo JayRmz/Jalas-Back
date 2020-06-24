@@ -45,6 +45,8 @@ class UserModel{
             this.idConfiguration=userObject.idConfiguration;
         if(userObject.hasOwnProperty("confirmationCode"))
             this.confirmationCode=userObject.confirmationCode;
+        if(userObject.hasOwnProperty("idSession"))
+            this.idSession=userObject.idSession;
     }
 
 
@@ -135,11 +137,11 @@ class UserModel{
             let result = await userConfModel.insertUserConf();
 
             if (result) {
-                const sql = `INSERT INTO user(iduser,name,lastname,email,password,birthday,sex,phone,confirmationcode, idconfiguration) values (?,?,?,?,?,?,?,?,?,?);`;
+                const sql = `INSERT INTO user(iduser,name,lastname,email,password,birthday,sex,phone,confirmationcode, idconfiguration, idsession) values (?,?,?,?,?,?,?,?,?,?,?);`;
                 const saltRounds = 10;
                 let hash = await bcrypt.hash(this.password,saltRounds);
 
-                const params = [this.idUser,this.name,this.lastName,this.email,hash,this.birthday,this.sex,this.phone,this.confirmationCode, idUserConf];
+                const params = [this.idUser,this.name,this.lastName,this.email,hash,this.birthday,this.sex,this.phone,this.confirmationCode, idUserConf, this.idSession];
                 return new Promise((resolve,reject) => {
 
                     try{
@@ -453,6 +455,73 @@ class UserModel{
             }
         });
     }
+
+    static async getIdSession(idUser){
+
+        const sql = `SELECT idsession FROM user WHERE iduser=?`;
+        const params = [idUser];
+
+        return new Promise((resolve,reject) => {
+            try{
+                db.query(sql, params, function(err, res){
+                    if(err){
+                        log("Error consulting idSession  idUser:"+idUser+" "+err,'error.log');
+                        reject("Error Consulting idSession")
+                    }else{
+                        log("idSession consulting idUser:" +idUser);
+                        if(res.length==1) {
+                                resolve(res[0].idsession);
+
+                        }
+                        else {
+                            log("Error consulting idSession  idUser:"+idUser+" "+err,'error.log');
+                            resolve(false)
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error consulting idSession  idUser:"+idUser+" "+err0r,'error.log');
+                reject("Error Consulting idSession")
+            }
+        });
+    }
+
+    static async setIdSession(idUser, idSession){
+
+        const sql = `UPDATE user SET user.idsession = ? WHERE user.iduser = ?;`;
+        const params = [idSession,idUser];
+
+        return new Promise((resolve,reject) => {
+            try{
+                db.query(sql, params, function(err, res){
+                    if(err){
+                        log("Error updating idSession  idUser:"+idUser+" "+err,'error.log');
+                        reject("Error updating idSession")
+                    }else{
+                        log("idSession updating idUser:" +idUser);
+
+                        console.log("res")
+                        console.log(res)
+                        console.log("res")
+
+                        if(res.affectedRows==1) {
+                            resolve(true);
+
+                        }
+                        else {
+                            log("Error updating idSession  idUser:"+idUser+" "+err,'error.log');
+                            resolve(false)
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error updating idSession  idUser:"+idUser+" "+err0r,'error.log');
+                reject("Error updating idSession")
+            }
+        });
+    }
+
+
 
 
 }

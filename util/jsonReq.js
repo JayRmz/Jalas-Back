@@ -36,7 +36,7 @@ exports.createUser =
                         {
                             "name": "birthday",
                             "require": true,
-                            "verification": validation.isDate,
+                            "verification": validation.pass,
                             "children": []
                         },
                         {

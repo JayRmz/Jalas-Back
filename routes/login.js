@@ -9,5 +9,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/validateCredentials',LoginController.ValidateCredentials);
 
+router.post('/verifyUserSession',LoginController.VerifyUserSession);
+router.post('/verifyEstablishmentSession',LoginController.VerifyEstablishmentSession);
 
 module.exports = router;
