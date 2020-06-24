@@ -58,6 +58,7 @@ async function createUser(req,res) {
         'status': 1,
         'message': '',
         'idUser':'',
+        'idSession':'',
         'images':{}
     };
 
@@ -87,12 +88,22 @@ async function createUser(req,res) {
                 //GENERAR ID UNICO POR USUARIO
                 let temp = generator.next();
                 let id = intformat(temp, 'dec');
+
                 //GENERAR UN CODIGO DE CONFIRMACION
                 let uuid = uuidv4();
+
+                //GENERAR UN ID DE SESION
+                let temp2 = generator.next();
+                let idSession = intformat(temp2, 'dec');
+
+
                 //INSERTAR A LA BASE DE DATOS
+
                 let userInfo = req.body.data;
                 userInfo.idUser = id;
+                userInfo.idSession=idSession;
                 userInfo.confirmationCode = uuid;
+
                 let userModel = new UserModel(userInfo);
 
                 let userConfData={};
@@ -172,6 +183,7 @@ async function createUser(req,res) {
 
                     resJson.message = "User Created Correctly";
                     resJson.idUser=id;
+                    resJson.idSession=idSession;
                     log("Sent Email Succesfully " + email);
                     res.json(resJson);   return;
                 } else {

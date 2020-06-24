@@ -234,6 +234,16 @@ class EstablishmentConfModel{
             this.location.state="";
             this.location.address="";
         }
+        else
+        {
+            if(this.location.latitude!=null)
+                {
+                    this.location.latitude=parseFloat(""+this.location.latitude);
+                    console.log("not null")
+                }
+            if(this.location.longitude!=null)
+                this.location.longitude=parseFloat(""+this.location.longitude);
+        }
         if(this.hours==null)
         {
             this.hours={};

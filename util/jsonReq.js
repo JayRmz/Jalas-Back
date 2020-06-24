@@ -36,7 +36,7 @@ exports.createUser =
                         {
                             "name": "birthday",
                             "require": true,
-                            "verification": validation.isDate,
+                            "verification": validation.pass,
                             "children": []
                         },
                         {
@@ -1803,7 +1803,7 @@ exports.searchEventsPerDate =
                             {
                                 "name": "date",
                                 "require": true,
-                                "verification": validation.isDate,
+                                "verification": validation.pass,
                                 "children": []
                             }
 
@@ -1926,7 +1926,7 @@ exports.searchEventsPerDate_Genres =
                             {
                                 "name": "date",
                                 "require": true,
-                                "verification": validation.isDate,
+                                "verification": validation.pass,
                                 "children": []
                             },
                             {

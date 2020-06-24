@@ -150,7 +150,16 @@ async function updateUserConf(req,res){
     let idUser = req.body.data.idUser;
     //llamar a updateUserConf
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
-    console.log(idConfiguration);
+
+    if (!idConfiguration)
+    {
+        log("fail Update user conf", 'error.log');
+        resJson.status = 0;
+        resJson.message = "fail Update user conf";
+        res.json(resJson);
+        return;
+    }
+
     let result = await UserConfModel.updateUserConf(userConfData, idUser, (idConfiguration));
     //regresar la respuesta
     if(result){
@@ -189,6 +198,14 @@ async function addFavorite(req,res){
     let idEstablishment=req.body.data.idEstablishment;
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
 
+    if (!idConfiguration)
+    {
+        log("Fail Add Favorite", 'error.log');
+        resJson.status = 0;
+        resJson.message = "Fail Add Favorite";
+        res.json(resJson);
+        return;
+    }
     let verifyEstablishment = await EstablishmentModel.verifyEstablishment(idEstablishment);
 
     if(verifyEstablishment){
@@ -289,7 +306,14 @@ async function addEvent(req,res){
     let idUser = req.body.data.idUser;
     let idEvent=req.body.data.idEvent;
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
-
+    if (!idConfiguration)
+    {
+        log("Fail Add Event", 'error.log');
+        resJson.status = 0;
+        resJson.message = "Fail Add Event";
+        res.json(resJson);
+        return;
+    }
     let verifyEvent = await EventModel.verifyEvent(idEvent);
 
     if(verifyEvent){
@@ -394,7 +418,14 @@ async function removeFavorite(req,res){
     let idUser = req.body.data.idUser;
     let idEstablishment=req.body.data.idEstablishment;
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
-
+    if (!idConfiguration)
+    {
+        log("Fail Remove Favorite", 'error.log');
+        resJson.status = 0;
+        resJson.message = "Fail Remove Favorite";
+        res.json(resJson);
+        return;
+    }
     let verifyEstablishment = await EstablishmentModel.verifyEstablishment(idEstablishment);
     //EXISTA LO QUE QUIERES BORRAR
 
@@ -480,6 +511,15 @@ async function removeEvent(req,res){
     let idUser = req.body.data.idUser;
     let idEvent=req.body.data.idEvent;
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
+    if (!idConfiguration)
+    {
+        log("Fail remove Event", 'error.log');
+        resJson.status = 0;
+        resJson.message = "Fail Remove Event";
+        res.json(resJson);
+        return;
+    }
+
 
     let verifyEvent = await EventModel.verifyEvent(idEvent);
     //EXISTA LO QUE QUIERES BORRAR
