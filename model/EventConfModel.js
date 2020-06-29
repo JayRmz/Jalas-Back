@@ -53,7 +53,7 @@ class EventConfModel{
 
         let jsonData=this.toJSON();
 
-        console.log(jsonData);
+
 
         const params = [this.idEventConf,jsonData];
         return new Promise((resolve,reject) => {

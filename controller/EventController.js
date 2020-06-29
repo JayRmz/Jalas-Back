@@ -39,7 +39,13 @@ async function createEvent(req,res) {
         //INSERTAR A LA BASE DE DATOS
         let eventInfo = req.body.data;
         eventInfo.idEvent = id;
+
+
+
+
+
         let eventModel = new EventModel(eventInfo);
+
         let eventConfData = req.body.data.conf;
 
 

@@ -5,7 +5,7 @@ const EventConfModel = require('../model/EventConfModel');
 const FlakeIdGen = require('flake-idgen');
 const intformat = require('biguint-format');
 const generator = new FlakeIdGen();
-
+const EstablishmentModel = require('../model/EstablishmentModel');
 
 class EventModel{
     //images
@@ -129,9 +129,19 @@ class EventModel{
 
             //crear un userConfModel
             let eventConfInfo = eventConfData;
+
             eventConfInfo.idEventConf = idEventConf;
 
             let eventConfModel = new EventConfModel(eventConfInfo);
+
+            if(eventConfModel.genres.length==0)
+            {
+
+                let establishmentGenres= await EstablishmentModel.getEstablishmentGenres(this.idEstablishment)
+                eventConfModel.genres=establishmentGenres
+
+
+            }
 
             //INSERTAR A LA BASE DE DATOS
             let result = await eventConfModel.insertEventConf();

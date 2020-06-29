@@ -207,6 +207,9 @@ class EstablishmentConfModel{
     }
 
 
+
+
+
     toJSON(){
 
         if(this.images==null)
