@@ -14,7 +14,7 @@ const EstablishmentModel = require('../model/EstablishmentModel');
 const config            = require('../util/config.js');
 const jsonReq = require('../util/jsonReq');
 const validation = require('../util/validation');
-
+const EventConfModel = require('../model/EventConfModel');
 
 async  function verifyMail(req,res){
     let resJson ={
@@ -427,19 +427,49 @@ async function getUserProfile(req, res){
         let eventInfo = JSON.parse('{"idEvent": "'+events[i]+'"}');
         let eventModel=new EventModel(eventInfo);
         //lamar a getEventInfo
-        let information = await eventModel.getEventInfo();
-        if(information!=false)
-            response.events[i] = information;
+        let eventData = await eventModel.getEventInfo();
+        eventData.idEvent=events[i]
+
+        let eventConfModel=new EventConfModel(eventData);
+        let confData=await eventConfModel.getEventConfInfo(eventInfo.idEvent);
+        //regresar la respuesta
+
+        if(eventData && confData) {
+            eventData.conf = JSON.parse(confData.conf)
+
+            let establishment = await EstablishmentModel.getEstablishment(eventData.idestablishment)
+            if (establishment) {
+                establishment.conf = JSON.parse(establishment.conf)
+                eventData.establishment = establishment
+
+
+                //SOLO SE MUESTRAN LOS EVENTOS CON ESTABLECIMIENTO
+                response.events[i] = eventData;
+            }
+
+
+
+        }
     }
 
     let favorites= conf.favorites;
     for(let i=0; i<favorites.length; i++){
+
+        let establishment = await EstablishmentModel.getEstablishment(favorites[i])
+        if (establishment) {
+            establishment.conf = JSON.parse(establishment.conf)
+            response.favorites[i] = establishment;
+        }
+
+        /*
         let establishmentInfo = JSON.parse('{"idEstablishment": "'+favorites[i]+'"}');
         let establishmentModel=new EstablishmentModel(establishmentInfo);
         //lamar a getEventInfo
         let information = await establishmentModel.getEstablishmentInfo();
         if(information!=false)
             response.favorites[i] = information;
+        */
+
     }
 
     // console.log("FAVORTIOS"+JSON.stringify(response));
