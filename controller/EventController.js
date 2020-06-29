@@ -245,18 +245,10 @@ async  function getEventInfo(req,res){
 
 
     let eventConfModel=new EventConfModel(eventData);
-
     let confData=await eventConfModel.getEventConfInfo(eventInfo.idEvent);
-
-
-
-
-
-
     //regresar la respuesta
 
     if(eventData && confData){
-        eventData.conf=confData;
         eventData.conf=JSON.parse(confData.conf)
         let establishment= await EstablishmentModel.getEstablishment(eventData.idestablishment)
         if(establishment)
