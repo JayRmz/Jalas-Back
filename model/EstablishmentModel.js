@@ -475,6 +475,36 @@ class EstablishmentModel{
             }
         });
     }
+    static async getEstablishmentGenres(idEstablishment){
+        const sql='SELECT JSON_EXTRACT(configuration.conf,"$.genres") genres FROM configuration JOIN establishment ON establishment.idconfiguration=configuration.idconfiguration WHERE idestablishment=?'
+        const params = [idEstablishment];
+
+        return new Promise((resolve, reject) => {
+            try{
+                db.query(sql, params, function(err, res){
+                    if(err){
+                        log("Error not found Establishment Genres to database "+idEstablishment+" "+err,'error.log');
+                        reject(false);
+                    }else{
+
+                        if(res.length>= 1){
+                            log("Establishment Genres found correctly "+idEstablishment);
+                            resolve(JSON.parse(res[0].genres));
+                        }
+                        else {
+                            log("Error not found Establishment Genres to database "+idEstablishment,'error.log');
+                            resolve(false);
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error not found Establishment Genres to database "+idEstablishment+" "+err0r,'error.log');
+                reject(false)
+            }
+
+
+        });
+    }
 
 
 
