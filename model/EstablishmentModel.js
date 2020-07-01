@@ -347,10 +347,11 @@ class EstablishmentModel{
             'WHERE idestablishment=? AND JSON_EXTRACT(configuration.conf,"$.date.fechaFin") >= ?';
 
         let fechaActual=moment().format().slice(0,10).split('-').reverse().join('-')
+        let fechaMMDDYYYY=fechaActual.split("-")[1]+"-"+fechaActual.split("-")[0]+"-"+fechaActual.split("-")[2]
 
 
         const params = [this.idEstablishment, fechaActual];
-        console.log(params);
+
         const  idEstablishment=this.idEstablishment;
         return new Promise((resolve, reject) => {
 
@@ -365,7 +366,20 @@ class EstablishmentModel{
                         {
 
                             log("Events found correctly idEstablishment: "+idEstablishment);
-                            resolve(res);
+
+                            let events=[];
+                            let i;
+                            for(i=0;i<res.length;i++)
+                            {
+                                let eventDate=JSON.parse(res[i].conf).date.fechaFin
+                                let eventDateMMDDYYYY=eventDate.split("-")[1]+"-"+eventDate.split("-")[0]+"-"+eventDate.split("-")[2];
+                                if(Date.parse(eventDateMMDDYYYY)>=Date.parse(fechaMMDDYYYY))
+                                {
+                                    events.push(res[i])
+                                }
+
+                            }
+                            resolve(events);
                         }
                         else {
                             log("Error not found Events to database from Establishment "+idEstablishment+" "+err,'error.log');
