@@ -17,7 +17,7 @@ class  SearchModel {
 
         //const sql = 'SELECT event.idevent,event.name, event.latitude, event.longitude FROM event  WHERE event.latitude>=? AND event.latitude <=? AND event.longitude>=? AND event.longitude <=?';
 
-        const sql = ' SELECT event.name, JSON_EXTRACT(configuration.conf,"$.genres") genres,event.idestablishment,event.idevent, JSON_EXTRACT(configuration.conf,"$.address") address,    JSON_EXTRACT(configuration.conf,"$.images.bannerImage") bannerImage,  event.latitude, event.longitude FROM configuration JOIN event ON event.idconfiguration = configuration.idconfiguration  WHERE event.latitude>=? AND event.latitude <=? AND event.longitude>=? AND event.longitude <=?';
+        const sql = ' SELECT event.name, JSON_EXTRACT(configuration.conf,"$.date") date, JSON_EXTRACT(configuration.conf,"$.genres") genres,event.idestablishment,event.idevent, JSON_EXTRACT(configuration.conf,"$.address") address,    JSON_EXTRACT(configuration.conf,"$.images.bannerImage") bannerImage,  event.latitude, event.longitude FROM configuration JOIN event ON event.idconfiguration = configuration.idconfiguration  WHERE event.latitude>=? AND event.latitude <=? AND event.longitude>=? AND event.longitude <=?';
 
 
         const params = [latitudeMin,latitudeMax, longitudeMin, longitudeMax];
@@ -39,6 +39,7 @@ class  SearchModel {
                                     res[i].bannerImage=JSON.parse(res[i].bannerImage)
                                     res[i].address=JSON.parse(res[i].address)
                                     res[i].genres=JSON.parse(res[i].genres)
+                                    res[i].date=JSON.parse(res[i].date)
                                     events.push(res[i])
                                 }
 
@@ -77,7 +78,7 @@ class  SearchModel {
 
 
 
-        const sql = 'SELECT idestablishment, JSON_EXTRACT(configuration.conf,"$.images.bannerImage") bannerImage, JSON_EXTRACT(configuration.conf,"$.address") address, JSON_EXTRACT(configuration.conf,"$.genres") genres, JSON_EXTRACT(configuration.conf,"$.date") date, event.idevent,event.name, event.latitude, event.longitude FROM configuration JOIN event ON event.idconfiguration = configuration.idconfiguration  WHERE event.latitude>=? AND event.latitude <=? AND event.longitude>=? AND event.longitude <=?';
+        const sql = 'SELECT idestablishment, JSON_EXTRACT(configuration.conf,"$.date") date, JSON_EXTRACT(configuration.conf,"$.images.bannerImage") bannerImage, JSON_EXTRACT(configuration.conf,"$.address") address, JSON_EXTRACT(configuration.conf,"$.genres") genres, JSON_EXTRACT(configuration.conf,"$.date") date, event.idevent,event.name, event.latitude, event.longitude FROM configuration JOIN event ON event.idconfiguration = configuration.idconfiguration  WHERE event.latitude>=? AND event.latitude <=? AND event.longitude>=? AND event.longitude <=?';
 
 
         const params = [latitudeMin,latitudeMax, longitudeMin, longitudeMax];
@@ -107,15 +108,22 @@ class  SearchModel {
 
                                     if(res[i].date.hasOwnProperty("fechaInicio") && res[i].date.hasOwnProperty("fechaFin"))
                                     {
-                                        var fecha_busqueda = new Date(fecha.split("-")[2]+"-"+fecha.split("-")[1]+"-"+fecha.split("-")[0]);
-                                        var fecha_inicio=new Date(res[i].date.fechaInicio.split("-")[2]+"-"+res[i].date.fechaInicio.split("-")[1]+"-"+res[i].date.fechaInicio.split("-")[0]);
-                                        var fecha_fin=new Date(res[i].date.fechaFin.split("-")[2]+"-"+res[i].date.fechaFin.split("-")[1]+"-"+res[i].date.fechaFin.split("-")[0]);
+
+
+                                        const fechaSplit=fecha.split("-");
+                                        const fechaFinSplit=res[i].date.fechaFin.split("-");
+
+                                        var fecha_busqueda = new Date(fechaSplit[2]+"-"+fechaSplit[1]+"-"+fechaSplit[0]);
+                                        //var fecha_inicio=new Date(res[i].date.fechaInicio.split("-")[2]+"-"+res[i].date.fechaInicio.split("-")[1]+"-"+res[i].date.fechaInicio.split("-")[0]);
+                                        var fecha_fin=new Date(fechaFinSplit[2]+"-"+fechaFinSplit[1]+"-"+fechaFinSplit[0]);
 
                                         if (  ((lat +lon) <= dis)  && fecha_fin>=fecha_busqueda  )
+                                        {
                                             res[i].bannerImage=JSON.parse(res[i].bannerImage)
                                             res[i].address=JSON.parse(res[i].address)
                                             res[i].genres=JSON.parse(res[i].genres)
                                             events.push(res[i])
+                                        }
                                     }
                                 }
                             }
@@ -178,7 +186,7 @@ class  SearchModel {
         let longitudeMax = parseInt(longitude+kmPerDegrees*distance)+1;
         let longitudeMin= parseInt(longitude-kmPerDegrees*distance)-1;
 
-        const sql = 'SELECT JSON_EXTRACT(configuration.conf,"$.images") images, JSON_EXTRACT(configuration.conf,"$.category") category, establishment.idestablishment,establishment.name, JSON_EXTRACT(configuration.conf,"$.location") location FROM configuration JOIN establishment ON establishment.idconfiguration = configuration.idconfiguration WHERE JSON_EXTRACT(configuration.conf,"$.location.latitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.latitude") <= ? AND JSON_EXTRACT(configuration.conf,"$.location.longitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.longitude") <=?;';
+        const sql = 'SELECT JSON_EXTRACT(configuration.conf,"$.hours") hours, JSON_EXTRACT(configuration.conf,"$.images") images, JSON_EXTRACT(configuration.conf,"$.category") category, establishment.idestablishment,establishment.name, JSON_EXTRACT(configuration.conf,"$.location") location FROM configuration JOIN establishment ON establishment.idconfiguration = configuration.idconfiguration WHERE JSON_EXTRACT(configuration.conf,"$.location.latitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.latitude") <= ? AND JSON_EXTRACT(configuration.conf,"$.location.longitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.longitude") <=?;';
 
         let params = [latitudeMin, latitudeMax,longitudeMin, longitudeMax];
 
@@ -201,6 +209,7 @@ class  SearchModel {
                                     (res[i].location.longitude - longitude) * (res[i].location.longitude - longitude)) <=
                                     (kmPerDegrees * distance) * (kmPerDegrees * distance)) {
                                     res[i].category=JSON.parse(res[i].category);
+                                    res[i].hours=JSON.parse(res[i].hours);
                                     res[i].images=JSON.parse(res[i].images)
                                     establishment.push(res[i])
                                 }
@@ -313,7 +322,7 @@ class  SearchModel {
         let longitudeMax = parseInt(longitude+kmPerDegrees*distance)+1;
         let longitudeMin= parseInt(longitude-kmPerDegrees*distance)-1;
 
-        const sql = 'SELECT JSON_EXTRACT(configuration.conf,"$.images") images, JSON_EXTRACT(configuration.conf,"$.category") category, establishment.idestablishment,establishment.name, JSON_EXTRACT(configuration.conf,"$.location") location FROM configuration JOIN establishment ON establishment.idconfiguration = configuration.idconfiguration WHERE JSON_EXTRACT(configuration.conf,"$.location.latitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.latitude") <= ? AND JSON_EXTRACT(configuration.conf,"$.location.longitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.longitude") <=? AND establishment.name LIKE ?  ORDER BY category;';
+        const sql = 'SELECT JSON_EXTRACT(configuration.conf,"$.hours") hours, JSON_EXTRACT(configuration.conf,"$.images") images, JSON_EXTRACT(configuration.conf,"$.category") category, establishment.idestablishment,establishment.name, JSON_EXTRACT(configuration.conf,"$.location") location FROM configuration JOIN establishment ON establishment.idconfiguration = configuration.idconfiguration WHERE JSON_EXTRACT(configuration.conf,"$.location.latitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.latitude") <= ? AND JSON_EXTRACT(configuration.conf,"$.location.longitude")>=? AND JSON_EXTRACT(configuration.conf,"$.location.longitude") <=? AND establishment.name LIKE ?  ORDER BY category;';
 
         const params = [latitudeMin,latitudeMax, longitudeMin, longitudeMax, "%"+name+"%"];
 
@@ -340,6 +349,7 @@ class  SearchModel {
                                 {
                                     res[i].category=JSON.parse(res[i].category);
                                     res[i].images=JSON.parse(res[i].images)
+                                    res[i].hours=JSON.parse(res[i].hours);
                                     establishment.push(res[i])
                                 }
                             }
