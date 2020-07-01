@@ -990,7 +990,7 @@ async  function getEvents(req,res){
         {
             log("ESTE EVENTO NO DEBERIA DE EXISTIR PORQUE NO TIENE ESTABLECIMIENTO ASOCIADO");
             resJson.data=result;
-            resJson.message="Events found";
+            resJson.message="ESTE EVENTO NO DEBERIA DE EXISTIR PORQUE NO TIENE ESTABLECIMIENTO ASOCIADO";
             resJson.status=1;
             res.json(resJson);   return;
         }
