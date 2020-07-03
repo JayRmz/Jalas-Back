@@ -56,6 +56,8 @@ async function searchEvents(req,res) {
             }
         }
 
+        realEvents=SearchModel.filterPerToday(realEvents)
+
         log("get events");
         resJson.message="found events";
         resJson.data=realEvents;
@@ -122,6 +124,8 @@ async function searchEventsPerGenres(req, res) {
 
 
         if (result) {
+
+            result=SearchModel.filterPerToday(result)
 
             if(result.length==0)
             {
@@ -202,6 +206,16 @@ async function searchEventsPerDate(req, res) {
             }
         }
 
+        realEvents=SearchModel.filterPerToday(realEvents)
+
+        if(realEvents.length==0)
+        {
+            log("not found events");
+            resJson.message = "not found events";
+            resJson.data = [];
+            res.json(resJson);   return;
+        }
+
         log("get events");
         resJson.message = "found events";
         resJson.data = realEvents;
@@ -274,6 +288,7 @@ async function searchEventsPerDate_Genres(req, res) {
 
         if (result) {
 
+            result=SearchModel.filterPerToday(result)
 
             if(events.length==0)
             {
@@ -400,6 +415,16 @@ async function searchEventsPerName(req, res) {
 
             }
         }
+        realEvents=SearchModel.filterPerToday(realEvents)
+
+        if(realEvents.length==0)
+        {
+            log("not found events");
+            resJson.message = "not found events";
+            resJson.data = [];
+            res.json(resJson);   return;
+        }
+
         log("get events");
         resJson.message = "found events";
         resJson.data = realEvents;

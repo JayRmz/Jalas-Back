@@ -1,5 +1,6 @@
 const log = require('log-to-file');
 const db = require('../util/db');
+const moment = require('moment');
 
 class  SearchModel {
 
@@ -174,6 +175,34 @@ class  SearchModel {
         return eventResult;
 
     }
+
+    static filterPerToday(events)
+    {
+        let eventResult=[];
+
+        for(let i=0;i<events.length;i++)
+        {
+            if(events[i].date.hasOwnProperty("fechaFin"))
+            {
+                let eventDate=(events[i].date.fechaFin);
+                let eventDateMMDDYYYY=eventDate.split("-")[1]+"-"+eventDate.split("-")[0]+"-"+eventDate.split("-")[2]
+
+                let fechaActual=moment().format().slice(0,10).split('-').reverse().join('-')
+                let fechaMMDDYYYY=fechaActual.split("-")[1]+"-"+fechaActual.split("-")[0]+"-"+fechaActual.split("-")[2]
+
+                if(Date.parse(eventDateMMDDYYYY)>=Date.parse(fechaMMDDYYYY))
+                {
+                    eventResult.push(events[i])
+                }
+            }
+        }
+
+        return eventResult;
+    }
+
+
+
+
 
     static async getEstablishments(latitude, longitude, distance)
     {
