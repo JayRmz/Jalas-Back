@@ -369,9 +369,14 @@ class EstablishmentModel{
 
                             let events=[];
                             let i;
+                            //console.log(res)
                             for(i=0;i<res.length;i++)
                             {
                                 let eventDate=JSON.parse(res[i].conf).date.fechaFin
+                                console.log(eventDate,i)
+
+
+
                                 let eventDateMMDDYYYY=eventDate.split("-")[1]+"-"+eventDate.split("-")[0]+"-"+eventDate.split("-")[2];
                                 if(Date.parse(eventDateMMDDYYYY)>=Date.parse(fechaMMDDYYYY))
                                 {
@@ -517,6 +522,35 @@ class EstablishmentModel{
             }
 
 
+        });
+    }
+    static async getIdEstablishment(email){
+
+        const sql = `SELECT idestablishment FROM establishment WHERE email=?`;
+        const params = [email];
+
+        return new Promise((resolve,reject) => {
+            try{
+                db.query(sql, params, function(err, res){
+                    if(err){
+                        log("Error consulting idEstablishment  email:"+email+" "+err,'error.log');
+                        reject("Error Consulting idEstablishment")
+                    }else{
+                        log("idEstablishment consulting email:" +email);
+                        if(res.length==1) {
+                            resolve(res[0].idestablishment);
+
+                        }
+                        else {
+                            log("Error consulting idEstablishment  email:"+email+" "+err,'error.log');
+                            resolve(false)
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error consulting idEstablishment  email:"+email+" "+err0r,'error.log');
+                reject("Error Consulting idEstablishment")
+            }
         });
     }
 

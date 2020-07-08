@@ -970,6 +970,9 @@ async  function getEvents(req,res){
     let result = await establishmentModel.getEvents();
 
 
+    console.log(result)
+
+
     if(result.length==0)
     {
         log("There are no events");

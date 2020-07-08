@@ -6,6 +6,7 @@ const validation = require('../util/validation');
 const intformat = require('biguint-format');
 const FlakeIdGen = require('flake-idgen');
 const generator = new FlakeIdGen();
+const Email = require('../util/Email');
 
 async function validateCredentials(req,res) {
     let resJson = {
@@ -20,7 +21,6 @@ async function validateCredentials(req,res) {
         res.json(resJson);   return;
         return;
     }
-
     //VERIFICAR SI EXISTE EL EMAIL
     let email = req.body.data.email;
     let exist = await UserModel.verifyUserCredentials(req.body.data);
@@ -179,8 +179,95 @@ async function verifyUserSession(req,res) {
 
     res.json(resJson);   return;
 }
+
+
+async function recoverPassword(req,res) {
+    let resJson = {
+        'status': 1,
+        'message': '',
+        'id': ''
+    };
+
+    if (!validation.isValid(req.body, jsonReq.recoverPassword)) {
+        resJson.status = 0;
+        resJson.message = "wrong formatting";
+        res.json(resJson);   return;
+        return;
+    }
+
+
+    let type=req.body.data.type;
+    if(type=="user")
+    {
+        let email=req.body.data.email;
+        let idUser = await UserModel.getIdUser(email);
+        if(idUser)
+        {
+            log("Verified idUser:"+idUser+" with email"+email);
+            resJson.message = "Verified idUser:"+idUser+" with email"+email;
+            resJson.id=idUser;
+            resJson.status=1
+
+            let emailResult = await Email.sendRecover(email, idUser);
+
+        }
+        else
+        {
+            log("Error Verified idUser:"+idUser+" with email"+email);
+            resJson.message = "Error Verified idUser:"+idUser+" with email"+email;
+            resJson.id=null;
+            resJson.status=0
+        }
+
+
+    }
+    else
+    {
+        if(type=="establishment")
+        {
+            let email=req.body.data.email;
+            let idEstablishment = await EstablishmentModel.getIdEstablishment(email);
+
+            if(idEstablishment)
+            {
+                log("Verified idEstablishment:"+idEstablishment+" with email"+email);
+                resJson.message = "Verified idEstablishment:"+idEstablishment+" with email"+email;
+                resJson.id=idEstablishment;
+                resJson.status=1
+
+                let emailResult = await Email.sendRecover(email, idEstablishment);
+                //mandar correo
+            }
+            else
+            {
+                log("Error Verified idEstablishment:"+idEstablishment+" with email"+email);
+                resJson.message = "Error Verified idEstablishment:"+idEstablishment+" with email"+email;
+                resJson.id=null;
+                resJson.status=0
+
+                //mandar correo
+            }
+
+        }
+        else
+        {
+            log("Error, type not valid");
+            resJson.message = "Error, type not valid.  type:"+type;
+            resJson.id=null;
+            resJson.status=0
+        }
+
+    }
+
+
+    res.json(resJson);
+    return;
+}
+
+
 module.exports.ValidateCredentials = validateCredentials;
 module.exports.VerifyUserSession = verifyUserSession;
 module.exports.VerifyEstablishmentSession = verifyEstablishmentSession;
+module.exports.RecoverPassword = recoverPassword;
 
 

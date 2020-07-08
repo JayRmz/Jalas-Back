@@ -2268,6 +2268,33 @@ exports.deleteEvent =
             ]
     }
 
+exports.recoverPassword =
+    {
+        "fields":
+            [
+                {
+                    "name": "data",
+                    "require": true,
+                    "verification": validation.pass,
+                    "children":
+                        [
+                            {
+                                "name": "email",
+                                "require": true,
+                                "verification": validation.isEmail,
+                                "children": []
+                            },
+                            {
+                                "name": "type",
+                                "require": true,
+                                "verification": validation.pass,
+                                "children": []
+                            }
+                        ]
+                }
+            ]
+    }
+
 
 
 
