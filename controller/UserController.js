@@ -70,7 +70,7 @@ async function createUser(req,res) {
         return;
     }
 
-    //console.log(req.body);
+
     //VERIFICAR SI EXISTE EL EMAIL
     try {
         let email = req.body.data.email;
@@ -532,10 +532,10 @@ async function setProfileImage(req,res)
         let imagesUser =await  UserConfModel.getImages(idConfiguration.idconfiguration);
         if(imagesUser)
         {
-            console.log(imagesUser);
+
             let oldProfileImage=JSON.parse(imagesUser.images).profileImage;
             let bannerImage = JSON.parse(imagesUser.images).bannerImage;
-            console.log(bannerImage);
+
             let imagesJSON =
                 [
                     "profileImage",nameImg,
@@ -558,7 +558,7 @@ async function setProfileImage(req,res)
                     }
 
                     let resultDelete = deleteImage.deleteImage(oldProfileImage,path);
-                    console.log(resultDelete);
+
                     if (resultDelete) {
                         log("Update profile Image Correctly");
                         resJson.message = "Update profile Image Correctly";
@@ -631,9 +631,6 @@ async function setBannerImage(req,res)
     let resultSave = await Base64ToImg.base64ToImg(img64,path,"jpg",nameImg.toString());
 
 
-    console.log("resultSave")
-    console.log(resultSave)
-    console.log("resultSave")
 
 
 
@@ -944,10 +941,10 @@ async  function getFavorites(req,res){
 
         //regresar la respuesta
     }
-    console.log("PZZ")
+
     if(resultList)
     {
-        console.log(ghostEstablishment)
+
         if(ghostEstablishment)
         {
             let updateData = [];
@@ -956,13 +953,13 @@ async  function getFavorites(req,res){
                 "data":establecimientosExistentes
             });
 
-            console.log(updateData)
+
             let idUser = req.body.data.idUser;
             let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
 
             let resultUpdateEstablishments = await UserConfModel.updateUserConf(updateData, idUser, idConfiguration);
 
-            console.log(resultUpdateEstablishments)
+
 
             if(resultUpdateEstablishments)
                 log("Establishments Updated");

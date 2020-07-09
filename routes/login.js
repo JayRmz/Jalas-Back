@@ -11,5 +11,6 @@ router.post('/validateCredentials',LoginController.ValidateCredentials);
 
 router.post('/verifyUserSession',LoginController.VerifyUserSession);
 router.post('/verifyEstablishmentSession',LoginController.VerifyEstablishmentSession);
+router.post('/recoverPassword',LoginController.RecoverPassword);
 
 module.exports = router;

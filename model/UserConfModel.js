@@ -63,7 +63,7 @@ class UserConfModel{
    async insertUserConf(){
        const sql = `INSERT INTO configuration(idconfiguration,conf) values (?,?);`;
        let jsonData=this.toJSON();
-       console.log(jsonData);
+
        const params = [this.idUserConf,jsonData];
        return new Promise((resolve,reject) => {
            try{

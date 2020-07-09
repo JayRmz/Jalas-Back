@@ -50,7 +50,7 @@ class UserModel{
     }
 
 
-    getIdUser(){
+    getIdUser1 (){//             CUIDADO CON EL NOMBRE DE ESTA FUNCION
         return this.idUser;
     }
     getName(){
@@ -521,6 +521,35 @@ class UserModel{
         });
     }
 
+    static async getIdUser(email){
+
+        const sql = `SELECT iduser FROM user WHERE email=?`;
+        const params = [email];
+
+        return new Promise((resolve,reject) => {
+            try{
+                db.query(sql, params, function(err, res){
+                    if(err){
+                        log("Error consulting idUser  email:"+email+" "+err,'error.log');
+                        reject("Error Consulting idUser")
+                    }else{
+                        log("idUser consulting email:" +email);
+                        if(res.length==1) {
+                            resolve(res[0].iduser);
+
+                        }
+                        else {
+                            log("Error consulting idUser  email:"+email+" "+err,'error.log');
+                            resolve(false)
+                        }
+                    }
+                });
+            }catch(err0r){
+                log("Error consulting idUser  email:"+email+" "+err0r,'error.log');
+                reject("Error Consulting idUser")
+            }
+        });
+    }
 
 
 
