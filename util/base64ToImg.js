@@ -1,18 +1,83 @@
 var base64ToImage = require('base64-to-image');
+const deleteImage = require('../util/deleteImage');
+
 const log = require('log-to-file');
+const fs = require('fs');
+const AWS = require('aws-sdk');
+
+// Enter copied or downloaded access ID and secret key here
+const ID = 'AKIAIQ6T3VTYH7H46BOA';
+const SECRET = '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';
+// The name of the bucket that you have created
+const BUCKET_NAME = 'jalas-bucket';
+
+const s3 = new AWS.S3({
+    accessKeyId: ID,
+    secretAccessKey: SECRET
+});
+
+
+const uploadFile = (pathFile,name) => {
+    // Read content from the file
+
+    const fileContent = fs.readFileSync(pathFile);
+
+    // Setting up S3 upload parameters
+    console.log(pathFile)
+    const params = {
+        Bucket: BUCKET_NAME,
+        Key: pathFile, // File name you want to save as in S3
+        Body: fileContent,
+        ACL:'public-read'
+    };
+
+    // Uploading files to the bucket
+    s3.upload(params, function(err, data) {
+        if (err) {
+            throw err;
+        }
+        console.log(`File uploaded successfully. ${data.Location}`);
+    });
+};
+
+
 
 exports.base64ToImg=function(base64, path, format, name){
     try{
 
         console.log(path);
-        console.log(format);
-        console.log(name);
+        //console.log(format);
+        //console.log(name);
 
     var params = {'fileName': name, 'type':format};
 
     let result= base64ToImage(base64,path,params);
 
-    console.log(result);
+
+    //aqui hacer lo del bucket
+
+     setTimeout(() => {
+
+
+
+
+         uploadFile(path+name+'.'+format, name);
+
+         let resultDelete = deleteImage.deleteImage(name,path);
+
+
+     }, 2000);
+
+
+
+
+
+
+
+
+
+
+
     log("base64 converted");
 
         return true
