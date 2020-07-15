@@ -1,6 +1,8 @@
 
 const base64ToImg = require('../util/base64ToImg');
 
+//NO UTILIZADO
+
 async function convertir(req,res) {
 
         let resJson ={

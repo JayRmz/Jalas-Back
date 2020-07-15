@@ -8,15 +8,17 @@ const jsonReq = require('../util/jsonReq');
 const validation = require('../util/validation');
 
 
-//new conf
+//Crea una configuracion de evento
 async function createEventConf(req,res) {
 
+    //Variable de respuesta
     let resJson ={
         'status': 0,
         'message': '',
         'idEventConf':''
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.createEventConf))
     {
         resJson.status=0;
@@ -24,7 +26,7 @@ async function createEventConf(req,res) {
         res.json(resJson);   return;
         return;
     }
-    console.log(req.body);
+    
 
     try {
 
@@ -40,7 +42,8 @@ async function createEventConf(req,res) {
 
         //INSERTAR A LA BASE DE DATOS
         let result = await eventConfModel.insertEventConf();
-        if (result) {
+        //regresar la respuesta
+        if(result) {
             resJson.idEventConf=idEventConf;
             log("UserConf Created Correctly");
             let resultLink = await  eventConfModel.linkEventConf(idEvent);
@@ -74,13 +77,16 @@ async function createEventConf(req,res) {
 
 }
 
+//Obtiene la configuracion de un evento
 async function getEventConf(req,res) {
+    //Variable de respuesta
     let resJson = {
         'status': 0,
         'message': '',
         'data': {}
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.getEventConf))
     {
         resJson.status=0;
@@ -126,13 +132,16 @@ async function getEventConf(req,res) {
 
 }
 
+//Modifica la configuracion de un evento
 async function updateEventConf(req,res)
 {
+    //Variable de respuesta
     let resJson ={
         'status': 0,
         'message': ''
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.updateEventConf))
     {
         resJson.status=0;
@@ -143,9 +152,9 @@ async function updateEventConf(req,res)
 
     let eventConfData=req.body.data.updateData;
     let idEvent = req.body.data.idEvent;
-    //llamar a updateUserConf
+
     let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
-    //console.log(idConfiguration);
+    //llamar a updateUserConf
     let result = await EventConfModel.updateEventConf(eventConfData, idEvent, idConfiguration);
     //regresar la respuesta
     if(result){

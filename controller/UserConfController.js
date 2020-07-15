@@ -10,8 +10,9 @@ const log = require('log-to-file');
 const jsonReq = require('../util/jsonReq');
 const validation = require('../util/validation');
 
-//new conf
+//Crea una configuracion de usuario
 async function createUserConf(req,res) {
+    //Variable de respuesta
     let resJson ={
         'status': 0,
         'message': '',
@@ -19,6 +20,8 @@ async function createUserConf(req,res) {
 
     };
 
+    
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.createUserConf))
     {
         resJson.status=0;
@@ -41,7 +44,9 @@ async function createUserConf(req,res) {
 
             //INSERTAR A LA BASE DE DATOS
             let result = await userConfModel.insertUserConf();
-            if (result) {
+            
+            //regresamos la respuesta
+            if(result) {
                 resJson.idUserConf=idUserConf;
                 log("UserConf Created Correctly");
                 let resultLink = await  userConfModel.linkUserConf(idUser);
@@ -75,14 +80,17 @@ async function createUserConf(req,res) {
 
 }
 
+//Obtiene los datos de la configuracion de usuario
 async function getUserConf(req,res) {
 
+    //Variable de respuesta
     let resJson = {
         'status': 0,
         'message': '',
         'data': {}
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.getUserConf))
     {
         resJson.status=0;
@@ -130,12 +138,15 @@ async function getUserConf(req,res) {
 
 }
 
+//Actualiza los datos de la configuracion
 async function updateUserConf(req,res){
+    //Variable de respuesta
     let resJson ={
         'status': 0,
         'message': ''
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.updateUserConf))
     {
         resJson.status=0;
@@ -148,7 +159,8 @@ async function updateUserConf(req,res){
 
     let userConfData=req.body.data.updateData;
     let idUser = req.body.data.idUser;
-    //llamar a updateUserConf
+    
+    //consulta el id de configuracion
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
 
     if (!idConfiguration)
@@ -160,6 +172,7 @@ async function updateUserConf(req,res){
         return;
     }
 
+    //llamar a updateUserConf
     let result = await UserConfModel.updateUserConf(userConfData, idUser, (idConfiguration));
     //regresar la respuesta
     if(result){
@@ -177,15 +190,17 @@ async function updateUserConf(req,res){
 
 }
 
-
+//Agrega a un establecimiento a la lista de favoritos
 async function addFavorite(req,res){
 
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': '',
         'data':{}
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.addFavorite))
     {
         resJson.status=0;
@@ -196,6 +211,7 @@ async function addFavorite(req,res){
 
     let idUser = req.body.data.idUser;
     let idEstablishment=req.body.data.idEstablishment;
+    //consulta el id de configuracion
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
 
     if (!idConfiguration)
@@ -206,17 +222,18 @@ async function addFavorite(req,res){
         res.json(resJson);
         return;
     }
+
+    //verificamos si el id pertenece a algun establecimiento
     let verifyEstablishment = await EstablishmentModel.verifyEstablishment(idEstablishment);
 
     if(verifyEstablishment){
+        //consultamos los favoritos
         let favorites = await UserConfModel.getFavorites(idConfiguration.idconfiguration);
 
-        //console.log(favorites.favorites)
-
-        //console.log(JSON.parse(favorites.favorites))
 
         if(favorites.favorites!=null)
         {
+            //Preparamos los datos recibidos y agregamos el nuevo favorito
             let data=JSON.parse(favorites.favorites);
             //console.log(JSON.parse(data))
 
@@ -239,6 +256,7 @@ async function addFavorite(req,res){
 
 
                 let result = await UserConfModel.updateUserConf(updateData, idUser, idConfiguration);
+                //regresar la respuesta
                 if(result){
                     log("add favorite Correctly");
                     resJson.message="add favorite Correctly";
@@ -262,7 +280,9 @@ async function addFavorite(req,res){
                 "data":[idEstablishment]
             });
 
+            //actualizamos la lista de favoritos
             let result = await UserConfModel.updateUserConf(updateData, idUser, idConfiguration);
+            //regresar la respuesta
             if(result){
                 log("add favorite Correctly");
                 resJson.message="add favorite Correctly";
@@ -287,14 +307,17 @@ async function addFavorite(req,res){
 
 }
 
+//Agrega a un evento a la lista de Eventos
 async function addEvent(req,res){
 
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': '',
         'data':{}
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.addEvent))
     {
         resJson.status=0;
@@ -305,6 +328,7 @@ async function addEvent(req,res){
 
     let idUser = req.body.data.idUser;
     let idEvent=req.body.data.idEvent;
+    //consulta el id de configuracion
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
     if (!idConfiguration)
     {
@@ -315,26 +339,15 @@ async function addEvent(req,res){
         return;
     }
     let verifyEvent = await EventModel.verifyEvent(idEvent);
-
+    //Verificamos si el id pertenece a un evento
     if(verifyEvent){
+        //consultamos los eventos del usuario
         let events = await UserConfModel.getEvents(idConfiguration.idconfiguration);
-
-
-
-
 
         if(events.events!=null)
         {
+            //preparamos los datos para agregar a la lista y actualizamos
             let data=JSON.parse(events.events);
-
-
-            console.log(events);
-
-            console.log(events.events);
-
-            console.log(data);
-
-            console.log(data[0]);
 
 
             if(data.includes( idEvent ))
@@ -353,7 +366,9 @@ async function addEvent(req,res){
                     "data":data
                 });
 
+                //actualizamos en la DB
                 let result = await UserConfModel.updateUserConf(updateData, idUser, idConfiguration);
+                //regresar la respuesta
                 if(result){
                     log("add event Correctly");
                     resJson.message="add event Correctly";
@@ -371,12 +386,15 @@ async function addEvent(req,res){
         }
         else
         {
+            //preparamos los datos para agregar a la lista y actualizamos
             let updateData = [];
             updateData.push({
                 "field":"events",
                 "data":[idEvent]
             });
+            //actualizamos en la DB
             let result = await UserConfModel.updateUserConf(updateData, idUser, idConfiguration);
+            //regresar la respuesta
             if(result){
                 log("add event Correctly");
                 resJson.message="add event Correctly";
@@ -399,14 +417,17 @@ async function addEvent(req,res){
     }
 }
 
+//Elimina a un establecimiento de la lista de Favoritos
 async function removeFavorite(req,res){
 
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': '',
         'data':{}
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.removeFavorite))
     {
         resJson.status=0;
@@ -417,6 +438,7 @@ async function removeFavorite(req,res){
 
     let idUser = req.body.data.idUser;
     let idEstablishment=req.body.data.idEstablishment;
+    //consulta el id de configuracion
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
     if (!idConfiguration)
     {
@@ -427,13 +449,12 @@ async function removeFavorite(req,res){
         return;
     }
     let verifyEstablishment = await EstablishmentModel.verifyEstablishment(idEstablishment);
-    //EXISTA LO QUE QUIERES BORRAR
+    //QUE EXISTA LO QUE QUIERES BORRAR
 
 
     if(verifyEstablishment){
         let favorites = await UserConfModel.getFavorites(idConfiguration.idconfiguration);
         //LISTA DE ESTABLECIMIENTOS FAVORITOS
-        console.log(JSON.parse(favorites.favorites));
 
         if(favorites.favorites!=null)
         {
@@ -441,7 +462,7 @@ async function removeFavorite(req,res){
 
             if(data.includes( idEstablishment ))
             {
-                //COMO SI ESTA AGREGADO HAY QUE BORRAR
+                //SI ESTA AGREGADO HAY QUE BORRAR
 
                 let index = data.indexOf( idEstablishment );
                 data.splice( index, 1 );
@@ -452,7 +473,9 @@ async function removeFavorite(req,res){
                     "data":data
                 });
 
+                //actualiza la lista en la DB
                 let result = await UserConfModel.updateUserConf(updateData, idUser, idConfiguration);
+                //regresar la respuesta
                 if(result){
                     log("removed favorite Correctly");
                     resJson.message="removed favorite Correctly";
@@ -467,8 +490,8 @@ async function removeFavorite(req,res){
 
             }
             else
-            {//NO HAY NADA QUE BORRAR
-
+            {
+                //NO HAY NADA QUE BORRAR
                 log("removed favorite Correctly");
                 resJson.message="removed favorite Correctly";
                 res.json(resJson);   return;
@@ -492,14 +515,17 @@ async function removeFavorite(req,res){
     }
 }
 
+//Elimina a un evento de la lista de Eventos
 async function removeEvent(req,res){
 
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': '',
         'data':{}
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.removeEvent))
     {
         resJson.status=0;
@@ -510,6 +536,7 @@ async function removeEvent(req,res){
 
     let idUser = req.body.data.idUser;
     let idEvent=req.body.data.idEvent;
+    //consulta el id de configuracion
     let idConfiguration = await UserConfModel.getIdConfiguration(idUser);
     if (!idConfiguration)
     {
@@ -528,7 +555,7 @@ async function removeEvent(req,res){
     if(verifyEvent){
         let events = await UserConfModel.getEvents(idConfiguration.idconfiguration);
         //LISTA DE ESTABLECIMIENTOS FAVORITOS
-        console.log(JSON.parse(events.events));
+
 
         if(events.events!=null)
         {
@@ -547,7 +574,9 @@ async function removeEvent(req,res){
                     "data":data
                 });
 
+                //actualiza la lista de eventos
                 let result = await UserConfModel.updateUserConf(updateData, idUser, idConfiguration);
+                //regresar la respuesta
                 if(result){
                     log("removed event Correctly");
                     resJson.message="removed event Correctly";
@@ -596,6 +625,3 @@ module.exports.AddEvent=addEvent;
 module.exports.RemoveFavorite=removeFavorite;
 module.exports.RemoveEvent=removeEvent;
 
-//loadconfig
-
-//updateconf

@@ -1,15 +1,13 @@
-'use strict';
+
 const nodemailer = require('nodemailer');
 const config = require('./config.js');
 const log = require('log-to-file');
+
 class Email{
 
     static async sendConfirmation(recipient,codigo){
 
         console.log(recipient,codigo);
-
-
-/*
         const formattedHtml = '<p>Bienvenido a Jalas! Por favor confirmar tu correo con la siguiente liga</p>' +
             '<a href="https://jalas.com.mx/confirmEmail?code='+codigo+'">Dar click aqui</a>';
         const fromEmail = 'Equipo Jalas <no-reply@jalas>';
@@ -18,21 +16,26 @@ class Email{
         return  this.sendMail(recipient,fromEmail,subject,formattedHtml);
         //temp.then(()=> log("Email sent for"+id,'email.log'),()=> log("Email failed for "+id,'email.log'));
 
-*/
+
         return true;
 
 
     }
     // async..await is not allowed in global scope, must use a wrapper
     static async sendMail(recipient,fromp,subjectp,htmlp) {
+        process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+
         try {
+
+            console.log(config.useremail)
+            console.log(config.userpass)
 
             // create reusable transporter object using the default SMTP transport
             let transporter = nodemailer.createTransport({
                 host: config.smtphost,
                 port: config.emailport,
                 secure: config.secureemail, // true for 465, false for other ports
-                requireTLS: true,
+                requireTLS:     false,
                 service: 'gmail',
                 auth: {
                     user: config.useremail, // generated ethereal user
@@ -64,8 +67,6 @@ class Email{
 
         try {
             console.log(email, id);
-
-
             const formattedHtml = '<p>Recuperar contraseña</p>' +
                 '<a href="https://jalas.com.mx/recoverEmail?code=' + id + '">Dar click aqui</a>';
             const fromEmail = 'Equipo Jalas <no-reply@jalas>';

@@ -7,15 +7,17 @@ const log = require('log-to-file');
 const jsonReq = require('../util/jsonReq');
 const validation = require('../util/validation');
 
-
+//Crea una configuracion de establecimiento
 async function createEstablishmentConf(req,res) {
 
+    //Variable de respuesta
     let resJson ={
         'status': 0,
         'message': '',
         'idEstablishmentConf':''
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.createEstablishmentConf))
     {
         resJson.status=0;
@@ -38,7 +40,8 @@ async function createEstablishmentConf(req,res) {
 
         //INSERTAR A LA BASE DE DATOS
         let result = await establishmentConfModel.insertEstablishmentConf();
-        if (result) {
+        //regresamos la respuesta
+            if(result) {
             resJson.idEstablishmentConf=idEstablishmentConf;
             log("EstablishmentConf Created Correctly");
             let resultLink = await  establishmentConfModel.linkEstablishmentConf(idEstablishment);
@@ -72,13 +75,16 @@ async function createEstablishmentConf(req,res) {
 
 }
 
+//Obtiene la configuracion de un establecimiento
 async function getEstablishmentConf(req,res) {
+    //Variable de respuesta
     let resJson = {
         'status': 0,
         'message': '',
         'data': {}
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.getEstablishmentConf))
     {
         resJson.status=0;
@@ -124,12 +130,15 @@ async function getEstablishmentConf(req,res) {
 
 }
 
+//Modifica la configuracion de un establecimiento
 async function updateEstablishmentConf(req,res){
+    //Variable de respuesta
     let resJson ={
         'status': 0,
         'message': ''
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.updateEstablishmentConf))
     {
         resJson.status=0;
@@ -140,9 +149,10 @@ async function updateEstablishmentConf(req,res){
     let establishmentConfData=req.body.data.updateData;
     console.log(establishmentConfData);
     let idEstablishment = req.body.data.idEstablishment;
-    //llamar a updateUserConf
+
+    //consulta el id de configuracion
     let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
-    //console.log(idConfiguration);
+    
     let result = await EstablishmentConfModel.updateEstablishmentConf(establishmentConfData, idEstablishment, idConfiguration);
     //regresar la respuesta
     if(result){

@@ -14,14 +14,18 @@ const config            = require('../util/config.js');
 const jsonReq = require('../util/jsonReq');
 const validation = require('../util/validation');
 
+//crea un evento
 async function createEvent(req,res) {
+    
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': '',
         'images':{},
         'idEvent':''
     };
-
+    
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.createEvent))
     {
         resJson.status=0;
@@ -36,24 +40,15 @@ async function createEvent(req,res) {
         let temp = generator.next();
         let id = intformat(temp, 'dec');
         //GENERAR UN CODIGO DE CONFIRMACION
-        //INSERTAR A LA BASE DE DATOS
+
         let eventInfo = req.body.data;
         eventInfo.idEvent = id;
 
-
-
-
-
         let eventModel = new EventModel(eventInfo);
-
         let eventConfData = req.body.data.conf;
-
-
 
         if(eventConfData==null)
             eventConfData={}
-
-
 
 
         if(eventConfData.hasOwnProperty("images"))
@@ -98,8 +93,10 @@ async function createEvent(req,res) {
   */
 
 
+
             images.profileImage="default";
 
+            //Recibimos una imagen al momento de crear el evento y la guardamos
             if(images.hasOwnProperty("bannerImage"))
             {
                 if(images.bannerImage!="")
@@ -120,14 +117,9 @@ async function createEvent(req,res) {
                 }
                 else
                     images.bannerImage="default";
-
             }
             else
                 images.bannerImage="default";
-
-
-
-
 
             eventConfData.images=images;
             resJson.images=images;
@@ -136,11 +128,13 @@ async function createEvent(req,res) {
 
 
 
-
+        //guardamos en la base de datos
         let result = await eventModel.insertEvent(eventConfData);
 
         //console.log(result)
-        if (result) {
+        
+        //regresamos la respuesta
+            if(result) {
             //ENVIAR UN CORREO DE CONFIRMACION
             //let emailResult = await Email.sendConfirmation(email, uuid);
             resJson.status=0;
@@ -164,12 +158,15 @@ async function createEvent(req,res) {
 
 }
 
+//Actualiza un evento
 async function updateEvent(req,res) {
+    //Variable de respuesta
     let resJson ={
         'status': 0,
         'message': ''
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.updateEvent))
     {
         resJson.status=0;
@@ -183,19 +180,17 @@ async function updateEvent(req,res) {
     let eventModel=new EventModel(eventInfo);
 
 
-
-
-
     let RC=true;
     let idEvent = req.body.data.idEvent;
+    //actualizamos la tabla event
     let result = await eventModel.updateEvent();
 
     if(req.body.data.hasOwnProperty("updateData"))
     {
+        
+        //consultamos el id de configuracion
         let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
-        console.log("__________________________")
-        console.log(idConfiguration)
-        console.log("__________________________")
+
         if (!idConfiguration)
         {
             log("fail Update event", 'error.log');
@@ -206,11 +201,11 @@ async function updateEvent(req,res) {
         }
 
         let eventConfData = req.body.data.updateData;
+        //actualizamos la configuracion
         let resultConf = await EventConfModel.updateEventConf(eventConfData, idEvent, idConfiguration);
         if(!resultConf)
             RC=false;
     }
-
 
     //regresar la respuesta
     if(result && RC){
@@ -228,13 +223,16 @@ async function updateEvent(req,res) {
     }
 }
 
+//obtiene los datos de un evento
 async  function getEventInfo(req,res){
+    //Variable de respuesta
     let resJson = {
         'status': 0,
         'message': '',
         'data': {}
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.getEventInfo))
     {
         resJson.status=0;
@@ -251,9 +249,11 @@ async  function getEventInfo(req,res){
 
 
     let eventConfModel=new EventConfModel(eventData);
+    //consultamos la configuracion
     let confData=await eventConfModel.getEventConfInfo(eventInfo.idEvent);
-    //regresar la respuesta
 
+
+    //verificamos que las dos consultas sean exitosas
     if(eventData && confData){
         eventData.conf=JSON.parse(confData.conf)
         let establishment= await EstablishmentModel.getEstablishment(eventData.idestablishment)
@@ -263,9 +263,7 @@ async  function getEventInfo(req,res){
             eventData.establishment=establishment
         }
 
-
-
-
+        //regresamos la respuesta
         resJson.status=1;
         log("event consulted");
         resJson.data=eventData;
@@ -280,13 +278,16 @@ async  function getEventInfo(req,res){
     }
 }
 
+//asigna una imagen de perfil
 async function setProfileImage(req,res) {
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
 
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.setProfileImageEvent))
     {
         resJson.status=0;
@@ -297,8 +298,21 @@ async function setProfileImage(req,res) {
 
     let img64 = req.body.data.image;
     let idEvent = req.body.data.idEvent;
-    let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
+    //consultamos el id de configuracion
+        let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
 
+
+    if (!idConfiguration)
+    {
+        log("fail event idConfiguration", 'error.log');
+        resJson.status = 0;
+        resJson.message = "fail event idConfiguration";
+        res.json(resJson);
+        return;
+    }
+
+
+    //preparamos los datos para el guardado en el bucket
     let temp = generator.next();
     let nameImg = intformat(temp, 'dec');
     let path =config.imagepath+"event/profile/";
@@ -306,9 +320,11 @@ async function setProfileImage(req,res) {
 
     if(resultSave)
     {
+        //consultamos las imagenes
         let imagesEvent =await  EventConfModel.getImages(idConfiguration.idconfiguration);
         if(imagesEvent)
         {
+            //preparamos los datos para actualizar en la DB
             let oldProfileImage=JSON.parse(imagesEvent.images).profileImage;
             let bannerImage = JSON.parse(imagesEvent.images).bannerImage;
             let promotionImage = JSON.parse(imagesEvent.images).promotionImage;
@@ -326,7 +342,7 @@ async function setProfileImage(req,res) {
             let result = await EventConfModel.updateEventConf(updateData, idEvent, idConfiguration);
             if(result){
                 try {
-
+                    //preparamos los datos para borrar la vieja imagen del bucket
                     if(oldProfileImage=="default" || oldProfileImage=="" || oldProfileImage==null)
                     {
                         resJson.status=1;
@@ -338,6 +354,9 @@ async function setProfileImage(req,res) {
 
 
                     let resultDelete = deleteImage.deleteImage(oldProfileImage, path);
+                    
+                    
+                    //regresamos la respuesta
                     if (resultDelete) {
                         resJson.status=1;
                         log("Update profile Image Correctly");
@@ -375,13 +394,16 @@ async function setProfileImage(req,res) {
     }
 }
 
+//asigna una imagen de portada
 async function setBannerImage(req,res){
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
 
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.setBannerImageEvent))
     {
         resJson.status=0;
@@ -392,8 +414,18 @@ async function setBannerImage(req,res){
 
     let img64 = req.body.data.image;
     let idEvent = req.body.data.idEvent;
-    let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
+    //consultamos el id de configuracion
+        let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
+    if (!idConfiguration)
+    {
+        log("fail event idConfiguration", 'error.log');
+        resJson.status = 0;
+        resJson.message = "fail event idConfiguration";
+        res.json(resJson);
+        return;
+    }
 
+    //preparamos los datos para el guardado en el bucket
     let temp = generator.next();
     let nameImg = intformat(temp, 'dec');
 
@@ -402,9 +434,11 @@ async function setBannerImage(req,res){
 
     if(resultSave)
     {
+        //consultamos las imagenes
         let imagesEvent =await  EventConfModel.getImages(idConfiguration.idconfiguration);
         if(imagesEvent)
         {
+            //preparamos los datos para actualizar en la DB
             let profileImage=JSON.parse(imagesEvent.images).profileImage;
             let oldBannerImage = JSON.parse(imagesEvent.images).bannerImage;
             let promotionImage = JSON.parse(imagesEvent.images).promotionImage;
@@ -421,8 +455,10 @@ async function setBannerImage(req,res){
                 "data":imagesJSON
             });
             let result = await EventConfModel.updateEventConf(updateData, idEvent, idConfiguration);
+
             if(result){
                 try {
+                    //preparamos los datos para borrar la vieja imagen del bucket
                     if(oldBannerImage=="default" || oldBannerImage=="" || oldBannerImage==null)
                     {
                         resJson.status=1;
@@ -433,6 +469,7 @@ async function setBannerImage(req,res){
 
 
                     let resultDelete = deleteImage.deleteImage(oldBannerImage, path);
+                    //regresamos la respuesta
                     if (resultDelete) {
                         resJson.status=1;
                         log("Update banner Image Correctly");
@@ -469,13 +506,16 @@ async function setBannerImage(req,res){
     }
 }
 
+//asigna una imagen de promocion
 async function setPromotionImage(req,res){
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
 
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.setPromotionImageEvent))
     {
         resJson.status=0;
@@ -486,8 +526,17 @@ async function setPromotionImage(req,res){
 
     let img64 = req.body.data.image;
     let idEvent = req.body.data.idEvent;
-    let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
-
+    //consultamos el id de configuracion
+        let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
+    if (!idConfiguration)
+    {
+        log("fail event idConfiguration", 'error.log');
+        resJson.status = 0;
+        resJson.message = "fail event idConfiguration";
+        res.json(resJson);
+        return;
+    }
+    //preparamos los datos para el guardado en el bucket
     let temp = generator.next();
     let nameImg = intformat(temp, 'dec');
 
@@ -496,9 +545,11 @@ async function setPromotionImage(req,res){
 
     if(resultSave)
     {
+        //consultamos las imagenes
         let imagesEvent =await  EventConfModel.getImages(idConfiguration.idconfiguration);
         if(imagesEvent)
         {
+            //preparamos los datos para actualizar en la DB
             let profileImage=JSON.parse(imagesEvent.images).profileImage;
             let bannerImage = JSON.parse(imagesEvent.images).bannerImage;
             let oldPromotionImage = JSON.parse(imagesEvent.images).promotionImage;
@@ -518,7 +569,7 @@ async function setPromotionImage(req,res){
             let result = await EventConfModel.updateEventConf(updateData, idEvent, idConfiguration);
             if(result){
                 try {
-
+                    //preparamos los datos para borrar la vieja imagen del bucket
                     if(oldPromotionImage=="default" || oldPromotionImage=="" || oldPromotionImage==null)
                     {
                         log("Update Promotion Image Correctly");
@@ -527,6 +578,7 @@ async function setPromotionImage(req,res){
                     }
 
                     let resultDelete = deleteImage.deleteImage(oldPromotionImage, path);
+                    //regresamos la respuesta
                     if (resultDelete) {
                         log("Update promotion Image Correctly");
                         resJson.message = "Update promotion Image Correctly";
@@ -562,13 +614,16 @@ async function setPromotionImage(req,res){
     }
 }
 
+//agrega una imagen a la galeria
 async function addImage(req,res){
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
 
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.addImageEvent))
     {
         resJson.status=0;
@@ -579,8 +634,18 @@ async function addImage(req,res){
 
     let img64 = req.body.data.image;
     let idEvent = req.body.data.idEvent;
-    let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
+    //consultamos el id de configuracion
+        let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
+    if (!idConfiguration)
+    {
+        log("fail event idConfiguration", 'error.log');
+        resJson.status = 0;
+        resJson.message = "fail event idConfiguration";
+        res.json(resJson);
+        return;
+    }
 
+    //preparamos los datos para el guardado en el bucket
     let temp = generator.next();
     let nameImg = intformat(temp, 'dec');
 
@@ -589,14 +654,15 @@ async function addImage(req,res){
 
     if(resultSave)
     {
+        //consultamos las imagenes
         let imagesEvent =await  EventConfModel.getGallery(idConfiguration.idconfiguration);
         if(imagesEvent)
         {
+            //preparamos los datos para actualizar en la DB
 
             let galleryImages=[]
             if(imagesEvent.gallery!=null)
                 galleryImages = JSON.parse(imagesEvent.gallery);
-
 
             galleryImages.push(nameImg.toString());
             let updateData = [];
@@ -605,6 +671,7 @@ async function addImage(req,res){
                 "data":galleryImages
             });
             let result = await EventConfModel.updateEventConf(updateData, imagesEvent, idConfiguration);
+            //regresamos la respuesta
             if(result){
                 log("add Image to gallery Correctly");
                 resJson.message = "add Image to gallery Correctly";
@@ -627,13 +694,16 @@ async function addImage(req,res){
     }
 }
 
+//elimina una imagen de la galeria
 async function  removeImage(req,res){
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
 
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.removeImageEvent))
     {
         resJson.status=0;
@@ -644,13 +714,23 @@ async function  removeImage(req,res){
 
     let nameImage = req.body.data.image;
     let idEvent = req.body.data.idEvent;
+    //consultamos el id de configuracion
     let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
 
+    if (!idConfiguration)
+    {
+        log("fail event idConfiguration", 'error.log');
+        resJson.status = 0;
+        resJson.message = "fail event idConfiguration";
+        res.json(resJson);
+        return;
+    }
 
+    //consultamos las imagenes
     let imagesEvent =await  EventConfModel.getGallery(idConfiguration.idconfiguration);
     if(imagesEvent)
     {
-
+        //preparamos los datos para actualizar en la DB
         let galleryImages = JSON.parse(imagesEvent.gallery);
         if(galleryImages!=null && galleryImages.length>=1)
         {
@@ -667,9 +747,12 @@ async function  removeImage(req,res){
                 let result = await EventConfModel.updateEventConf(updateData, idEvent, idConfiguration);
                 if(result){
                     try {
+
+                        //preparamos los datos para borrar la vieja imagen del bucket
                         let path =config.imagepath+"event/gallery/";
                         let resultDelete = deleteImage.deleteImage(nameImage,path);
-                        if (resultDelete) {
+                        //regresamos la respuesta
+                    if (resultDelete) {
                             log("delete Image Correctly", 'error.log');
                             resJson.message = "delete Image Correctly";
                             res.json(resJson);   return;
@@ -712,13 +795,16 @@ async function  removeImage(req,res){
 
 }
 
+//elimina la imagen de banner
 async function deleteBannerImage(req,res) {
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
 
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.deleteBannerImageEvent))
     {
         resJson.status=0;
@@ -728,12 +814,22 @@ async function deleteBannerImage(req,res) {
     }
 
     let idEvent = req.body.data.idEvent;
-    let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
+    //consultamos el id de configuracion
+        let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
+    if (!idConfiguration)
+    {
+        log("fail event idConfiguration", 'error.log');
+        resJson.status = 0;
+        resJson.message = "fail event idConfiguration";
+        res.json(resJson);
+        return;
+    }
 
-
+    //consultamos las imagenes
     let imagesEvent =await  EventConfModel.getImages(idConfiguration.idconfiguration);
     if(imagesEvent)
     {
+        //preparamos los datos para actualizar en la DB
         let bannerImage = JSON.parse(imagesEvent.images).bannerImage;
         let profileImage = JSON.parse(imagesEvent.images).profileImage;
         let promotionImage = JSON.parse(imagesEvent.images).promotionImage;
@@ -761,9 +857,11 @@ async function deleteBannerImage(req,res) {
         let result = await EventConfModel.updateEventConf(updateData, idEvent, idConfiguration);
         if(result){
             try {
+                //preparamos los datos para borrar la vieja imagen del bucket
                 let path =config.imagepath+"event/banner/";
                 let resultDelete = deleteImage.deleteImage(bannerImage,path);
-                if (resultDelete) {
+                //regresamos la respuesta
+                    if (resultDelete) {
                     log("Delete banner Image Correctly");
                     resJson.message = "Delete banner Image Correctly";
                     res.json(resJson);   return;
@@ -792,13 +890,16 @@ async function deleteBannerImage(req,res) {
 
 }
 
+//elimina la imagen de perfil
 async function deleteProfileImage(req,res) {
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
 
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.deleteProfileImageEvent))
     {
         resJson.status=0;
@@ -808,12 +909,21 @@ async function deleteProfileImage(req,res) {
     }
 
     let idEvent = req.body.data.idEvent;
-    let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
-
-
+    //consultamos el id de configuracion
+        let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
+    if (!idConfiguration)
+    {
+        log("fail event idConfiguration", 'error.log');
+        resJson.status = 0;
+        resJson.message = "fail event idConfiguration";
+        res.json(resJson);
+        return;
+    }
+    //consultamos las imagenes
     let imagesEvent =await  EventConfModel.getImages(idConfiguration.idconfiguration);
     if(imagesEvent)
     {
+        //preparamos los datos para actualizar en la DB
         let bannerImage = JSON.parse(imagesEvent.images).bannerImage;
         let profileImage = JSON.parse(imagesEvent.images).profileImage;
         let promotionImage = JSON.parse(imagesEvent.images).promotionImage;
@@ -843,9 +953,11 @@ async function deleteProfileImage(req,res) {
         let result = await EventConfModel.updateEventConf(updateData, idEvent, idConfiguration);
         if(result){
             try {
+                //preparamos los datos para borrar la vieja imagen del bucket
                 let path =config.imagepath+"event/profile/";
                 let resultDelete = deleteImage.deleteImage(profileImage,path);
-                if (resultDelete) {
+                //regresamos la respuesta
+                    if (resultDelete) {
                     log("Delete profile Image Correctly");
                     resJson.message = "Delete profile Image Correctly";
                     res.json(resJson);   return;
@@ -874,13 +986,16 @@ async function deleteProfileImage(req,res) {
 
 }
 
+//elimina la imagen de promocion
 async function deletePromotionImage(req,res) {
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
 
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.deleteProfileImageEvent))
     {
         resJson.status=0;
@@ -890,12 +1005,21 @@ async function deletePromotionImage(req,res) {
     }
 
     let idEvent = req.body.data.idEvent;
-    let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
-
-
+    //consultamos el id de configuracion
+        let idConfiguration = await EventConfModel.getIdConfiguration(idEvent);
+    if (!idConfiguration)
+    {
+        log("fail event idConfiguration", 'error.log');
+        resJson.status = 0;
+        resJson.message = "fail event idConfiguration";
+        res.json(resJson);
+        return;
+    }
+    //consultamos las imagenes
     let imagesEvent =await  EventConfModel.getImages(idConfiguration.idconfiguration);
     if(imagesEvent)
     {
+        //preparamos los datos para actualizar en la DB
         let bannerImage = JSON.parse(imagesEvent.images).bannerImage;
         let profileImage = JSON.parse(imagesEvent.images).profileImage;
         let promotionImage = JSON.parse(imagesEvent.images).promotionImage;
@@ -924,9 +1048,11 @@ async function deletePromotionImage(req,res) {
         let result = await EventConfModel.updateEventConf(updateData, idEvent, idConfiguration);
         if(result){
             try {
+                //preparamos los datos para borrar la vieja imagen del bucket
                 let path =config.imagepath+"event/promotion/";
                 let resultDelete = deleteImage.deleteImage(promotionImage, path);
-                if (resultDelete) {
+                //regresamos la respuesta
+                    if (resultDelete) {
                     log("Delete promotion Image Correctly");
                     resJson.message = "Delete promotion Image Correctly";
                     res.json(resJson);   return;
@@ -955,13 +1081,16 @@ async function deletePromotionImage(req,res) {
 
 }
 
+//elimina un evento
 async  function deleteEvent(req,res){
+    //Variable de respuesta
     let resJson = {
         'status': 0,
         'message': '',
         'data': {}
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.deleteEvent))
     {
         resJson.status=0;
@@ -978,6 +1107,7 @@ async  function deleteEvent(req,res){
 
     let result = await eventModel.deleteEvent();
 
+    //regresamos la respuesta
     if(result){
         resJson.status=1;
         log("delete event");
