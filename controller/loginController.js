@@ -8,13 +8,16 @@ const FlakeIdGen = require('flake-idgen');
 const generator = new FlakeIdGen();
 const Email = require('../util/Email');
 
+//Valida las credenciales de un usuario o de un establecimiento
 async function validateCredentials(req,res) {
+    //Variable de respuesta
     let resJson = {
         'status': 1,
         'message': '',
         'data': {},
         'type': ''
     };
+    //Validamos los datos de entrada
     if (!validation.isValid(req.body, jsonReq.validateCredentials)) {
         resJson.status = 0;
         resJson.message = "wrong formatting";
@@ -23,13 +26,16 @@ async function validateCredentials(req,res) {
     }
     //VERIFICAR SI EXISTE EL EMAIL
     let email = req.body.data.email;
+    //Verificamos las credenciales para un usuario
     let exist = await UserModel.verifyUserCredentials(req.body.data);
     if (exist != '0') {
         let temp = generator.next();
         let idSession = intformat(temp, 'dec');
 
-
+        //Asignamos un id de sesion
         let setIdSession = await  UserModel.setIdSession(exist,idSession);
+
+        //Regresamos la respuesta
         if(setIdSession)
         {
             log("Verified User " + email);
@@ -47,6 +53,7 @@ async function validateCredentials(req,res) {
     }
     else
     {
+        //Verificamos las credenciales para un establecimiento
         exist = await EstablishmentModel.verifyEstablishmentCredentials(req.body.data);
 
         if (exist != '0') {
@@ -54,7 +61,9 @@ async function validateCredentials(req,res) {
             let temp = generator.next();
             let idSession = intformat(temp, 'dec');
 
+            //Asignamos un id de sesion
             let setIdSession = await  EstablishmentModel.setIdSession(exist,idSession);
+            //Regresamos la respuesta
             if(setIdSession)
             {
                 log("Verified Establishment " + email);
@@ -90,7 +99,9 @@ async function validateCredentials(req,res) {
     res.json(resJson);   return;
 }
 
+//Verifica la sesion de un establecimiento
 async function verifyEstablishmentSession(req,res) {
+    //Variable de respuesta
     let resJson = {
         'status': 1,
         'message': '',
@@ -101,13 +112,14 @@ async function verifyEstablishmentSession(req,res) {
         let idSession=req.body.data.idSession+"";
         let idEstablishment=req.body.data.idEstablishment;
 
-
+        //Obtenemos el id de sesion
         let getIdSession = await  EstablishmentModel.getIdSession(idEstablishment);
 
 
         if(getIdSession)
         {
 
+            //Comparamos el id de sesion y regresamos la respuesta
             if(getIdSession==idSession)
             {
                 log("Verified Session idEstablishment"+idEstablishment);
@@ -134,7 +146,9 @@ async function verifyEstablishmentSession(req,res) {
     res.json(resJson);   return;
 }
 
+//Verifica la sesion de un usuario
 async function verifyUserSession(req,res) {
+    //Variable de respuesta
     let resJson = {
         'status': 1,
         'message': '',
@@ -145,7 +159,7 @@ async function verifyUserSession(req,res) {
     let idSession=req.body.data.idSession+"";
     let idUser=req.body.data.idUser;
 
-    console.log(idUser)
+    //Obtenemos el id de sesion
     let getIdSession = await  UserModel.getIdSession(idUser);
 
     console.log(getIdSession)
@@ -154,6 +168,7 @@ async function verifyUserSession(req,res) {
     if(getIdSession)
     {
 
+        //Comparamos el id de sesion y regresamos la respuesta
         if(getIdSession==idSession)
         {
             log("Verified Session idUser"+idUser);
@@ -180,14 +195,16 @@ async function verifyUserSession(req,res) {
     res.json(resJson);   return;
 }
 
-
+//Manda un correo de recuperacion de contraseña
 async function recoverPassword(req,res) {
+    //Variable de respuesta
     let resJson = {
         'status': 1,
         'message': '',
         'id': ''
     };
 
+    //Validamos los datos de entrada
     if (!validation.isValid(req.body, jsonReq.recoverPassword)) {
         resJson.status = 0;
         resJson.message = "wrong formatting";
@@ -200,6 +217,7 @@ async function recoverPassword(req,res) {
     if(type=="user")
     {
         let email=req.body.data.email;
+        //Consultamos el id por el email
         let idUser = await UserModel.getIdUser(email);
         if(idUser)
         {
@@ -207,7 +225,7 @@ async function recoverPassword(req,res) {
             resJson.message = "Verified idUser:"+idUser+" with email"+email;
             resJson.id=idUser;
             resJson.status=1
-
+            //Mandamos el correo de recuperacion
             let emailResult = await Email.sendRecover(email, idUser);
 
         }
@@ -226,6 +244,7 @@ async function recoverPassword(req,res) {
         if(type=="establishment")
         {
             let email=req.body.data.email;
+            //Consultamos el id por el email
             let idEstablishment = await EstablishmentModel.getIdEstablishment(email);
 
             if(idEstablishment)
@@ -234,7 +253,7 @@ async function recoverPassword(req,res) {
                 resJson.message = "Verified idEstablishment:"+idEstablishment+" with email"+email;
                 resJson.id=idEstablishment;
                 resJson.status=1
-
+                //Mandamos el correo de recuperacion
                 let emailResult = await Email.sendRecover(email, idEstablishment);
                 //mandar correo
             }

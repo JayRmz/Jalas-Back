@@ -9,13 +9,17 @@ const log = require('log-to-file');
 const jsonReq = require('../util/jsonReq');
 const validation = require('../util/validation');
 
+//Busca eventos por distancia
 async function searchEvents(req,res) {
+
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': '',
         'data':[]
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.searchEvents))
     {
         resJson.status=0;
@@ -28,11 +32,12 @@ async function searchEvents(req,res) {
     let longitude=parseFloat(req.body.data.longitude);
     let distance = parseFloat(req.body.data.distance);
 
-
+    //Hacemos la consukta
     let events = await  SearchModel.getEvents(latitude,longitude,distance);
 
     if(events){
         let realEvents=[]
+        //no hay eventos
         if(events.length==0)
         {
             log("not found events");
@@ -42,7 +47,7 @@ async function searchEvents(req,res) {
         }
         else
         {
-
+            //Obtenemos el establecimiento asociado
             for(let i=0; i<events.length;i++)
             {
                 let Establishment= await SearchModel.getEstablishmentData(events[i].idestablishment)
@@ -56,8 +61,10 @@ async function searchEvents(req,res) {
             }
         }
 
+        //si el evento fue antes de hoy lo quitamos
         realEvents=SearchModel.filterPerToday(realEvents)
 
+        //regresamos la respuesta
         log("get events");
         resJson.message="found events";
         resJson.data=realEvents;
@@ -71,14 +78,17 @@ async function searchEvents(req,res) {
     }
 }
 
+//Busca eventos por distancia y por generos
 async function searchEventsPerGenres(req, res) {
 
+    //Variable de respuesta
     let resJson = {
         'status': 0,
         'message': '',
         'data': []
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.searchEventsPerGenres))
     {
         resJson.status=0;
@@ -91,11 +101,12 @@ async function searchEventsPerGenres(req, res) {
     let longitude = parseFloat(req.body.data.longitude);
     let distance = parseFloat(req.body.data.distance);
 
-
+    //Obtenemos los eventos
     let events = await SearchModel.getEvents(latitude, longitude, distance);
 
     if (events) {
         let realEvents=[];
+        //No hay eventos
         if(events.length==0)
         {
             log("not found events");
@@ -106,6 +117,7 @@ async function searchEventsPerGenres(req, res) {
         else
         {
 
+            //Obtenemos el establecimiento asociado
             for(let i=0; i<events.length;i++)
             {
                 let Establishment= await SearchModel.getEstablishmentData(events[i].idestablishment)
@@ -124,9 +136,10 @@ async function searchEventsPerGenres(req, res) {
 
 
         if (result) {
-
+            //si el evento fue antes de hoy lo quitamos
             result=SearchModel.filterPerToday(result)
 
+            //Regresamos la respuesta
             if(result.length==0)
             {
                 log("not found events");
@@ -156,14 +169,17 @@ async function searchEventsPerGenres(req, res) {
 
 }
 
+//Busca eventos por distancia y por fcha
 async function searchEventsPerDate(req, res) {
 
+    //Variable de respuesta
     let resJson = {
         'status': 1,
         'message': '',
         'data': []
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.searchEventsPerDate))
     {
         resJson.status=0;
@@ -178,11 +194,13 @@ async function searchEventsPerDate(req, res) {
     let date = req.body.data.date;
 
 
+    //Obtenemos los eventos
     let events = await SearchModel.getEventsPerDate(latitude, longitude, distance, date);
 
     if (events)
     {
         let realEvents=[]
+        //No hay eventos
         if(events.length==0)
         {
             log("not found events");
@@ -192,6 +210,7 @@ async function searchEventsPerDate(req, res) {
         }
         else
         {
+            //Obtenemos el establecimiento asociado
             for(let i=0; i<events.length;i++)
             {
                 let Establishment= await SearchModel.getEstablishmentData(events[i].idestablishment)
@@ -206,8 +225,10 @@ async function searchEventsPerDate(req, res) {
             }
         }
 
+        //si el evento fue antes de hoy lo quitamos
         realEvents=SearchModel.filterPerToday(realEvents)
 
+        //Regresamos la respuesta
         if(realEvents.length==0)
         {
             log("not found events");
@@ -233,14 +254,17 @@ async function searchEventsPerDate(req, res) {
 
 }
 
+//Busca eventos por distancia, generos y fecha
 async function searchEventsPerDate_Genres(req, res) {
 
+    //Variable de respuesta
     let resJson = {
         'status': 1,
         'message': '',
         'data': []
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.searchEventsPerDate_Genres))
     {
         resJson.status=0;
@@ -254,11 +278,12 @@ async function searchEventsPerDate_Genres(req, res) {
     let distance = parseFloat(req.body.data.distance);
     let date = req.body.data.date;
 
-
+    //Obtenemos los eventos
     let events = await SearchModel.getEventsPerDate(latitude, longitude, distance, date);
 
     if (events) {
         let realEvents=[]
+        //No hay eventos
         if(events.length==0)
         {
             log("not found events");
@@ -271,6 +296,7 @@ async function searchEventsPerDate_Genres(req, res) {
 
             for(let i=0; i<events.length;i++)
             {
+                //Obtenemos los datos del establecimiento asociado
                 let Establishment= await SearchModel.getEstablishmentData(events[i].idestablishment)
                 if(Establishment)
                 {
@@ -284,12 +310,14 @@ async function searchEventsPerDate_Genres(req, res) {
 
 
         let genres = req.body.data.genres;
+        //Filtramos por generos
         let result = SearchModel.filterPerGenres(realEvents, genres);
 
         if (result) {
-
+            //si el evento fue antes de hoy lo quitamos
             result=SearchModel.filterPerToday(result)
 
+            //Regresamos la respuesta
             if(events.length==0)
             {
                 log("not found events");
@@ -319,13 +347,16 @@ async function searchEventsPerDate_Genres(req, res) {
 
 }
 
+//Busca establecimientos por distancia
 async function searchEstablishments(req, res){
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': '',
         'data':[]
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.searchEstablishment))
     {
         resJson.status=0;
@@ -339,10 +370,11 @@ async function searchEstablishments(req, res){
     let distance = parseFloat(req.body.data.distance);
 
 
+    //Obtenemos los establecimientos
     let establishments = await  SearchModel.getEstablishments(latitude,longitude,distance);
 
 
-
+    //Regresamos la respuesta
     if(establishments){
 
         if(establishments.length==0)
@@ -365,14 +397,17 @@ async function searchEstablishments(req, res){
     }
 }
 
+//Busca eventos por distancia y nombre
 async function searchEventsPerName(req, res) {
 
+    //Variable de respuesta
     let resJson = {
         'status': 1,
         'message': '',
         'data': []
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.searchEventsPerName))
     {
         resJson.status=0;
@@ -387,12 +422,14 @@ async function searchEventsPerName(req, res) {
     let name = req.body.data.name;
 
 
+    //Obtenemos los eventos
     let events = await SearchModel.getEventsPerName(latitude, longitude, distance, name);
 
     if (events)
     {
         let realEvents=[]
 
+        //No hay eventos
         if(events.length==0)
         {
             log("not found events");
@@ -405,6 +442,7 @@ async function searchEventsPerName(req, res) {
 
             for(let i=0; i<events.length;i++)
             {
+                //Obtenemos los establecimientos asociados
                 let Establishment= await SearchModel.getEstablishmentData(events[i].idestablishment)
                 if(Establishment)
                 {
@@ -415,8 +453,11 @@ async function searchEventsPerName(req, res) {
 
             }
         }
+        //si el evento fue antes de hoy lo quitamos
         realEvents=SearchModel.filterPerToday(realEvents)
 
+
+        //Regresamos la respuesta
         if(realEvents.length==0)
         {
             log("not found events");
@@ -442,14 +483,17 @@ async function searchEventsPerName(req, res) {
 
 }
 
+//Busca establecimientos por distancia y nombre
 async function searchEstablishmentsPerName(req, res) {
 
+    //Variable de respuesta
     let resJson = {
         'status': 1,
         'message': '',
         'data': []
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.searchEstablishmentsPerName))
     {
         resJson.status=0;
@@ -463,10 +507,11 @@ async function searchEstablishmentsPerName(req, res) {
     let distance = req.body.data.distance;
     let name = req.body.data.name;
 
-
+    //Obtenemos los establecimientos
     let establishments = await SearchModel.getEstablishmentsPerName(latitude, longitude, distance, name);
 
     if (establishments) {
+        //No hay establecimientos
         if(establishments.length==0)
         {
             log("not found establishments");
@@ -474,6 +519,7 @@ async function searchEstablishmentsPerName(req, res) {
             resJson.data = [];
             res.json(resJson);   return;
         }
+        //Regresamos la respuesta
         log("get establishments");
         resJson.message = "found establishments";
         resJson.data = establishments;

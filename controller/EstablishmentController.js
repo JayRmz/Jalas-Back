@@ -14,8 +14,11 @@ const config            = require('../util/config.js');
 const jsonReq = require('../util/jsonReq');
 const validation = require('../util/validation');
 
+//Crea un establecimiento
 async function createEstablishment(req,res) {
 
+
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': '',
@@ -24,12 +27,12 @@ async function createEstablishment(req,res) {
         'idEstablishment':''
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.createEstablishment))
     {
         resJson.status=0;
         resJson.message="wrong formatting";
         res.json(resJson);
-return;
         return;
     }
 
@@ -59,7 +62,7 @@ return;
             let temp2 = generator.next();
             let idSession = intformat(temp2, 'dec');
 
-            //INSERTAR A LA BASE DE DATOS
+            //creamos un modelo con los datos
             let establishmentInfo=req.body.data;
             establishmentInfo.idEstablishment=id;
             establishmentInfo.confirmationCode=uuid;
@@ -72,6 +75,7 @@ return;
 
 
 
+            //por si algun dia se quieren asignar las imagenes desde el principio
             /*
             if(establishmentConfData.hasOwnProperty("images"))
             {
@@ -92,7 +96,7 @@ return;
                             resJson.message="Problem uploading profile image";
                             log("Problem uploading profile image", "error.log")
                             res.json(resJson);
-return;
+                            return;
                         }
                     }
                 }
@@ -113,7 +117,7 @@ return;
                             resJson.message="Problem uploading banner image";
                             log("Problem uploading banner image", "error.log")
                             res.json(resJson);
-return;
+                            return;
                         }
                     }
                 }
@@ -141,7 +145,7 @@ return;
                                 resJson.message="Problem uploading image";
                                 log("Problem uploading image", "error.log")
                                 res.json(resJson);
-return;
+                                return;
                             }
                         }
                         images.gallery=resultGallery;
@@ -156,6 +160,8 @@ return;
             }
 
             */
+
+            //asignamos en default las imagenes
             let images =
                 {
                     "profileImage":"default",
@@ -167,7 +173,10 @@ return;
 
             resJson.images=images;
 
+            //guardamos los datos en la base de datos
             let result = await establishmentModel.insertEstablishment(establishmentConfData);
+
+            //regresamos la respuesta
             if(result)
             {
                 //ENVIAR UN CORREO DE CONFIRMACION
@@ -198,12 +207,15 @@ return;
 
 }
 
+//valida las credenciales de un establecimiento
 async function validateEstablishmentCredentials(req,res) {
+    //Variable de respuesta
     let resJson ={
         'status': 0,
         'message': ''
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.validateCredentials))
     {
         resJson.status=0;
@@ -212,9 +224,11 @@ async function validateEstablishmentCredentials(req,res) {
         return;
     }
 
-    //VERIFICAR SI EXISTE EL EMAIL
+    //validamos las credenciales
     let email=req.body.data.email;
     let exist = await EstablishmentModel.verifyEstablishmentCredentials(req.body.data);
+
+    //regresamos la respuesta
     if(exist != '0'){
         log("Verified Establishment "+email);
         resJson.status=1;
@@ -236,12 +250,15 @@ async function validateEstablishmentCredentials(req,res) {
     res.json(resJson);   return;
 }
 
+//modifica los datos de un establecimiento
 async function updateEstablishment(req,res) {
+    //Variable de respuesta
     let resJson ={
         'status': 0,
         'message': ''
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.updateEstablishment))
     {
         resJson.status=0;
@@ -256,13 +273,16 @@ async function updateEstablishment(req,res) {
 
     let RC=true;
     let idEstablishment = req.body.data.idEstablishment;
+    //actualizamos la tabla usuario
     let result = await establishmentModel.updateEstablishment();
 
+    //chechamos si hay parametros de la configuracion
     if(req.body.data.hasOwnProperty("updateData"))
     {
+        //consultamos el id de configuracion
         let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
         if (!idConfiguration)
-        {
+        {   //si no hay configuracion se produce un error
             log("fail Update establishment conf", 'error.log');
             resJson.status = 0;
             resJson.message = "fail Update establishment conf";
@@ -271,6 +291,7 @@ async function updateEstablishment(req,res) {
         }
 
         let establishmentConfData = req.body.data.updateData;
+        //actualizamos los datos de la configuracion
         let resultConf = await EstablishmentConfModel.updateEstablishmentConf(establishmentConfData, idEstablishment, idConfiguration);
         if(!resultConf)
             RC=false;
@@ -291,13 +312,16 @@ async function updateEstablishment(req,res) {
     }
 }
 
+//obtiene la informacion de un establecimiento
 async  function getEstablishmentInfo(req,res){
+    //variable de respuesta
     let resJson = {
         'status': 0,
         'message': '',
         'data': {}
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.getEstablishmentInfo))
     {
         resJson.status=0;
@@ -316,7 +340,6 @@ async  function getEstablishmentInfo(req,res){
 
     let establishmentConfModel=new EstablishmentConfModel(establishmentInfo);
     //llamar a gerEstablishmentConfInfo
-
     let RC=await establishmentConfModel.getEstablishmentConfInfo(establishmentInfo.idEstablishment);
     //regresar la respuesta
     if(result && RC){
@@ -337,12 +360,15 @@ async  function getEstablishmentInfo(req,res){
 
 }
 
+//Modifica la contraseña de un establecimiento
 async function updateEstablishmentPassword(req,res) {
+    //Variable de respuesta
     let resJson ={
         'status': 0,
         'message': ''
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.updateEstablishmentPassword))
     {
         resJson.status=0;
@@ -372,12 +398,15 @@ async function updateEstablishmentPassword(req,res) {
     }
 }
 
+//Asigna una imagen de perfil
 async function setProfileImage(req,res) {
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
 
     };
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.setProfileImageEstablishment))
     {
         resJson.status=0;
@@ -389,20 +418,24 @@ async function setProfileImage(req,res) {
     let img64 = req.body.data.image;
     let idEstablishment = req.body.data.idEstablishment;
     let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
-
+    //consultamos el id de configuracion
     if(idConfiguration)
     {
+
+        //generamos un nombre aleatorio para la imagen
         let temp = generator.next();
         let nameImg = intformat(temp, 'dec');
 
         let path =config.imagepath+"establishment/profile/";
         let resultSave = await Base64ToImg.base64ToImg(img64,path,"jpg",nameImg.toString());
-
+        //guardamos la imagen en el bucket
         if(resultSave)
         {
+            //consultamos las imagenes
             let imagesEstablishment =await  EstablishmentConfModel.getImages(idConfiguration.idconfiguration);
             if(imagesEstablishment)
             {
+                //preparamos los datos para borrar la vieja imagen
                 let oldProfileImage=JSON.parse(imagesEstablishment.images).profileImage;
                 let bannerImage = JSON.parse(imagesEstablishment.images).bannerImage;
 
@@ -416,10 +449,12 @@ async function setProfileImage(req,res) {
                     "field":"images",
                     "data":imagesJSON
                 });
+                //actualizamos las imagenes
                 let result = await EstablishmentConfModel.updateEstablishmentConf(updateData, idEstablishment, idConfiguration);
                 if(result){
                     try {
 
+                        //si la vieja imagen en default no se borra
                         if(oldProfileImage=="default" || oldProfileImage=="" || oldProfileImage==null)
                         {
                             log("Update profile Image Correctly");
@@ -427,8 +462,10 @@ async function setProfileImage(req,res) {
                             res.json(resJson);   return;
                         }
 
-
+                        //borramos la vieja imagen del bucket
                         let resultDelete = deleteImage.deleteImage(oldProfileImage, path);
+
+                        //regresamos la respuesta
                         if (resultDelete) {
                             log("Update profile Image Correctly");
                             resJson.message = "Update profile Image Correctly";
@@ -475,12 +512,15 @@ async function setProfileImage(req,res) {
 
 }
 
+//Asigna una imagen de portada
 async function setBannerImage(req,res){
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
 
     };
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.setBannerImageEstablishment))
     {
         resJson.status=0;
@@ -491,6 +531,7 @@ async function setBannerImage(req,res){
 
     let img64 = req.body.data.image;
     let idEstablishment = req.body.data.idEstablishment;
+    //consulta el id de configuracion
     let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
 
     if(!idConfiguration)
@@ -501,17 +542,19 @@ async function setBannerImage(req,res){
         res.json(resJson);   return;
     }
 
+    //generamos un nombre y guardamos la imagen en el bucket
     let temp = generator.next();
     let nameImg = intformat(temp, 'dec');
-
     let path =config.imagepath+"establishment/banner/";
     let resultSave = await Base64ToImg.base64ToImg(img64,path,"jpg",nameImg.toString());
 
     if(resultSave)
     {
+        //consultamos las imagenes
         let imagesEstablishment =await  EstablishmentConfModel.getImages(idConfiguration.idconfiguration);
         if(imagesEstablishment)
         {
+            //preparamos la actualizacion en la base de datos
             let profileImage=JSON.parse(imagesEstablishment.images).profileImage;
             let oldBannerImage = JSON.parse(imagesEstablishment.images).bannerImage;
 
@@ -526,8 +569,10 @@ async function setBannerImage(req,res){
                 "data":imagesJSON
             });
             let result = await EstablishmentConfModel.updateEstablishmentConf(updateData, idEstablishment, idConfiguration);
+
             if(result){
                 try {
+                    //preparamos el borrado de la vieja imagen en el bucket
                     if(oldBannerImage=="default" || oldBannerImage=="" || oldBannerImage==null)
                     {
                         log("Update banner Image Correctly");
@@ -537,6 +582,8 @@ async function setBannerImage(req,res){
 
 
                     let resultDelete = deleteImage.deleteImage(oldBannerImage,path);
+
+                    //regresamos la respuesta
                     if (resultDelete)
                     {
                         log("Update banner Image Correctly");
@@ -574,12 +621,15 @@ async function setBannerImage(req,res){
     }
 }
 
+//Agrega una imagen a la galeria de un establecimiento
 async function addImage(req,res){
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
 
     };
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.addImageEstablishment))
     {
         resJson.status=0;
@@ -592,7 +642,7 @@ async function addImage(req,res){
     let img64 = req.body.data.image;
     let idEstablishment = req.body.data.idEstablishment;
     let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
-
+    //consultamos el id de configuracion
     if(!idConfiguration)
     {
         log("fail add Image to gallery",'error.log');
@@ -601,7 +651,7 @@ async function addImage(req,res){
         res.json(resJson);   return;
     }
 
-
+    //generamos un nombre y guardamos la imagen en el bucket
     let temp = generator.next();
     let nameImg = intformat(temp, 'dec');
 
@@ -609,10 +659,11 @@ async function addImage(req,res){
     let resultSave = await Base64ToImg.base64ToImg(img64,path,"jpg",nameImg.toString());
 
     if(resultSave)
-    {
+    {   //consultamos la galeria de imagenes
         let imagesEstablishment =await  EstablishmentConfModel.getGallery(idConfiguration.idconfiguration);
         if(imagesEstablishment)
         {
+            //preparamos los datos para actualizar los datos en la base de datos
             let galleryImages = JSON.parse(imagesEstablishment.gallery);
 
             galleryImages.push(nameImg.toString());
@@ -622,6 +673,7 @@ async function addImage(req,res){
                 "data":galleryImages
             });
             let result = await EstablishmentConfModel.updateEstablishmentConf(updateData, idEstablishment, idConfiguration);
+            //regresamos la respuesta
             if(result){
                 log("add Image to gallery Correctly");
                 resJson.message = "add Image to gallery Correctly";
@@ -644,12 +696,16 @@ async function addImage(req,res){
     }
 }
 
+//Elimina una imagen de la galería
 async function removeImage(req,res){
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
 
     };
+
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.removeImageEstablishment))
     {
         resJson.status=0;
@@ -661,7 +717,7 @@ async function removeImage(req,res){
     let nameImage = req.body.data.image;
     let idEstablishment = req.body.data.idEstablishment;
     let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
-
+    //consultamos el id de configuracion
     if(!idConfiguration)
     {
         log("fail delete Image",'error.log');
@@ -670,6 +726,7 @@ async function removeImage(req,res){
         res.json(resJson);   return;
     }
 
+        //consultamos la galeria de un establecimiento
         let imagesEstablishment =await  EstablishmentConfModel.getGallery(idConfiguration.idconfiguration);
         if(imagesEstablishment)
         {
@@ -677,8 +734,10 @@ async function removeImage(req,res){
 
             if(galleryImages!=null && galleryImages.length>=1)
             {
+                //verificamos si la imagen por borrar esta en la galeria
                 if(galleryImages.includes(nameImage))
                 {
+                    //preparamos los datos para el borrado en la base de datos
                     let index = galleryImages.indexOf(nameImage);
                     galleryImages.splice(index,1);
                     let updateData = [];
@@ -689,8 +748,10 @@ async function removeImage(req,res){
                     let result = await EstablishmentConfModel.updateEstablishmentConf(updateData, idEstablishment, idConfiguration);
                     if(result){
                         try {
+                            //preparamos el borrado en el bucket
                             let path =config.imagepath+"establishment/gallery/";
                             let resultDelete = deleteImage.deleteImage(nameImage,path);
+                            //regresamos la respuesta
                             if (resultDelete) {
                                 log("delete Image Correctly", 'error.log');
                                 resJson.message = "delete Image Correctly";
@@ -734,13 +795,16 @@ async function removeImage(req,res){
 
 }
 
+//Elimina una imagen de portada
 async function deleteBannerImage(req,res) {
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
 
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.deleteBannerImageEstablishment))
     {
         resJson.status=0;
@@ -751,7 +815,7 @@ async function deleteBannerImage(req,res) {
 
     let idEstablishment = req.body.data.idEstablishment;
     let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
-
+    //consultamos el id de configuracion
     if(!idConfiguration)
     {
         log("fail delete banner Image",'error.log');
@@ -760,19 +824,20 @@ async function deleteBannerImage(req,res) {
         res.json(resJson);
     }
 
+    //consultamos las imagenes
     let imagesEstablishment =await  EstablishmentConfModel.getImages(idConfiguration.idconfiguration);
     if(imagesEstablishment)
     {
         let bannerImage = JSON.parse(imagesEstablishment.images).bannerImage;
         let profileImage = JSON.parse(imagesEstablishment.images).profileImage;
-
+        //si ya esta en banner no se borra
         if(bannerImage=="default")
         {
             log("Delete banner Image Correctly");
             resJson.message = "Delete banner Image Correctly";
             res.json(resJson);   return;
         }
-
+    //ponemos en default la imagen de banner
         let imagesJSON =
             [
                 "profileImage",profileImage,
@@ -784,11 +849,14 @@ async function deleteBannerImage(req,res) {
             "field":"images",
             "data":imagesJSON
         });
+        //actulizamos las imagenes en la DB
         let result = await EstablishmentConfModel.updateEstablishmentConf(updateData, idEstablishment, idConfiguration);
         if(result){
             try {
+                //eliminamos la imagen del bucket
                 let path =config.imagepath+"establishment/banner/";
                 let resultDelete = deleteImage.deleteImage(bannerImage,path);
+                //regresamos la respuesta
                 if (resultDelete) {
                     log("Delete banner Image Correctly");
                     resJson.message = "Delete banner Image Correctly";
@@ -818,13 +886,16 @@ async function deleteBannerImage(req,res) {
 
 }
 
+//Elimina una imagen de perfil
 async function deleteProfileImage(req,res) {
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
 
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.deleteProfileImageEstablishment))
     {
         resJson.status=0;
@@ -835,7 +906,7 @@ async function deleteProfileImage(req,res) {
 
     let idEstablishment = req.body.data.idEstablishment;
     let idConfiguration = await EstablishmentConfModel.getIdConfiguration(idEstablishment);
-
+    //consultamos el id de configuracion
     if(!idConfiguration)
     {
         log("fail delete profile Image",'error.log');
@@ -844,12 +915,12 @@ async function deleteProfileImage(req,res) {
         res.json(resJson);   return;
     }
 
+    //consultamos las imagenes
     let imagesEstablishment =await  EstablishmentConfModel.getImages(idConfiguration.idconfiguration);
-
-
 
     if(imagesEstablishment)
     {
+        //preparamos los datos para actualizar las imagenes
         let bannerImage = JSON.parse(imagesEstablishment.images).bannerImage;
         let profileImage = JSON.parse(imagesEstablishment.images).profileImage;
 
@@ -873,11 +944,14 @@ async function deleteProfileImage(req,res) {
             "field":"images",
             "data":imagesJSON
         });
+        //actualizamos las imagenes en la DB
         let result = await EstablishmentConfModel.updateEstablishmentConf(updateData, idEstablishment, idConfiguration);
         if(result){
             try {
+                //preparamos para borrar la imagen en el bucket
                 let path =config.imagepath+"establishment/profile/";
                 let resultDelete = deleteImage.deleteImage(profileImage,path);
+                //regresamos la respuesta
                 if (resultDelete) {
                     log("Delete profile Image Correctly");
                     resJson.message = "Delete profile Image Correctly";
@@ -907,12 +981,15 @@ async function deleteProfileImage(req,res) {
 
 }
 
+//verifica si un email está en la tabla establishment
 async  function verifyMail(req,res){
+    //Variable de respuesta
     let resJson ={
         'status': 1,
         'message': ''
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.verifyMail))
     {
         resJson.status=0;
@@ -923,7 +1000,9 @@ async  function verifyMail(req,res){
 
     try {
         let email = req.body.data.email;
+        //consulta el email
         let exist = await EstablishmentModel.verifyMail(email);
+        //regresa la respuesta
         if (exist == '1') {
             resJson.status = 1;
             resJson.message = "email already exist";
@@ -944,13 +1023,16 @@ async  function verifyMail(req,res){
 
 }
 
+//Obtiene los eventos asociados a un establecimiento
 async  function getEvents(req,res){
+    //Variable de respuesta
     let resJson = {
         'status': 0,
         'message': '',
         'data': {}
     };
 
+    //validamos los datos de entrada
     if(!validation.isValid(req.body,jsonReq.getEvents2))
     {
         resJson.status=0;
@@ -962,17 +1044,11 @@ async  function getEvents(req,res){
     //crear un nuevo EstablishmentModel
     let establishmentInfo=req.body.data;
     let establishmentModel=new EstablishmentModel(establishmentInfo);
-    //llamar a gerEstablishmentInfo
 
-
-
-
+    //Obtiene los eventos
     let result = await establishmentModel.getEvents();
 
-
-    console.log(result)
-
-
+    //si no hay eventos
     if(result.length==0)
     {
         log("There are no events");
@@ -984,8 +1060,6 @@ async  function getEvents(req,res){
 
     if(result.length>=1)
     {
-
-
         let i;
         let establishment= await EstablishmentModel.getEstablishment(establishmentInfo.idEstablishment)
 
@@ -1000,13 +1074,14 @@ async  function getEvents(req,res){
 
 
         establishment.conf=JSON.parse(establishment.conf)
-
+        //asignamos los datos del establecimientos a sus eventos
         for(i=0;i<result.length;i++)
         {
             result[i].conf=(JSON.parse(result[i].conf))
             result[i].establishment=establishment
         }
 
+        //regresamos la respuesta
         log("Events consulted");
         resJson.data=result;
         resJson.message="Events found";

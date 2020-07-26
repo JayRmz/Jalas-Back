@@ -8,6 +8,8 @@ const log = require('log-to-file');
 const jsonReq = require('../util/jsonReq');
 const validation = require('../util/validation');
 
+//PENDIENTE PARA LA FASE DOS
+//TODO LO DE ESTE ARCHIVO FUNCIONABA
 
 async function createReview(req,res) {
 
