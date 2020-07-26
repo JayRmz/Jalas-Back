@@ -6,8 +6,8 @@ const fs = require('fs');
 const AWS = require('aws-sdk');
 
 // Enter copied or downloaded access ID and secret key here
-const ID = 'AKIAIQ6T3VTYH7H46BOA';
-const SECRET = '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';
+const ID = 'AKIAJDBROCIVCWYTYDKA';
+const SECRET = '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';
 // The name of the bucket that you have created
 const BUCKET_NAME = 'jalas-bucket';
 
