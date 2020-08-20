@@ -10,7 +10,7 @@
   "dependencies": {
     "aws-sdk": "^2.712.0",
     "base64-to-image": "^1.0.2",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "bcrypt-nodejs": "0.0.3",
     "biguint-format": "^1.0.1",
     "cookie-parser": "~1.4.4",
